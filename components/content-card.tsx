@@ -27,57 +27,64 @@ export function ContentCard({
   comments,
 }: ContentCardProps) {
   return (
-    <article className="border-b border-border py-10 last:border-b-0">
+    <article className="py-12 first:pt-8">
       <div className="mx-auto max-w-2xl px-6">
-        <span className="mb-4 inline-block text-xs uppercase tracking-widest text-muted-foreground">
-          {type}
-        </span>
+        <div className="mb-8 flex items-center gap-3">
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            {type}
+          </span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
 
-        <h2 className="mb-6 font-serif text-3xl font-bold italic text-foreground">
+        <h2 className="mb-8 text-center font-serif text-4xl font-medium tracking-tight text-foreground">
           {title}
         </h2>
 
-        <div className="mb-6 space-y-1 font-serif text-lg leading-relaxed text-foreground">
+        <div className="mb-8 space-y-2 font-serif text-xl leading-relaxed text-foreground/90">
           {content.split("\n").map((line, index) => (
-            <p key={index}>{line}</p>
+            <p key={index} className="text-center">{line}</p>
           ))}
         </div>
 
-        <Link
-          href="#"
-          className="mb-8 inline-block text-sm font-medium text-accent hover:underline"
-        >
-          Read more
-        </Link>
+        <div className="mb-10 text-center">
+          <Link
+            href="#"
+            className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline underline-offset-4"
+          >
+            Continue reading
+            <span className="text-accent">&#8594;</span>
+          </Link>
+        </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
+        <div className="flex items-center justify-between border-t border-border pt-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary border border-border">
               {author.avatar ? (
                 <img
                   src={author.avatar}
                   alt={author.name}
-                  className="h-10 w-10 rounded-full object-cover"
+                  className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <span className="font-serif text-sm font-medium text-muted-foreground">
+                <span className="font-serif text-lg text-muted-foreground">
                   {author.name.charAt(0)}
                 </span>
               )}
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">{author.name}</p>
-              <p className="text-xs text-muted-foreground">{date}</p>
+              <p className="text-[11px] text-muted-foreground tracking-wide">{date}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-              <Heart className="h-4 w-4" strokeWidth={1.5} />
+          <div className="flex items-center gap-5">
+            <button className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors group">
+              <Heart className="h-[18px] w-[18px] group-hover:fill-accent/20" strokeWidth={1.25} />
               <span className="text-xs">{likes}</span>
             </button>
-            <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors">
-              <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
+            <button className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors">
+              <MessageCircle className="h-[18px] w-[18px]" strokeWidth={1.25} />
               <span className="text-xs">{comments}</span>
             </button>
           </div>

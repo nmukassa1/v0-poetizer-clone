@@ -1,28 +1,31 @@
 "use client"
 
 import Link from "next/link"
-import { Facebook, Twitter, Instagram } from "lucide-react"
+import { Twitter, Instagram, Mail } from "lucide-react"
 
 export function SocialSidebar() {
   return (
-    <div className="fixed bottom-6 left-6 flex items-center gap-1 rounded-full border border-border bg-background px-3 py-2">
+    <div className="fixed bottom-8 left-8 flex items-center gap-0.5 rounded-lg border border-border bg-background px-2 py-1.5 shadow-sm">
       <Link
         href="#"
-        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+        aria-label="Twitter"
       >
-        <Facebook className="h-4 w-4" strokeWidth={1.5} />
+        <Twitter className="h-4 w-4" strokeWidth={1.25} />
       </Link>
       <Link
         href="#"
-        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+        aria-label="Instagram"
       >
-        <Twitter className="h-4 w-4" strokeWidth={1.5} />
+        <Instagram className="h-4 w-4" strokeWidth={1.25} />
       </Link>
       <Link
         href="#"
-        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        className="flex h-8 w-8 items-center justify-center text-muted-foreground hover:text-accent transition-colors"
+        aria-label="Email"
       >
-        <Instagram className="h-4 w-4" strokeWidth={1.5} />
+        <Mail className="h-4 w-4" strokeWidth={1.25} />
       </Link>
     </div>
   )
@@ -32,9 +35,9 @@ export function GetAppButton() {
   return (
     <Link
       href="#"
-      className="fixed bottom-6 right-6 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+      className="fixed bottom-8 right-8 rounded-lg border border-border bg-background px-5 py-2.5 text-[13px] font-medium text-foreground hover:bg-secondary hover:border-foreground/20 transition-all shadow-sm"
     >
-      Get app
+      Get the app
     </Link>
   )
 }
