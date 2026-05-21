@@ -37,17 +37,17 @@ export function ContentCard({
           <span className="h-px flex-1 bg-border" />
         </div>
 
-        <h2 className="mb-8 text-center font-serif text-4xl font-medium tracking-tight text-foreground">
+        <h2 className="mb-8 font-serif text-4xl font-medium tracking-tight text-foreground">
           {title}
         </h2>
 
         <div className="mb-8 space-y-2 font-serif text-xl leading-relaxed text-foreground/90">
           {content.split("\n").map((line, index) => (
-            <p key={index} className="text-center">{line}</p>
+            <p key={index}>{line}</p>
           ))}
         </div>
 
-        <div className="mb-10 text-center">
+        <div className="mb-10">
           <Link
             href="#"
             className="inline-flex items-center gap-2 text-sm font-medium text-accent hover:underline underline-offset-4"
