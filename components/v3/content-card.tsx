@@ -45,12 +45,12 @@ export function ContentCard({
 
         <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary border border-border">
+            <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-secondary border border-border">
               {author.avatar ? (
                 <img
                   src={author.avatar}
                   alt={author.name}
-                  className="h-8 w-8 rounded-full object-cover"
+                  className="h-8 w-8 object-cover"
                 />
               ) : (
                 <span className="font-serif text-sm text-muted-foreground">
@@ -107,12 +107,12 @@ export function ContentCard({
 
         <div className="flex items-center justify-between border-t border-border pt-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary border border-border">
+            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-secondary border border-border">
               {author.avatar ? (
                 <img
                   src={author.avatar}
                   alt={author.name}
-                  className="h-11 w-11 rounded-full object-cover"
+                  className="h-11 w-11 object-cover"
                 />
               ) : (
                 <span className="font-serif text-lg text-muted-foreground">
@@ -127,11 +127,20 @@ export function ContentCard({
           </div>
 
           <div className="flex items-center gap-5">
-            <button className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors group">
-              <Heart className="h-[18px] w-[18px] group-hover:fill-accent/20" strokeWidth={1.25} />
+            <button
+              type="button"
+              className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors group"
+            >
+              <Heart
+                className="h-[18px] w-[18px] group-hover:fill-accent/20"
+                strokeWidth={1.25}
+              />
               <span className="text-xs">{likes}</span>
             </button>
-            <button className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors">
+            <button
+              type="button"
+              className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors"
+            >
               <MessageCircle className="h-[18px] w-[18px]" strokeWidth={1.25} />
               <span className="text-xs">{comments}</span>
             </button>

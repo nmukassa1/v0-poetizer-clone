@@ -1,6 +1,10 @@
-import { ContentCardProps } from "@/components/v1/content-card"
+import type { ContentItem } from "@/lib/content"
 
-export const sampleContent: ContentCardProps[] = [
+function authorAvatar(seed: string) {
+  return `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(seed)}`
+}
+
+export const sampleContent: ContentItem[] = [
   {
     id: "1",
     title: "Whispers of Dusk",
@@ -12,6 +16,8 @@ The lingering need to to feel, to know, you can't outlast,
 I have learned to till my thoughts with a need to understand...`,
     author: {
       name: "Eleanor Vance",
+      avatar: authorAvatar("Eleanor Vance"),
+      bio: "Poet and essayist writing at the edge of dusk. Former editor of The Lantern Review. Based in Portland.",
     },
     date: "05/21/2026 09:46",
     type: "poem",
@@ -26,6 +32,8 @@ I have learned to till my thoughts with a need to understand...`,
 She had waited here before, years ago, when time moved differently and goodbyes felt like promises. Now the benches held only shadows, and the departure board flickered with destinations she no longer recognized...`,
     author: {
       name: "James Whitmore",
+      avatar: authorAvatar("James Whitmore"),
+      bio: "Short fiction writer obsessed with transit, memory, and coastal towns. Published in Granta and The Paris Review.",
     },
     date: "05/21/2026 08:22",
     type: "story",
@@ -46,6 +54,8 @@ each syllable a memory
 of where we might have been...`,
     author: {
       name: "Sofia Chen",
+      avatar: authorAvatar("Sofia Chen"),
+      bio: "Experimental poet exploring fragmentation and bilingual verse. MFA from Iowa Writers' Workshop.",
     },
     date: "05/21/2026 07:15",
     type: "poem",
@@ -60,6 +70,8 @@ of where we might have been...`,
 Tonight was different. Tonight, for the first time in forty years, every clock had stopped...`,
     author: {
       name: "Theodore Blake",
+      avatar: authorAvatar("Theodore Blake"),
+      bio: "Novelist and clock enthusiast. Writes historical fiction set in forgotten European villages. Debut novel forthcoming.",
     },
     date: "05/20/2026 22:18",
     type: "story",

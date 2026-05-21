@@ -1,6 +1,6 @@
 "use client"
 
-import { ContentCard } from "@/components/v1/content-card"
+import { ContentCard } from "@/components/v3/content-card"
 import type { ContentItem } from "@/lib/content"
 import { useLayout } from "@/lib/layout-context"
 
@@ -10,6 +10,8 @@ interface ContentFeedProps {
 
 export function ContentFeed({ items }: ContentFeedProps) {
   const { view } = useLayout()
+
+  if (items.length === 0) return null
 
   if (view === "grid") {
     return (
