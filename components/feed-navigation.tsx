@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LayoutGrid, List } from "lucide-react"
+import { useLayout } from "@/lib/layout-context"
 
 const mainTabs = [
   { label: "All", href: "/" },
@@ -18,16 +19,31 @@ const subTabs = [
 
 export function FeedNavigation() {
   const pathname = usePathname()
+  const { view, setView } = useLayout()
 
   return (
     <div className="border-b border-border bg-background py-8">
-      <div className="mx-auto max-w-3xl px-6">
+      <div className="mx-auto max-w-5xl px-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
+            <button 
+              onClick={() => setView("grid")}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-all ${
+                view === "grid" 
+                  ? "border-foreground text-foreground" 
+                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+              }`}
+            >
               <LayoutGrid className="h-4 w-4" strokeWidth={1.25} />
             </button>
-            <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
+            <button 
+              onClick={() => setView("single")}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-all ${
+                view === "single" 
+                  ? "border-foreground text-foreground" 
+                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+              }`}
+            >
               <List className="h-4 w-4" strokeWidth={1.25} />
             </button>
           </div>

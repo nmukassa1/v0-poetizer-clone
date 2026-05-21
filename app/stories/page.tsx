@@ -1,5 +1,5 @@
 import FeedLayout from "@/components/feed-layout"
-import { ContentCard } from "@/components/content-card"
+import { ContentFeed } from "@/components/content-feed"
 import { sampleContent } from "@/lib/sample-data"
 
 export default function StoriesPage() {
@@ -7,11 +7,7 @@ export default function StoriesPage() {
 
   return (
     <FeedLayout>
-      <div className="pb-24">
-        {stories.map((item) => (
-          <ContentCard key={item.id} {...item} />
-        ))}
-      </div>
+      <ContentFeed items={stories} />
     </FeedLayout>
   )
 }
