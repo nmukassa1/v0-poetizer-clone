@@ -1,4 +1,4 @@
-import { ContentCardProps } from "@/components/content-card"
+import { ContentCardProps } from "@/components/v1/content-card"
 
 export const sampleContent: ContentCardProps[] = [
   {

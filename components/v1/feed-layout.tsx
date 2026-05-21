@@ -1,8 +1,8 @@
 "use client"
 
-import { Header } from "@/components/header"
-import { FeedNavigation } from "@/components/feed-navigation"
-import { SocialSidebar, GetAppButton } from "@/components/floating-elements"
+import { Header } from "@/components/v1/header"
+import { FeedNavigation } from "@/components/v1/feed-navigation"
+import { SocialSidebar, GetAppButton } from "@/components/v1/floating-elements"
 import { LayoutProvider } from "@/lib/layout-context"
 
 export default function FeedLayout({

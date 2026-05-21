@@ -1,8 +1,7 @@
 "use client"
 
-import { ContentCardProps } from "@/components/content-card"
+import { ContentCardProps, ContentCard } from "@/components/v1/content-card"
 import { useLayout } from "@/lib/layout-context"
-import { ContentCard } from "@/components/content-card"
 
 interface ContentFeedProps {
   items: ContentCardProps[]
