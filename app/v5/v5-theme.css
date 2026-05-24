@@ -1,0 +1,31 @@
+.v5-theme {
+  --v5-bg: #faf9f6;
+  --v5-fg: #1a1a18;
+  --v5-muted: #6b6860;
+  --v5-subtle: #b0aca3;
+  --v5-border: #e4e0d8;
+  --v5-border-soft: #ede9e0;
+  --v5-featured-bg: #0d1f1a;
+  --v5-featured-title: #e8f5f1;
+  --v5-featured-body: #8bbfb0;
+  --v5-featured-accent: #5dcaa5;
+  --v5-featured-accent-border: #1d9e75;
+  --v5-prompt-bg: #eeedfe;
+  --v5-prompt-border: #ccc9f4;
+  --v5-prompt-title: #26215c;
+  --v5-prompt-meta: #7f77dd;
+  --v5-prompt-btn: #534ab7;
+  font-family: Georgia, "Times New Roman", serif;
+  background-color: var(--v5-bg);
+  color: var(--v5-fg);
+  min-height: 100vh;
+}
+
+.v5-theme .v5-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.v5-theme .v5-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
