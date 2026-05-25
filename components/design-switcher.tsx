@@ -10,9 +10,11 @@ const versions = [
   { id: "v4", label: "v4", href: "/v4" },
   { id: "v5", label: "v5", href: "/v5" },
   { id: "v6", label: "v6", href: "/v6" },
+  { id: "v7", label: "v7", href: "/v7" },
 ] as const
 
 function getActiveVersion(pathname: string) {
+  if (pathname.startsWith("/v7")) return "v7"
   if (pathname.startsWith("/v6")) return "v6"
   if (pathname.startsWith("/v5")) return "v5"
   if (pathname.startsWith("/v4")) return "v4"
