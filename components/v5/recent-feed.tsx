@@ -1,7 +1,8 @@
 "use client"
 
 import type { V4FeedItem } from "@/lib/v4-feed-data"
-import { PieceCard, SocialPost } from "@/components/v5/cards"
+import { PieceCard } from "@/components/v5/piece-card"
+import { SocialPost } from "@/components/v5/cards"
 import { Divider } from "@/components/v5/primitives"
 import { QuoteCallout, ReadersLovingGrid, TrendingWriters } from "@/components/v5/features"
 

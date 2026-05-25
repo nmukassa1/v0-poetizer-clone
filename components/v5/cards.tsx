@@ -1,4 +1,5 @@
-import type { V4Featured, V4PiecePost, V4SocialPost, V4WeeklyPrompt } from "@/lib/v4-feed-data"
+import type { V4Featured, V4SocialPost, V4WeeklyPrompt } from "@/lib/v4-feed-data"
+import { PieceCard } from "@/components/v5/piece-card"
 import { Actions, Avatar, CommentIcon, HeartIcon, Tag } from "@/components/v5/primitives"
 
 export function FeaturedCard({ post }: { post: V4Featured }) {
@@ -100,63 +101,26 @@ export function PromptRail({ prompt }: { prompt: V4WeeklyPrompt }) {
   )
 }
 
-export function PieceCard({ post }: { post: V4PiecePost }) {
-  return (
-    <article className="flex gap-2.5 border-b border-[var(--v5-border-soft)] py-[18px] min-[480px]:gap-3.5">
-      <span className="max-[479px]:inline min-[480px]:hidden">
-        <Avatar seed={post.author} size={32} />
-      </span>
-      <span className="hidden min-[480px]:inline lg:hidden">
-        <Avatar seed={post.author} size={40} />
-      </span>
-      <span className="hidden lg:inline">
-        <Avatar seed={post.author} size={48} />
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-semibold min-[480px]:text-[13px]">{post.author}</span>
-          <Tag label={post.type} />
-          <span className="ml-auto text-[10px] text-[#c8c4bb]">{post.date}</span>
-        </div>
-        <h3 className="mb-1.5 font-serif text-[15px] font-bold leading-snug min-[480px]:text-base">
-          {post.title}
-        </h3>
-        <p className="whitespace-pre-line font-serif text-xs leading-[1.8] text-[var(--v5-muted)] min-[480px]:text-[13px]">
-          {post.excerpt}
-        </p>
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <Actions likes={post.likes} comments={post.comments} shares={post.shares} />
-          <button
-            type="button"
-            className="ml-auto hidden cursor-pointer rounded-md border border-[#ddd8ce] bg-transparent px-2.5 py-1 text-[11px] text-[#8b8780] min-[480px]:inline-block"
-          >
-            Continue reading →
-          </button>
-        </div>
-      </div>
-    </article>
-  )
-}
-
 export function SocialPost({ post }: { post: V4SocialPost }) {
   return (
-    <article className="flex gap-2.5 border-b border-[var(--v5-border-soft)] py-4 min-[480px]:gap-3.5">
+    <article className="flex gap-2 border-b border-[var(--v5-border-soft)]/80 py-3 min-[480px]:gap-2.5 min-[480px]:py-3.5">
       <span className="max-[479px]:inline min-[480px]:hidden">
+        <Avatar seed={post.author} size={28} />
+      </span>
+      <span className="hidden min-[480px]:inline">
         <Avatar seed={post.author} size={32} />
       </span>
-      <span className="hidden min-[480px]:inline lg:hidden">
-        <Avatar seed={post.author} size={40} />
-      </span>
-      <span className="hidden lg:inline">
-        <Avatar seed={post.author} size={48} />
-      </span>
       <div className="min-w-0 flex-1">
-        <div className="mb-1.5 flex flex-wrap items-baseline gap-1.5">
-          <span className="text-xs font-semibold min-[480px]:text-[13px]">{post.author}</span>
-          <span className="text-[11px] text-[#c0bbb2]">@{post.handle}</span>
-          <span className="ml-auto text-[10px] text-[#c8c4bb]">{post.time}</span>
+        <div className="mb-1 flex flex-wrap items-baseline gap-1.5">
+          <span className="text-[11px] font-semibold text-[var(--v5-fg)] min-[480px]:text-xs">
+            {post.author}
+          </span>
+          <span className="text-[10px] text-[#c0bbb2]">@{post.handle}</span>
+          <span className="ml-auto text-[9px] text-[#c8c4bb] min-[480px]:text-[10px]">
+            {post.time}
+          </span>
         </div>
-        <p className="text-[13px] leading-[1.75] text-[#3a3830] min-[480px]:text-sm">{post.text}</p>
+        <p className="text-xs leading-[1.7] text-[#6b6860] min-[480px]:text-[13px]">{post.text}</p>
         <Actions likes={post.likes} comments={post.comments} shares={post.shares} small />
       </div>
     </article>
