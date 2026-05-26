@@ -35,7 +35,7 @@ function filterPieces(items: V4PiecePost[], filter: V7Filter): V4PiecePost[] {
   return items
 }
 
-export function InkwellFeed() {
+export function InkwellFeed({ basePath = "/v7" }: { basePath?: string }) {
   const [filter, setFilter] = useState<V7Filter>("all")
   const [menuOpen, setMenuOpen] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -144,7 +144,11 @@ export function InkwellFeed() {
 
           <section>
             <Divider label="Recent" />
-            <RecentFeed items={visibleItems} showFeatures={filter === "all"} />
+            <RecentFeed
+              items={visibleItems}
+              showFeatures={filter === "all"}
+              basePath={basePath}
+            />
           </section>
         </main>
 

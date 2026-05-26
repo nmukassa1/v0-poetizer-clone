@@ -9,10 +9,13 @@ import { WriterSpotlight } from "@/components/v7/writer-spotlight"
 export function RecentFeed({
   items,
   showFeatures,
+  basePath = "/v7",
 }: {
   items: V4PiecePost[]
   showFeatures: boolean
+  basePath?: string
 }) {
+  const readHref = `${basePath}/read`
   if (items.length === 0) {
     return (
       <p className="py-10 text-center font-sans text-[13px] text-[var(--v5-subtle)]">
@@ -25,7 +28,7 @@ export function RecentFeed({
     return (
       <>
         {items.map((item, i) => (
-          <PieceCard key={i} post={item} />
+          <PieceCard key={i} post={item} readHref={readHref} />
         ))}
       </>
     )
@@ -43,7 +46,7 @@ export function RecentFeed({
       {chunks.map((chunk, ci) => (
         <div key={ci}>
           {chunk.items.map((item, i) => (
-            <PieceCard key={i} post={item} />
+            <PieceCard key={i} post={item} readHref={readHref} />
           ))}
           {chunk.feature === "spotlight" && chunk.items.length > 0 && (
             <>

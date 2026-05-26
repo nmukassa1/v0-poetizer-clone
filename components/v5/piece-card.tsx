@@ -3,7 +3,13 @@ import { MessageCircle, Heart } from "lucide-react"
 import type { V4PiecePost } from "@/lib/v4-feed-data"
 import { Avatar, Tag } from "@/components/v5/primitives"
 
-export function PieceCard({ post }: { post: V4PiecePost }) {
+export function PieceCard({
+  post,
+  readHref = "#",
+}: {
+  post: V4PiecePost
+  readHref?: string
+}) {
   const lines = post.excerpt.split("\n").filter(Boolean)
 
   return (
@@ -27,7 +33,7 @@ export function PieceCard({ post }: { post: V4PiecePost }) {
 
         <div className="mb-8 min-[480px]:mb-10">
           <Link
-            href="#"
+            href={readHref}
             className="inline-flex items-center gap-2 text-sm font-medium text-[#534AB7] hover:underline underline-offset-4"
           >
             Continue reading
