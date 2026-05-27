@@ -1,0 +1,31 @@
+.inkwell-theme {
+  --ink-bg: #faf9f6;
+  --ink-fg: #1a1a18;
+  --ink-muted: #6b6860;
+  --ink-subtle: #b0aca3;
+  --ink-border: #e4e0d8;
+  --ink-border-soft: #ede9e0;
+  --ink-featured-bg: #0d1f1a;
+  --ink-featured-title: #e8f5f1;
+  --ink-featured-body: #8bbfb0;
+  --ink-featured-accent: #5dcaa5;
+  --ink-featured-accent-border: #1d9e75;
+  --ink-prompt-bg: #eeedfe;
+  --ink-prompt-border: #ccc9f4;
+  --ink-prompt-title: #26215c;
+  --ink-prompt-meta: #7f77dd;
+  --ink-prompt-btn: #534ab7;
+  font-family: Georgia, "Times New Roman", serif;
+  background-color: var(--ink-bg);
+  color: var(--ink-fg);
+  min-height: 100vh;
+}
+
+.inkwell-theme .ink-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.inkwell-theme .ink-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
