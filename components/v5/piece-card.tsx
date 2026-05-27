@@ -6,9 +6,11 @@ import { Avatar, Tag } from "@/components/v5/primitives"
 export function PieceCard({
   post,
   readHref = "#",
+  authorHref,
 }: {
   post: V4PiecePost
   readHref?: string
+  authorHref?: string
 }) {
   const lines = post.excerpt.split("\n").filter(Boolean)
 
@@ -45,7 +47,16 @@ export function PieceCard({
           <div className="flex items-center gap-3 min-[480px]:gap-4">
             <Avatar seed={post.author} size={40} />
             <div>
-              <p className="text-sm font-medium text-[var(--v5-fg)]">{post.author}</p>
+              {authorHref ? (
+                <Link
+                  href={authorHref}
+                  className="text-sm font-medium text-[var(--v5-fg)] underline-offset-4 hover:underline"
+                >
+                  {post.author}
+                </Link>
+              ) : (
+                <p className="text-sm font-medium text-[var(--v5-fg)]">{post.author}</p>
+              )}
               <p className="text-[11px] tracking-wide text-[var(--v5-subtle)]">{post.date}</p>
             </div>
           </div>

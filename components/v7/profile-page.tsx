@@ -11,6 +11,8 @@ import {
 } from "@/lib/v4-feed-data"
 import { Avatar, Divider, Tag } from "@/components/v5/primitives"
 import { PieceCard } from "@/components/v5/piece-card"
+import { StreakWidget } from "@/components/v5/streak-widget"
+import { getPublicProfileByHandle, getPublicProfileHref } from "@/lib/profile-directory"
 
 type ProfileMode = "public" | "me"
 type TabKey = "pieces" | "saved" | "drafts" | "about"
@@ -22,15 +24,6 @@ const meProfile = {
   bio: "Writer in progress. Chasing clarity through essays and quiet poems.",
   followers: "126",
   following: "84",
-}
-
-const publicProfile = {
-  name: "Eleanor Vance",
-  handle: "eleanorv",
-  location: "Portland, OR",
-  bio: "Editor of The Lantern Review. Writing at dusk, where memory loosens.",
-  followers: "284",
-  following: "162",
 }
 
 const drafts: V4PiecePost[] = [
@@ -103,19 +96,31 @@ function EmptyState({
   )
 }
 
-export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
-  const [mode, setMode] = useState<ProfileMode>("public")
+export function ProfilePage({
+  basePath = "/v7",
+  initialMode = "me",
+  lockMode = false,
+  initialPublicHandle = "eleanorv",
+}: {
+  basePath?: string
+  initialMode?: ProfileMode
+  lockMode?: boolean
+  initialPublicHandle?: string
+}) {
+  const [mode, setMode] = useState<ProfileMode>(initialMode)
+  const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
   const [tab, setTab] = useState<TabKey>("pieces")
   const readHref = `${basePath}/read`
+  const publicProfile = getPublicProfileByHandle(publicHandle)
 
   const profile = mode === "me" ? meProfile : publicProfile
 
   const pieces = useMemo(() => {
-    const authorName = mode === "me" ? "Lena Müller" : "Eleanor Vance"
+    const authorName = mode === "me" ? "Lena Müller" : publicProfile.name
     return v4FeedItems
       .filter((item): item is V4PiecePost => item.kind === "piece")
       .filter((item) => item.author === authorName)
-  }, [mode])
+  }, [mode, publicProfile.name])
 
   const saved = useMemo(
     () =>
@@ -159,30 +164,32 @@ export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
             </span>
           </Link>
 
-          <div className="inline-flex rounded-full border border-[var(--v5-border)] p-1">
-            <button
-              type="button"
-              onClick={() => setMode("public")}
-              className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition-colors min-[480px]:px-3.5 ${
-                mode === "public"
-                  ? "bg-[var(--v5-fg)] text-[var(--v5-bg)]"
-                  : "text-[var(--v5-muted)]"
-              }`}
-            >
-              Public
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("me")}
-              className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition-colors min-[480px]:px-3.5 ${
-                mode === "me"
-                  ? "bg-[var(--v5-fg)] text-[var(--v5-bg)]"
-                  : "text-[var(--v5-muted)]"
-              }`}
-            >
-              My profile
-            </button>
-          </div>
+          {!lockMode && (
+            <div className="inline-flex rounded-full border border-[var(--v5-border)] p-1">
+              <button
+                type="button"
+                onClick={() => setMode("public")}
+                className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition-colors min-[480px]:px-3.5 ${
+                  mode === "public"
+                    ? "bg-[var(--v5-fg)] text-[var(--v5-bg)]"
+                    : "text-[var(--v5-muted)]"
+                }`}
+              >
+                Public
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("me")}
+                className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition-colors min-[480px]:px-3.5 ${
+                  mode === "me"
+                    ? "bg-[var(--v5-fg)] text-[var(--v5-bg)]"
+                    : "text-[var(--v5-muted)]"
+                }`}
+              >
+                My profile
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -190,6 +197,27 @@ export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
         <main className="min-w-0">
           <section className="pt-8 min-[480px]:pt-10 lg:pt-12">
             <div className="rounded-2xl border border-[var(--v5-border)] bg-[var(--v5-bg)] p-5 min-[480px]:p-6 lg:p-7">
+              {mode === "public" && !lockMode && (
+                <div className="mb-4">
+                  <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--v5-subtle)]">
+                    Viewing public profile
+                  </label>
+                  <select
+                    value={publicHandle}
+                    onChange={(e) => setPublicHandle(e.target.value)}
+                    className="w-full rounded-lg border border-[var(--v5-border)] bg-[var(--v5-bg)] px-3 py-2 text-sm text-[var(--v5-fg)] outline-none min-[480px]:w-auto"
+                  >
+                    <option value="eleanorv">Eleanor Vance</option>
+                    <option value="lenaschreibt">Lena Muller</option>
+                    <option value="jinpark">Jin Park</option>
+                    <option value="tblake">Theodore Blake</option>
+                    <option value="kwamea">Kwame Asante</option>
+                    <option value="sofiac">Sofia Chen</option>
+                    <option value="jwhitmore">James Whitmore</option>
+                    <option value="maraosei">Mara Osei</option>
+                  </select>
+                </div>
+              )}
               <div className="flex flex-wrap items-start gap-4 min-[480px]:gap-5">
                 <Avatar seed={profile.name} size={72} />
                 <div className="min-w-0 flex-1">
@@ -233,6 +261,13 @@ export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
             </div>
           </section>
 
+          {mode === "me" && (
+            <section>
+              <Divider label="Your streaks" />
+              <StreakWidget />
+            </section>
+          )}
+
           <section>
             <Divider label="Library" />
             <nav className="mb-3 flex flex-wrap gap-1.5" aria-label="Profile tabs">
@@ -255,7 +290,12 @@ export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
             {tab === "pieces" &&
               (pieces.length > 0 ? (
                 pieces.map((item, i) => (
-                  <PieceCard key={`${item.title}-${i}`} post={item} readHref={readHref} />
+                  <PieceCard
+                    key={`${item.title}-${i}`}
+                    post={item}
+                    readHref={readHref}
+                    authorHref={getPublicProfileHref(basePath, item.author)}
+                  />
                 ))
               ) : (
                 <EmptyState
@@ -273,6 +313,7 @@ export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
                     key={`${item.title}-saved-${i}`}
                     post={item}
                     readHref={readHref}
+                    authorHref={getPublicProfileHref(basePath, item.author)}
                   />
                 ))
               ) : (
@@ -289,6 +330,7 @@ export function ProfilePage({ basePath = "/v7" }: { basePath?: string }) {
                     key={`${item.title}-draft-${i}`}
                     post={item}
                     readHref={`${basePath}/write`}
+                    authorHref={getPublicProfileHref(basePath, item.author)}
                   />
                 ))
               ) : (

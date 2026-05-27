@@ -5,6 +5,7 @@ import { QuoteCallout, ReadersLovingGrid } from "@/components/v5/features"
 import { PieceCard } from "@/components/v5/piece-card"
 import { Divider } from "@/components/v5/primitives"
 import { WriterSpotlight } from "@/components/v7/writer-spotlight"
+import { getPublicProfileHref } from "@/lib/profile-directory"
 
 export function RecentFeed({
   items,
@@ -28,7 +29,12 @@ export function RecentFeed({
     return (
       <>
         {items.map((item, i) => (
-          <PieceCard key={i} post={item} readHref={readHref} />
+          <PieceCard
+            key={i}
+            post={item}
+            readHref={readHref}
+            authorHref={getPublicProfileHref(basePath, item.author)}
+          />
         ))}
       </>
     )
@@ -46,7 +52,12 @@ export function RecentFeed({
       {chunks.map((chunk, ci) => (
         <div key={ci}>
           {chunk.items.map((item, i) => (
-            <PieceCard key={i} post={item} readHref={readHref} />
+            <PieceCard
+              key={i}
+              post={item}
+              readHref={readHref}
+              authorHref={getPublicProfileHref(basePath, item.author)}
+            />
           ))}
           {chunk.feature === "spotlight" && chunk.items.length > 0 && (
             <>

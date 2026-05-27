@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import {
   v4Featured,
   v4FeedItems,
@@ -13,6 +14,7 @@ import { StreakWidget } from "@/components/v5/streak-widget"
 import { DesktopSidebar } from "@/components/v7/desktop-sidebar"
 import { RecentFeed } from "@/components/v7/recent-feed"
 import { WelcomeCard } from "@/components/v7/welcome-card"
+import { getPublicProfileHref } from "@/lib/profile-directory"
 
 type V7Filter = "all" | "poems" | "stories" | "essays"
 
@@ -72,6 +74,14 @@ export function InkwellFeed({ basePath = "/v7" }: { basePath?: string }) {
           </nav>
 
           <div className="flex items-center gap-2">
+            {isLoggedIn && (
+              <Link
+                href={`${basePath}/profile`}
+                className="hidden shrink-0 rounded-full border border-[var(--v5-border)] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--v5-fg)] transition-colors hover:border-[var(--v5-fg)] min-[480px]:inline-flex lg:px-3.5 lg:py-1.5 lg:text-xs"
+              >
+                My profile
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setIsLoggedIn((v) => !v)}
@@ -134,12 +144,18 @@ export function InkwellFeed({ basePath = "/v7" }: { basePath?: string }) {
 
           <section>
             <Divider label="Featured" />
-            <FeaturedCard post={v4Featured} />
+            <FeaturedCard
+              post={v4Featured}
+              authorHref={getPublicProfileHref(basePath, v4Featured.author)}
+            />
           </section>
 
           <section>
             <Divider label="This week's prompt" accent />
-            <PromptRail prompt={v4WeeklyPrompt} />
+            <PromptRail
+              prompt={v4WeeklyPrompt}
+              authorHrefFor={(author) => getPublicProfileHref(basePath, author)}
+            />
           </section>
 
           <section>

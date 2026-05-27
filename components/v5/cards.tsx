@@ -1,8 +1,15 @@
 import type { V4Featured, V4SocialPost, V4WeeklyPrompt } from "@/lib/v4-feed-data"
+import Link from "next/link"
 import { PieceCard } from "@/components/v5/piece-card"
 import { Actions, Avatar, CommentIcon, HeartIcon, Tag } from "@/components/v5/primitives"
 
-export function FeaturedCard({ post }: { post: V4Featured }) {
+export function FeaturedCard({
+  post,
+  authorHref,
+}: {
+  post: V4Featured
+  authorHref?: string
+}) {
   return (
     <div className="relative overflow-hidden rounded-[14px] bg-[var(--v5-featured-bg)] p-[18px] max-[479px]:px-[18px] max-[479px]:py-5 min-[480px]:p-7 min-[480px]:pb-[22px] lg:p-9 lg:pb-8">
       <div
@@ -37,7 +44,16 @@ export function FeaturedCard({ post }: { post: V4Featured }) {
               <Avatar seed={post.author} size={30} />
             </span>
             <div>
-              <div className="text-xs font-semibold text-[#c8e8de]">{post.author}</div>
+              {authorHref ? (
+                <Link
+                  href={authorHref}
+                  className="text-xs font-semibold text-[#c8e8de] underline-offset-4 hover:underline"
+                >
+                  {post.author}
+                </Link>
+              ) : (
+                <div className="text-xs font-semibold text-[#c8e8de]">{post.author}</div>
+              )}
               <div className="hidden text-[10px] text-[#4a8070] min-[480px]:block">{post.bio}</div>
             </div>
           </div>
@@ -53,7 +69,13 @@ export function FeaturedCard({ post }: { post: V4Featured }) {
   )
 }
 
-export function PromptRail({ prompt }: { prompt: V4WeeklyPrompt }) {
+export function PromptRail({
+  prompt,
+  authorHrefFor,
+}: {
+  prompt: V4WeeklyPrompt
+  authorHrefFor?: (author: string) => string
+}) {
   return (
     <div>
       <div className="mb-3.5 flex flex-col gap-2.5 rounded-xl border border-[var(--v5-prompt-border)] bg-[var(--v5-prompt-bg)] p-3.5 min-[480px]:flex-row min-[480px]:items-center min-[480px]:justify-between min-[480px]:gap-3 min-[480px]:px-[18px] min-[480px]:py-3.5">
@@ -85,7 +107,18 @@ export function PromptRail({ prompt }: { prompt: V4WeeklyPrompt }) {
             <div className="my-1.5 font-serif text-[13px] font-semibold text-[var(--v5-prompt-title)]">
               {s.title}
             </div>
-            <div className="mb-2 text-[11px] text-[var(--v5-prompt-meta)]">{s.author}</div>
+            <div className="mb-2 text-[11px] text-[var(--v5-prompt-meta)]">
+              {authorHrefFor ? (
+                <Link
+                  href={authorHrefFor(s.author)}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {s.author}
+                </Link>
+              ) : (
+                s.author
+              )}
+            </div>
             <div className="flex gap-2.5 text-[11px] text-[var(--v5-subtle)]">
               <span className="flex items-center gap-1">
                 <HeartIcon /> {s.likes}
