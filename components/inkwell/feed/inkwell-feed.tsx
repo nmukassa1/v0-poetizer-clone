@@ -8,7 +8,7 @@ import {
   type PiecePost,
 } from "@/lib/feed-data";
 import { FeaturedCard, PromptRail } from "@/components/inkwell/cards";
-import { Divider } from "@/components/inkwell/primitives"
+import { Divider } from "@/components/inkwell/primitives";
 import { type FeedFilter } from "@/components/inkwell/Header";
 import { FeedFilterBar } from "@/components/inkwell/feed/feed-filter-bar";
 import { StreakWidget } from "@/components/inkwell/streak-widget";
@@ -40,12 +40,12 @@ export function InkwellFeed() {
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[760px] pb-20 lg:max-w-6xl lg:pb-24 xl:max-w-7xl">
-      <FeedFilterBar
+      {/* <FeedFilterBar
         filter={filter}
         onFilterChange={setFilter}
         menuOpen={menuOpen}
         onMenuOpenChange={setMenuOpen}
-      />
+      /> */}
       <div className="px-4 min-[480px]:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-8 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-12 xl:px-10">
         <main className="min-w-0">
           {showFirstSlot && (

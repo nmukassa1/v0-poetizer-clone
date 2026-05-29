@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useMemo, useState } from "react"
-import { ArrowLeft, PenSquare } from "lucide-react"
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { ArrowLeft, PenSquare } from "lucide-react";
 import {
   feedItems,
   lovedPieces,
   type ContentTag,
   type PiecePost,
-} from "@/lib/feed-data"
-import { Avatar, Divider, Tag } from "@/components/inkwell/primitives"
-import { PieceCard } from "@/components/inkwell/piece-card"
-import { StreakWidget } from "@/components/inkwell/streak-widget"
-import { getPublicProfileByHandle, getPublicProfileHref } from "@/lib/profiles"
+} from "@/lib/feed-data";
+import { Avatar, Divider, Tag } from "@/components/inkwell/primitives";
+import { PieceCard } from "@/components/inkwell/piece-card";
+import { StreakWidget } from "@/components/inkwell/streak-widget";
+import { getPublicProfileByHandle, getPublicProfileHref } from "@/lib/profiles";
 
-type ProfileMode = "public" | "me"
-type TabKey = "pieces" | "saved" | "drafts" | "about"
+type ProfileMode = "public" | "me";
+type TabKey = "pieces" | "saved" | "drafts" | "about";
 
 const meProfile = {
   name: "You",
@@ -24,7 +24,7 @@ const meProfile = {
   bio: "Writer in progress. Chasing clarity through essays and quiet poems.",
   followers: "126",
   following: "84",
-}
+};
 
 const drafts: PiecePost[] = [
   {
@@ -51,7 +51,7 @@ const drafts: PiecePost[] = [
     comments: 0,
     shares: 0,
   },
-]
+];
 
 function toPieceCardItem(item: (typeof lovedPieces)[number]): PiecePost {
   return {
@@ -64,7 +64,7 @@ function toPieceCardItem(item: (typeof lovedPieces)[number]): PiecePost {
     likes: item.likes,
     comments: Math.max(4, Math.round(item.likes / 20)),
     shares: Math.max(2, Math.round(item.likes / 40)),
-  }
+  };
 }
 
 function EmptyState({
@@ -73,14 +73,16 @@ function EmptyState({
   ctaLabel,
   ctaHref,
 }: {
-  title: string
-  copy: string
-  ctaLabel?: string
-  ctaHref?: string
+  title: string;
+  copy: string;
+  ctaLabel?: string;
+  ctaHref?: string;
 }) {
   return (
     <div className="rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] px-5 py-10 text-center min-[480px]:px-8">
-      <h3 className="font-serif text-xl font-semibold text-[var(--ink-fg)]">{title}</h3>
+      <h3 className="font-serif text-xl font-semibold text-[var(--ink-fg)]">
+        {title}
+      </h3>
       <p className="mx-auto mt-2 max-w-md font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
         {copy}
       </p>
@@ -93,7 +95,7 @@ function EmptyState({
         </Link>
       )}
     </div>
-  )
+  );
 }
 
 export function ProfilePage({
@@ -101,32 +103,34 @@ export function ProfilePage({
   lockMode = false,
   initialPublicHandle = "eleanorv",
 }: {
-  initialMode?: ProfileMode
-  lockMode?: boolean
-  initialPublicHandle?: string
+  initialMode?: ProfileMode;
+  lockMode?: boolean;
+  initialPublicHandle?: string;
 }) {
-  const [mode, setMode] = useState<ProfileMode>(initialMode)
-  const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
-  const [tab, setTab] = useState<TabKey>("pieces")
-  const readHref = `/read`
-  const publicProfile = getPublicProfileByHandle(publicHandle)
+  const [mode, setMode] = useState<ProfileMode>(initialMode);
+  const [publicHandle, setPublicHandle] = useState(initialPublicHandle);
+  const [tab, setTab] = useState<TabKey>("pieces");
+  const readHref = `/read`;
+  const publicProfile = getPublicProfileByHandle(publicHandle);
 
-  const profile = mode === "me" ? meProfile : publicProfile
+  const profile = mode === "me" ? meProfile : publicProfile;
 
   const pieces = useMemo(() => {
-    const authorName = mode === "me" ? "Lena Müller" : publicProfile.name
+    const authorName = mode === "me" ? "Lena Müller" : publicProfile.name;
     return feedItems
       .filter((item): item is PiecePost => item.kind === "piece")
-      .filter((item) => item.author === authorName)
-  }, [mode, publicProfile.name])
+      .filter((item) => item.author === authorName);
+  }, [mode, publicProfile.name]);
 
   const saved = useMemo(
     () =>
       lovedPieces
-        .filter((item) => (mode === "public" ? item.author !== profile.name : true))
+        .filter((item) =>
+          mode === "public" ? item.author !== profile.name : true,
+        )
         .map(toPieceCardItem),
     [mode, profile.name],
-  )
+  );
 
   const tabs: { key: TabKey; label: string }[] =
     mode === "me"
@@ -140,57 +144,16 @@ export function ProfilePage({
           { key: "pieces", label: "Pieces" },
           { key: "saved", label: "Saved" },
           { key: "about", label: "About" },
-        ]
+        ];
 
   if (!tabs.some((item) => item.key === tab)) {
-    setTab("pieces")
+    setTab("pieces");
   }
 
-  const pieceCount = mode === "me" ? pieces.length : Math.max(3, pieces.length)
+  const pieceCount = mode === "me" ? pieces.length : Math.max(3, pieces.length);
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[760px] pb-24 lg:max-w-6xl lg:pb-28 xl:max-w-7xl">
-      <header className="sticky top-0 z-20 border-b border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_95%,transparent)] backdrop-blur-md">
-        <div className="flex h-12 items-center justify-between gap-3 px-4 min-[480px]:h-[52px] min-[480px]:px-6 lg:h-16 lg:px-8 xl:px-10">
-          <Link
-            href="/"
-            className="group inline-flex items-center gap-2 text-[var(--ink-fg)]"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-            <span className="text-lg font-bold tracking-tight min-[480px]:text-xl lg:text-2xl">
-              inkwell
-            </span>
-          </Link>
-
-          {!lockMode && (
-            <div className="inline-flex rounded-full border border-[var(--ink-border)] p-1">
-              <button
-                type="button"
-                onClick={() => setMode("public")}
-                className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition-colors min-[480px]:px-3.5 ${
-                  mode === "public"
-                    ? "bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-                    : "text-[var(--ink-muted)]"
-                }`}
-              >
-                Public
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("me")}
-                className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide transition-colors min-[480px]:px-3.5 ${
-                  mode === "me"
-                    ? "bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-                    : "text-[var(--ink-muted)]"
-                }`}
-              >
-                My profile
-              </button>
-            </div>
-          )}
-        </div>
-      </header>
-
       <div className="px-4 min-[480px]:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:px-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:gap-12 xl:px-10">
         <main className="min-w-0">
           <section className="pt-8 min-[480px]:pt-10 lg:pt-12">
@@ -268,7 +231,10 @@ export function ProfilePage({
 
           <section>
             <Divider label="Library" />
-            <nav className="mb-3 flex flex-wrap gap-1.5" aria-label="Profile tabs">
+            <nav
+              className="mb-3 flex flex-wrap gap-1.5"
+              aria-label="Profile tabs"
+            >
               {tabs.map((item) => (
                 <button
                   key={item.key}
@@ -299,7 +265,9 @@ export function ProfilePage({
                 <EmptyState
                   title="No published pieces yet"
                   copy="When a new piece is published, it will appear here."
-                  ctaLabel={mode === "me" ? "Write your first piece" : undefined}
+                  ctaLabel={
+                    mode === "me" ? "Write your first piece" : undefined
+                  }
                   ctaHref={mode === "me" ? `/write` : undefined}
                 />
               ))}
@@ -412,7 +380,7 @@ export function ProfilePage({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function StatPill({
@@ -420,9 +388,9 @@ function StatPill({
   value,
   tag = false,
 }: {
-  label: string
-  value: string
-  tag?: boolean
+  label: string;
+  value: string;
+  tag?: boolean;
 }) {
   return (
     <div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink-border)] bg-[var(--ink-bg)] px-3 py-1.5">
@@ -432,8 +400,10 @@ function StatPill({
       {tag ? (
         <Tag label={value} />
       ) : (
-        <span className="text-[12px] font-semibold text-[var(--ink-fg)]">{value}</span>
+        <span className="text-[12px] font-semibold text-[var(--ink-fg)]">
+          {value}
+        </span>
       )}
     </div>
-  )
+  );
 }

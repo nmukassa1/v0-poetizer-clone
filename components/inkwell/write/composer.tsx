@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import Link from "next/link"
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   ArrowLeft,
   Bold,
@@ -10,216 +10,220 @@ import {
   Quote,
   Settings,
   X,
-} from "lucide-react"
-import type { ContentTag } from "@/lib/feed-data"
-import { Avatar, Tag } from "@/components/inkwell/primitives"
+} from "lucide-react";
+import type { ContentTag } from "@/lib/feed-data";
+import { Avatar, Tag } from "@/components/inkwell/primitives";
 
-type Visibility = "public" | "followers" | "draft"
-type Phase = "edit" | "preview" | "published"
+type Visibility = "public" | "followers" | "draft";
+type Phase = "edit" | "preview" | "published";
 
 const TYPES: { id: ContentTag; label: string; placeholder: string }[] = [
   { id: "poem", label: "Poem", placeholder: "Begin your verse…" },
   { id: "story", label: "Story", placeholder: "It begins…" },
   { id: "essay", label: "Essay", placeholder: "Begin here…" },
-]
+];
 
 const VISIBILITIES: { id: Visibility; label: string; hint: string }[] = [
   { id: "public", label: "Public", hint: "Anyone can read" },
   { id: "followers", label: "Followers", hint: "Only people who follow you" },
   { id: "draft", label: "Draft", hint: "Only visible to you" },
-]
+];
 
 const AUTHOR = {
   name: "You",
   handle: "you",
-}
+};
 
 function paragraphsFromBody(html: string, type: ContentTag): string[] {
-  const tmp = document.createElement("div")
-  tmp.innerHTML = html
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
   const blocks = Array.from(tmp.children).length
     ? Array.from(tmp.children)
-    : [tmp]
+    : [tmp];
 
   if (type === "poem") {
     return blocks
-      .map((b) => (b instanceof HTMLElement ? b.innerHTML : (b as Element).innerHTML))
-      .filter((s) => s.replace(/<br\s*\/?>/g, "").trim().length > 0)
+      .map((b) =>
+        b instanceof HTMLElement ? b.innerHTML : (b as Element).innerHTML,
+      )
+      .filter((s) => s.replace(/<br\s*\/?>/g, "").trim().length > 0);
   }
 
   return blocks
-    .map((b) => (b instanceof HTMLElement ? b.innerHTML : (b as Element).innerHTML))
-    .filter((s) => s.replace(/<br\s*\/?>/g, "").trim().length > 0)
+    .map((b) =>
+      b instanceof HTMLElement ? b.innerHTML : (b as Element).innerHTML,
+    )
+    .filter((s) => s.replace(/<br\s*\/?>/g, "").trim().length > 0);
 }
 
 export function Composer() {
-  const [type, setType] = useState<ContentTag>("essay")
-  const [title, setTitle] = useState("")
-  const [bodyHtml, setBodyHtml] = useState("")
-  const [excerpt, setExcerpt] = useState("")
-  const [excerptOverridden, setExcerptOverridden] = useState(false)
-  const [tags, setTags] = useState<string[]>([])
-  const [tagDraft, setTagDraft] = useState("")
-  const [visibility, setVisibility] = useState<Visibility>("public")
-  const [wordCount, setWordCount] = useState(0)
-  const [savedAt, setSavedAt] = useState<Date | null>(null)
-  const [savedAgoText, setSavedAgoText] = useState<string>("")
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [phase, setPhase] = useState<Phase>("edit")
-  const [popover, setPopover] = useState<{ x: number; y: number } | null>(null)
+  const [type, setType] = useState<ContentTag>("essay");
+  const [title, setTitle] = useState("");
+  const [bodyHtml, setBodyHtml] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [excerptOverridden, setExcerptOverridden] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState("");
+  const [visibility, setVisibility] = useState<Visibility>("public");
+  const [wordCount, setWordCount] = useState(0);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [savedAgoText, setSavedAgoText] = useState<string>("");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [phase, setPhase] = useState<Phase>("edit");
+  const [popover, setPopover] = useState<{ x: number; y: number } | null>(null);
 
-  const bodyRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLTextAreaElement>(null)
-  const initialBodySet = useRef(false)
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLTextAreaElement>(null);
+  const initialBodySet = useRef(false);
 
   useEffect(() => {
-    if (!bodyRef.current || initialBodySet.current) return
-    bodyRef.current.innerHTML = ""
-    initialBodySet.current = true
-  }, [])
+    if (!bodyRef.current || initialBodySet.current) return;
+    bodyRef.current.innerHTML = "";
+    initialBodySet.current = true;
+  }, []);
 
   function recalcFromEditor() {
-    if (!bodyRef.current) return
-    const html = bodyRef.current.innerHTML
-    const text = bodyRef.current.textContent || ""
-    const words = text.trim().split(/\s+/).filter(Boolean)
-    setBodyHtml(html)
-    setWordCount(words.length)
+    if (!bodyRef.current) return;
+    const html = bodyRef.current.innerHTML;
+    const text = bodyRef.current.textContent || "";
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    setBodyHtml(html);
+    setWordCount(words.length);
     if (!excerptOverridden) {
-      const first = words.slice(0, 30).join(" ")
-      setExcerpt(first + (words.length > 30 ? "…" : ""))
+      const first = words.slice(0, 30).join(" ");
+      setExcerpt(first + (words.length > 30 ? "…" : ""));
     }
   }
 
   useEffect(() => {
-    if (phase !== "edit") return
+    if (phase !== "edit") return;
     const handler = setTimeout(() => {
-      if (title.trim() === "" && bodyHtml.trim() === "") return
-      setSavedAt(new Date())
-    }, 800)
-    return () => clearTimeout(handler)
-  }, [type, title, bodyHtml, excerpt, tags, visibility, phase])
+      if (title.trim() === "" && bodyHtml.trim() === "") return;
+      setSavedAt(new Date());
+    }, 800);
+    return () => clearTimeout(handler);
+  }, [type, title, bodyHtml, excerpt, tags, visibility, phase]);
 
   useEffect(() => {
     const update = () => {
       if (!savedAt) {
-        setSavedAgoText("")
-        return
+        setSavedAgoText("");
+        return;
       }
-      const seconds = Math.round((Date.now() - savedAt.getTime()) / 1000)
-      if (seconds < 4) setSavedAgoText("saved just now")
-      else if (seconds < 60) setSavedAgoText(`saved ${seconds}s ago`)
-      else setSavedAgoText(`saved ${Math.round(seconds / 60)}m ago`)
-    }
-    update()
-    const interval = setInterval(update, 5000)
-    return () => clearInterval(interval)
-  }, [savedAt])
+      const seconds = Math.round((Date.now() - savedAt.getTime()) / 1000);
+      if (seconds < 4) setSavedAgoText("saved just now");
+      else if (seconds < 60) setSavedAgoText(`saved ${seconds}s ago`);
+      else setSavedAgoText(`saved ${Math.round(seconds / 60)}m ago`);
+    };
+    update();
+    const interval = setInterval(update, 5000);
+    return () => clearInterval(interval);
+  }, [savedAt]);
 
   useEffect(() => {
     if (phase !== "edit") {
-      setPopover(null)
-      return
+      setPopover(null);
+      return;
     }
     const onSelectionChange = () => {
-      const sel = window.getSelection()
+      const sel = window.getSelection();
       if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
-        setPopover(null)
-        return
+        setPopover(null);
+        return;
       }
-      const range = sel.getRangeAt(0)
+      const range = sel.getRangeAt(0);
       if (
         !bodyRef.current ||
         !bodyRef.current.contains(range.commonAncestorContainer)
       ) {
-        setPopover(null)
-        return
+        setPopover(null);
+        return;
       }
       if (sel.toString().trim().length === 0) {
-        setPopover(null)
-        return
+        setPopover(null);
+        return;
       }
-      const rect = range.getBoundingClientRect()
+      const rect = range.getBoundingClientRect();
       setPopover({
         x: rect.left + rect.width / 2,
         y: rect.top - 6,
-      })
-    }
-    const finalize = () => setTimeout(onSelectionChange, 10)
-    document.addEventListener("mouseup", finalize)
-    document.addEventListener("touchend", finalize)
-    document.addEventListener("selectionchange", onSelectionChange)
+      });
+    };
+    const finalize = () => setTimeout(onSelectionChange, 10);
+    document.addEventListener("mouseup", finalize);
+    document.addEventListener("touchend", finalize);
+    document.addEventListener("selectionchange", onSelectionChange);
     return () => {
-      document.removeEventListener("mouseup", finalize)
-      document.removeEventListener("touchend", finalize)
-      document.removeEventListener("selectionchange", onSelectionChange)
-    }
-  }, [phase])
+      document.removeEventListener("mouseup", finalize);
+      document.removeEventListener("touchend", finalize);
+      document.removeEventListener("selectionchange", onSelectionChange);
+    };
+  }, [phase]);
 
   function applyFormat(cmd: string, value?: string) {
-    document.execCommand(cmd, false, value)
-    bodyRef.current?.focus()
-    setTimeout(recalcFromEditor, 0)
+    document.execCommand(cmd, false, value);
+    bodyRef.current?.focus();
+    setTimeout(recalcFromEditor, 0);
   }
 
   function applyLink() {
-    const sel = window.getSelection()
-    if (!sel || sel.isCollapsed) return
-    const url = window.prompt("URL", "https://")
-    if (!url) return
-    applyFormat("createLink", url)
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) return;
+    const url = window.prompt("URL", "https://");
+    if (!url) return;
+    applyFormat("createLink", url);
   }
 
   function applyBlockquote() {
-    applyFormat("formatBlock", "blockquote")
+    applyFormat("formatBlock", "blockquote");
   }
 
   function commitTag() {
-    const v = tagDraft.trim().toLowerCase().replace(/^#/, "")
-    if (!v || tags.includes(v) || tags.length >= 5) return
-    setTags([...tags, v])
-    setTagDraft("")
+    const v = tagDraft.trim().toLowerCase().replace(/^#/, "");
+    if (!v || tags.includes(v) || tags.length >= 5) return;
+    setTags([...tags, v]);
+    setTagDraft("");
   }
 
   function removeTag(t: string) {
-    setTags(tags.filter((x) => x !== t))
+    setTags(tags.filter((x) => x !== t));
   }
 
   function startPreview() {
-    setPhase("preview")
-    if (typeof window !== "undefined") window.scrollTo({ top: 0 })
+    setPhase("preview");
+    if (typeof window !== "undefined") window.scrollTo({ top: 0 });
   }
 
   function backToEdit() {
-    setPhase("edit")
+    setPhase("edit");
     setTimeout(() => {
       if (bodyRef.current && bodyHtml) {
-        bodyRef.current.innerHTML = bodyHtml
+        bodyRef.current.innerHTML = bodyHtml;
       }
-    }, 10)
+    }, 10);
   }
 
   function confirmPublish() {
-    setPhase("published")
-    if (typeof window !== "undefined") window.scrollTo({ top: 0 })
+    setPhase("published");
+    if (typeof window !== "undefined") window.scrollTo({ top: 0 });
   }
 
-  const isPoem = type === "poem"
+  const isPoem = type === "poem";
   const editorColumn = isPoem
     ? "mx-auto max-w-[520px] px-5 text-center min-[480px]:px-6"
-    : "mx-auto max-w-[680px] px-5 min-[480px]:px-6"
+    : "mx-auto max-w-[680px] px-5 min-[480px]:px-6";
   const titleSize = isPoem
     ? "text-[28px] min-[480px]:text-[34px] lg:text-[40px]"
-    : "text-[28px] min-[480px]:text-[36px] lg:text-[44px]"
+    : "text-[28px] min-[480px]:text-[36px] lg:text-[44px]";
   const bodyClass = isPoem
     ? "font-serif text-base leading-[2] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[2.1]"
-    : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]"
+    : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]";
 
   const today = new Date().toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
-  })
+  });
 
   if (phase === "published") {
     return (
@@ -251,83 +255,11 @@ export function Composer() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen pb-32">
-      <header className="sticky top-0 z-30 border-b border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_92%,transparent)] backdrop-blur-md">
-        <div className="mx-auto flex h-12 max-w-7xl items-center justify-between gap-3 px-4 min-[480px]:h-[52px] min-[480px]:px-6 lg:h-14 lg:px-8">
-          <Link
-            href="/"
-            className="group flex items-center gap-2 text-[var(--ink-fg)]"
-          >
-            <ArrowLeft
-              className="h-4 w-4 transition-transform group-hover:-translate-x-0.5"
-              strokeWidth={1.5}
-            />
-            <span className="text-sm font-bold tracking-tight min-[480px]:text-base">
-              inkwell
-            </span>
-          </Link>
-
-          <div className="flex items-center gap-2 text-[11px] text-[var(--ink-subtle)] min-[480px]:text-xs">
-            {phase === "edit" && savedAgoText && (
-              <span className="hidden font-sans tracking-wide min-[480px]:inline">
-                {savedAgoText}
-              </span>
-            )}
-            {phase === "preview" && (
-              <span className="font-serif text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-accent)]">
-                Preview
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setSettingsOpen((v) => !v)}
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[var(--ink-muted)] transition-colors hover:text-[var(--ink-fg)] lg:hidden"
-              aria-label="Open settings"
-              aria-pressed={settingsOpen}
-            >
-              <Settings className="h-[18px] w-[18px]" strokeWidth={1.5} />
-            </button>
-
-            {phase === "edit" ? (
-              <button
-                type="button"
-                onClick={startPreview}
-                disabled={
-                  title.trim().length === 0 && bodyHtml.replace(/<[^>]*>/g, "").trim().length === 0
-                }
-                className="cursor-pointer rounded-full bg-[var(--ink-fg)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-bg)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 min-[480px]:px-4 min-[480px]:py-2 min-[480px]:text-xs"
-              >
-                Publish →
-              </button>
-            ) : (
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={backToEdit}
-                  className="cursor-pointer rounded-full border border-[var(--ink-border)] bg-transparent px-3 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] min-[480px]:px-3.5 min-[480px]:text-xs"
-                >
-                  ← Edit
-                </button>
-                <button
-                  type="button"
-                  onClick={confirmPublish}
-                  className="cursor-pointer rounded-full bg-[var(--ink-accent)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white transition-opacity hover:opacity-90 min-[480px]:px-4 min-[480px]:py-2 min-[480px]:text-xs"
-                >
-                  Confirm publish
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
       {phase === "edit" ? (
         <div className="mx-auto grid max-w-7xl gap-0 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-8 xl:grid-cols-[minmax(0,1fr)_360px]">
           <main className="min-w-0 pt-10 min-[480px]:pt-14 lg:pt-16">
@@ -342,9 +274,9 @@ export function Composer() {
                   isPoem ? "text-center" : ""
                 }`}
                 onInput={(e) => {
-                  const el = e.currentTarget
-                  el.style.height = "auto"
-                  el.style.height = `${el.scrollHeight}px`
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
                 }}
               />
 
@@ -353,11 +285,15 @@ export function Composer() {
                   isPoem ? "justify-center" : ""
                 }`}
               >
-                {!isPoem && <span className="h-px w-8 bg-[var(--ink-border)]" />}
+                {!isPoem && (
+                  <span className="h-px w-8 bg-[var(--ink-border)]" />
+                )}
                 <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ink-subtle)]">
                   {TYPES.find((t) => t.id === type)?.label}
                 </span>
-                {!isPoem && <span className="h-px w-8 bg-[var(--ink-border)]" />}
+                {!isPoem && (
+                  <span className="h-px w-8 bg-[var(--ink-border)]" />
+                )}
               </div>
 
               <div
@@ -417,8 +353,8 @@ export function Composer() {
                 <textarea
                   value={excerpt}
                   onChange={(e) => {
-                    setExcerpt(e.target.value)
-                    setExcerptOverridden(true)
+                    setExcerpt(e.target.value);
+                    setExcerptOverridden(true);
                   }}
                   placeholder="Shown on the feed card"
                   rows={3}
@@ -460,11 +396,15 @@ export function Composer() {
                       onChange={(e) => setTagDraft(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === ",") {
-                          e.preventDefault()
-                          commitTag()
+                          e.preventDefault();
+                          commitTag();
                         }
-                        if (e.key === "Backspace" && tagDraft === "" && tags.length > 0) {
-                          setTags(tags.slice(0, -1))
+                        if (
+                          e.key === "Backspace" &&
+                          tagDraft === "" &&
+                          tags.length > 0
+                        ) {
+                          setTags(tags.slice(0, -1));
                         }
                       }}
                       onBlur={commitTag}
@@ -612,8 +552,8 @@ export function Composer() {
                 <textarea
                   value={excerpt}
                   onChange={(e) => {
-                    setExcerpt(e.target.value)
-                    setExcerptOverridden(true)
+                    setExcerpt(e.target.value);
+                    setExcerptOverridden(true);
                   }}
                   placeholder="Shown on the feed card"
                   rows={3}
@@ -646,8 +586,8 @@ export function Composer() {
                       onChange={(e) => setTagDraft(e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === ",") {
-                          e.preventDefault()
-                          commitTag()
+                          e.preventDefault();
+                          commitTag();
                         }
                       }}
                       onBlur={commitTag}
@@ -703,7 +643,7 @@ export function Composer() {
         }
       `}</style>
     </div>
-  )
+  );
 }
 
 function ToolbarButton({
@@ -711,20 +651,20 @@ function ToolbarButton({
   label,
   icon,
 }: {
-  onClick: () => void
-  label: string
-  icon: React.ReactNode
+  onClick: () => void;
+  label: string;
+  icon: React.ReactNode;
 }) {
   return (
     <button
       type="button"
       onMouseDown={(e) => {
-        e.preventDefault()
-        onClick()
+        e.preventDefault();
+        onClick();
       }}
       onTouchStart={(e) => {
-        e.preventDefault()
-        onClick()
+        e.preventDefault();
+        onClick();
       }}
       className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-[var(--ink-bg)] transition-colors hover:bg-white/10"
       aria-label={label}
@@ -732,7 +672,7 @@ function ToolbarButton({
     >
       {icon}
     </button>
-  )
+  );
 }
 
 function Section({
@@ -740,9 +680,9 @@ function Section({
   hint,
   children,
 }: {
-  label: string
-  hint?: string
-  children: React.ReactNode
+  label: string;
+  hint?: string;
+  children: React.ReactNode;
 }) {
   return (
     <div>
@@ -758,7 +698,7 @@ function Section({
       </div>
       {children}
     </div>
-  )
+  );
 }
 
 function PreviewPane({
@@ -769,27 +709,26 @@ function PreviewPane({
   tags,
   date,
 }: {
-  type: ContentTag
-  title: string
-  bodyHtml: string
-  excerpt: string
-  tags: string[]
-  date: string
+  type: ContentTag;
+  title: string;
+  bodyHtml: string;
+  excerpt: string;
+  tags: string[];
+  date: string;
 }) {
-  const isPoem = type === "poem"
+  const isPoem = type === "poem";
   const articleColumn = isPoem
     ? "mx-auto max-w-[480px] px-5 text-center min-[480px]:px-6 min-[480px]:max-w-[520px]"
-    : "mx-auto max-w-[640px] px-5 min-[480px]:px-6 lg:max-w-[680px]"
+    : "mx-auto max-w-[640px] px-5 min-[480px]:px-6 lg:max-w-[680px]";
   const titleSize = isPoem
     ? "text-[28px] min-[480px]:text-[36px] lg:text-[44px]"
-    : "text-[28px] min-[480px]:text-[40px] lg:text-[52px]"
+    : "text-[28px] min-[480px]:text-[40px] lg:text-[52px]";
   const bodyClass = isPoem
     ? "font-serif text-base leading-[2] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[2.1]"
-    : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]"
+    : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]";
 
-  const paragraphs = typeof window !== "undefined"
-    ? paragraphsFromBody(bodyHtml, type)
-    : []
+  const paragraphs =
+    typeof window !== "undefined" ? paragraphsFromBody(bodyHtml, type) : [];
 
   return (
     <article className={`pt-12 min-[480px]:pt-16 lg:pt-20 ${articleColumn}`}>
@@ -840,7 +779,9 @@ function PreviewPane({
           No body yet — go back and start writing.
         </p>
       ) : (
-        <div className={`space-y-7 ${bodyClass} ${isPoem ? "whitespace-pre-line" : ""}`}>
+        <div
+          className={`space-y-7 ${bodyClass} ${isPoem ? "whitespace-pre-line" : ""}`}
+        >
           {paragraphs.map((p, i) => (
             <p
               key={i}
@@ -888,5 +829,5 @@ function PreviewPane({
         {!isPoem && <span className="h-px w-12 bg-[var(--ink-border)]" />}
       </div>
     </article>
-  )
+  );
 }

@@ -1,24 +1,30 @@
-"use client"
+"use client";
 
-import { useEffect, useMemo, useRef, useState } from "react"
-import Link from "next/link"
-import { ArrowLeft, Bookmark, Heart, MessageCircle, Share2 } from "lucide-react"
-import type { ContentTag, PiecePost } from "@/lib/feed-data"
-import { Avatar, Tag } from "@/components/inkwell/primitives"
-import { PieceCard } from "@/components/inkwell/piece-card"
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Bookmark,
+  Heart,
+  MessageCircle,
+  Share2,
+} from "lucide-react";
+import type { ContentTag, PiecePost } from "@/lib/feed-data";
+import { Avatar, Tag } from "@/components/inkwell/primitives";
+import { PieceCard } from "@/components/inkwell/piece-card";
 
 const piece: {
-  type: ContentTag
-  date: string
-  title: string
-  author: string
-  authorBio: string
-  authorHandle: string
-  authorFollowers: string
-  authorPieces: number
-  body: string[]
-  likes: number
-  comments: number
+  type: ContentTag;
+  date: string;
+  title: string;
+  author: string;
+  authorBio: string;
+  authorHandle: string;
+  authorFollowers: string;
+  authorPieces: number;
+  body: string[];
+  likes: number;
+  comments: number;
 } = {
   type: "essay",
   date: "May 20, 2026",
@@ -41,7 +47,7 @@ const piece: {
   ],
   likes: 203,
   comments: 47,
-}
+};
 
 const moreByAuthor: PiecePost[] = [
   {
@@ -68,118 +74,123 @@ const moreByAuthor: PiecePost[] = [
     comments: 35,
     shares: 24,
   },
-]
+];
 
 function readingTime(body: string[]) {
-  const words = body.join(" ").split(/\s+/).length
-  return Math.max(1, Math.round(words / 220))
+  const words = body.join(" ").split(/\s+/).length;
+  return Math.max(1, Math.round(words / 220));
 }
 
 export function ReadingRoom() {
-  const [progress, setProgress] = useState(0)
-  const [liked, setLiked] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [highlights, setHighlights] = useState<string[]>([])
+  const [progress, setProgress] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [highlights, setHighlights] = useState<string[]>([]);
   const [popover, setPopover] = useState<{
-    x: number
-    y: number
-    text: string
-  } | null>(null)
-  const articleRef = useRef<HTMLElement>(null)
+    x: number;
+    y: number;
+    text: string;
+  } | null>(null);
+  const articleRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => {
-      const el = document.documentElement
-      const max = el.scrollHeight - el.clientHeight
-      setProgress(max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0)
-    }
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    window.addEventListener("resize", onScroll)
+      const el = document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      setProgress(max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     return () => {
-      window.removeEventListener("scroll", onScroll)
-      window.removeEventListener("resize", onScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const onSelectionChange = () => {
-      const sel = window.getSelection()
+      const sel = window.getSelection();
       if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
-        setPopover(null)
-        return
+        setPopover(null);
+        return;
       }
-      const range = sel.getRangeAt(0)
+      const range = sel.getRangeAt(0);
       if (
         !articleRef.current ||
         !articleRef.current.contains(range.commonAncestorContainer)
       ) {
-        setPopover(null)
-        return
+        setPopover(null);
+        return;
       }
-      const text = sel.toString().trim()
+      const text = sel.toString().trim();
       if (text.length === 0) {
-        setPopover(null)
-        return
+        setPopover(null);
+        return;
       }
-      const rect = range.getBoundingClientRect()
+      const rect = range.getBoundingClientRect();
       setPopover({
         x: rect.left + rect.width / 2,
         y: rect.top - 6,
         text,
-      })
-    }
+      });
+    };
 
     const finalize = () => {
-      setTimeout(onSelectionChange, 10)
-    }
+      setTimeout(onSelectionChange, 10);
+    };
 
-    document.addEventListener("mouseup", finalize)
-    document.addEventListener("touchend", finalize)
-    document.addEventListener("selectionchange", onSelectionChange)
+    document.addEventListener("mouseup", finalize);
+    document.addEventListener("touchend", finalize);
+    document.addEventListener("selectionchange", onSelectionChange);
     return () => {
-      document.removeEventListener("mouseup", finalize)
-      document.removeEventListener("touchend", finalize)
-      document.removeEventListener("selectionchange", onSelectionChange)
-    }
-  }, [])
+      document.removeEventListener("mouseup", finalize);
+      document.removeEventListener("touchend", finalize);
+      document.removeEventListener("selectionchange", onSelectionChange);
+    };
+  }, []);
 
   function addHighlight() {
-    if (!popover) return
-    setHighlights((prev) => (prev.includes(popover.text) ? prev : [...prev, popover.text]))
-    setPopover(null)
-    window.getSelection()?.removeAllRanges()
+    if (!popover) return;
+    setHighlights((prev) =>
+      prev.includes(popover.text) ? prev : [...prev, popover.text],
+    );
+    setPopover(null);
+    window.getSelection()?.removeAllRanges();
   }
 
   const renderParagraph = useMemo(() => {
     return (text: string) => {
-      if (highlights.length === 0) return text
-      let parts: (string | { key: string; text: string })[] = [text]
+      if (highlights.length === 0) return text;
+      let parts: (string | { key: string; text: string })[] = [text];
       highlights.forEach((h, hi) => {
-        const next: (string | { key: string; text: string })[] = []
+        const next: (string | { key: string; text: string })[] = [];
         parts.forEach((part) => {
           if (typeof part !== "string") {
-            next.push(part)
-            return
+            next.push(part);
+            return;
           }
-          let cursor = 0
-          let idx = part.indexOf(h, cursor)
-          let counter = 0
+          let cursor = 0;
+          let idx = part.indexOf(h, cursor);
+          let counter = 0;
           while (idx !== -1) {
-            const before = part.slice(cursor, idx)
-            if (before) next.push(before)
-            next.push({ key: `h${hi}-${counter}`, text: part.slice(idx, idx + h.length) })
-            cursor = idx + h.length
-            counter += 1
-            idx = part.indexOf(h, cursor)
+            const before = part.slice(cursor, idx);
+            if (before) next.push(before);
+            next.push({
+              key: `h${hi}-${counter}`,
+              text: part.slice(idx, idx + h.length),
+            });
+            cursor = idx + h.length;
+            counter += 1;
+            idx = part.indexOf(h, cursor);
           }
-          const tail = part.slice(cursor)
-          if (tail) next.push(tail)
-        })
-        parts = next
-      })
+          const tail = part.slice(cursor);
+          if (tail) next.push(tail);
+        });
+        parts = next;
+      });
       return parts.map((part, i) => {
-        if (typeof part === "string") return <span key={i}>{part}</span>
+        if (typeof part === "string") return <span key={i}>{part}</span>;
         return (
           <mark
             key={i}
@@ -187,23 +198,23 @@ export function ReadingRoom() {
           >
             {part.text}
           </mark>
-        )
-      })
-    }
-  }, [highlights])
+        );
+      });
+    };
+  }, [highlights]);
 
-  const isPoem = piece.type === "poem"
+  const isPoem = piece.type === "poem";
   const articleColumn = isPoem
     ? "mx-auto max-w-[480px] px-5 text-center min-[480px]:px-6 min-[480px]:max-w-[520px]"
-    : "mx-auto max-w-[640px] px-5 min-[480px]:px-6 lg:max-w-[680px]"
+    : "mx-auto max-w-[640px] px-5 min-[480px]:px-6 lg:max-w-[680px]";
   const titleSize = isPoem
     ? "text-[28px] min-[480px]:text-[36px] lg:text-[44px]"
-    : "text-[28px] min-[480px]:text-[40px] lg:text-[52px]"
+    : "text-[28px] min-[480px]:text-[40px] lg:text-[52px]";
   const bodyClass = isPoem
     ? "font-serif text-base leading-[2] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[2.1]"
-    : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]"
+    : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]";
 
-  const minutes = readingTime(piece.body)
+  const minutes = readingTime(piece.body);
 
   return (
     <div className="min-h-screen pb-32">
@@ -216,47 +227,6 @@ export function ReadingRoom() {
           style={{ width: `${progress}%` }}
         />
       </div>
-
-      <header className="sticky top-0 z-20 border-b border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_92%,transparent)] backdrop-blur-md">
-        <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-4 min-[480px]:h-[52px] min-[480px]:px-6 lg:h-14 lg:px-8">
-          <Link
-            href={"/"}
-            className="group flex items-center gap-2 text-[var(--ink-fg)] hover:text-[var(--ink-accent)]"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" strokeWidth={1.5} />
-            <span className="text-sm font-bold tracking-tight min-[480px]:text-base">
-              inkwell
-            </span>
-          </Link>
-
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setSaved((v) => !v)}
-              className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-colors min-[480px]:h-9 min-[480px]:w-9 ${
-                saved
-                  ? "text-[var(--ink-accent)]"
-                  : "text-[var(--ink-muted)] hover:text-[var(--ink-fg)]"
-              }`}
-              aria-label={saved ? "Unsave" : "Save"}
-              aria-pressed={saved}
-            >
-              <Bookmark
-                className="h-[18px] w-[18px]"
-                strokeWidth={1.5}
-                fill={saved ? "currentColor" : "none"}
-              />
-            </button>
-            <button
-              type="button"
-              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[var(--ink-muted)] transition-colors hover:text-[var(--ink-fg)] min-[480px]:h-9 min-[480px]:w-9"
-              aria-label="Share"
-            >
-              <Share2 className="h-[18px] w-[18px]" strokeWidth={1.5} />
-            </button>
-          </div>
-        </div>
-      </header>
 
       <article
         ref={articleRef}
@@ -286,7 +256,9 @@ export function ReadingRoom() {
           }`}
         >
           <Avatar seed={piece.author} size={28} />
-          <span className="font-medium text-[var(--ink-fg)]">{piece.author}</span>
+          <span className="font-medium text-[var(--ink-fg)]">
+            {piece.author}
+          </span>
           <span className="text-[var(--ink-subtle)]">·</span>
           <span>{piece.date}</span>
           <span className="text-[var(--ink-subtle)]">·</span>
@@ -308,8 +280,8 @@ export function ReadingRoom() {
 
         <div className={`space-y-7 ${bodyClass}`}>
           {piece.body.map((paragraph, i) => {
-            const isFirst = i === 0
-            const showDropCap = !isPoem && isFirst
+            const isFirst = i === 0;
+            const showDropCap = !isPoem && isFirst;
             return (
               <p
                 key={i}
@@ -323,7 +295,7 @@ export function ReadingRoom() {
               >
                 {renderParagraph(paragraph)}
               </p>
-            )
+            );
           })}
         </div>
 
@@ -444,9 +416,13 @@ export function ReadingRoom() {
 
           {highlights.length > 0 && (
             <>
-              <span className="mx-1 h-5 w-px bg-[var(--ink-border)]" aria-hidden />
+              <span
+                className="mx-1 h-5 w-px bg-[var(--ink-border)]"
+                aria-hidden
+              />
               <span className="px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-accent)]">
-                {highlights.length} highlight{highlights.length === 1 ? "" : "s"}
+                {highlights.length} highlight
+                {highlights.length === 1 ? "" : "s"}
               </span>
             </>
           )}
@@ -465,12 +441,12 @@ export function ReadingRoom() {
           <button
             type="button"
             onMouseDown={(e) => {
-              e.preventDefault()
-              addHighlight()
+              e.preventDefault();
+              addHighlight();
             }}
             onTouchStart={(e) => {
-              e.preventDefault()
-              addHighlight()
+              e.preventDefault();
+              addHighlight();
             }}
             className="pointer-events-auto cursor-pointer rounded-full bg-[var(--ink-fg)] px-3 py-1.5 text-[11px] font-semibold text-[var(--ink-bg)] shadow-[0_8px_24px_rgba(0,0,0,0.18)] hover:opacity-90"
           >
@@ -479,5 +455,5 @@ export function ReadingRoom() {
         </div>
       )}
     </div>
-  )
+  );
 }
