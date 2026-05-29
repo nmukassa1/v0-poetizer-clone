@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/components/inkwell/auth-provider";
 import {
   featured,
   feedItems,
@@ -33,7 +34,7 @@ function filterPieces(items: PiecePost[], filter: FeedFilter): PiecePost[] {
 export function InkwellFeed() {
   const [filter, setFilter] = useState<FeedFilter>("all");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn } = useAuth();
   const visibleItems = filterPieces(allPieces, filter);
 
   const showFirstSlot = filter === "all";

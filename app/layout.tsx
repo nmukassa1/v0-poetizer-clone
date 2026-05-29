@@ -3,7 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import "./inkwell-theme.css";
-import { Header } from "@/components/inkwell/Header";
+import { InkwellShell } from "@/components/inkwell/inkwell-shell";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -35,8 +35,7 @@ export default function RootLayout({
     >
       <body className="font-sans antialiased">
         <div className="inkwell-theme">
-          <Header />
-          {children}
+          <InkwellShell>{children}</InkwellShell>
         </div>
         {process.env.NODE_ENV === "production" && <Analytics />}
       </body>

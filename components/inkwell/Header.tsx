@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Settings } from "lucide-react"
 import { MenuIcon } from "@/components/inkwell/primitives"
+import { useAuth } from "@/components/inkwell/auth-provider"
 
 export type FeedFilter = "all" | "poems" | "stories" | "essays"
 
@@ -16,8 +18,6 @@ export const feedFilters: { key: FeedFilter; label: string }[] = [
 type HeaderProps = {
   filter?: FeedFilter
   onFilterChange?: (filter: FeedFilter) => void
-  isLoggedIn?: boolean
-  onAuthToggle?: () => void
   menuOpen?: boolean
   onMenuOpenChange?: (open: boolean) => void
 }
@@ -25,19 +25,13 @@ type HeaderProps = {
 export function Header({
   filter,
   onFilterChange,
-  isLoggedIn: isLoggedInProp,
-  onAuthToggle,
   menuOpen: menuOpenProp,
   onMenuOpenChange,
 }: HeaderProps = {}) {
-  const [internalLoggedIn, setInternalLoggedIn] = useState(false)
-  const [internalMenuOpen, setInternalMenuOpen] = useState(false)
-
-  const isLoggedIn = isLoggedInProp ?? internalLoggedIn
-  const handleAuthToggle = onAuthToggle ?? (() => setInternalLoggedIn((v) => !v))
-  const menuOpen = menuOpenProp ?? internalMenuOpen
-  const handleMenuOpenChange =
-    onMenuOpenChange ?? ((open: boolean) => setInternalMenuOpen(open))
+  const { isLoggedIn, toggleAuth } = useAuth()
+  const pathname = usePathname()
+  const showProfileSettings =
+    isLoggedIn && pathname === "/profile"
 
   const showFeedFilters = filter !== undefined && onFilterChange !== undefined
 
@@ -75,16 +69,27 @@ export function Header({
 
         <div className="flex items-center gap-2">
           {isLoggedIn && (
-            <Link
-              href="/profile"
-              className="hidden shrink-0 rounded-full border border-[var(--ink-border)] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] min-[480px]:inline-flex lg:px-3.5 lg:py-1.5 lg:text-xs"
-            >
-              My profile
-            </Link>
+            <div className="hidden items-center gap-1.5 min-[480px]:flex">
+              <Link
+                href="/profile"
+                className="shrink-0 rounded-full border border-[var(--ink-border)] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] lg:px-3.5 lg:py-1.5 lg:text-xs"
+              >
+                My profile
+              </Link>
+              {showProfileSettings && (
+                <Link
+                  href="/profile/settings"
+                  className="inline-flex shrink-0 items-center justify-center rounded-full border border-[var(--ink-border)] p-1.5 text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] lg:p-2"
+                  aria-label="Profile settings"
+                >
+                  <Settings className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+                </Link>
+              )}
+            </div>
           )}
           <button
             type="button"
-            onClick={handleAuthToggle}
+            onClick={toggleAuth}
             className={`shrink-0 cursor-pointer rounded-full border px-3 py-1 font-sans text-[11px] font-medium tracking-wide transition-colors lg:px-3.5 lg:py-1.5 lg:text-xs ${
               isLoggedIn
                 ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
@@ -99,9 +104,9 @@ export function Header({
             <button
               type="button"
               className="flex cursor-pointer items-center border-0 bg-transparent p-1 text-[var(--ink-fg)] min-[480px]:hidden"
-              onClick={() => handleMenuOpenChange(!menuOpen)}
+              onClick={() => onMenuOpenChange?.(!menuOpenProp)}
               aria-label="Toggle filters"
-              aria-expanded={menuOpen}
+              aria-expanded={menuOpenProp}
             >
               <MenuIcon />
             </button>
@@ -109,7 +114,7 @@ export function Header({
         </div>
       </div>
 
-      {showFeedFilters && menuOpen && (
+      {showFeedFilters && menuOpenProp && (
         <nav
           className="flex flex-wrap gap-1.5 border-t border-[var(--ink-border)] px-4 py-2.5 min-[480px]:hidden"
           aria-label="Feed filters"
@@ -120,7 +125,7 @@ export function Header({
               type="button"
               onClick={() => {
                 onFilterChange(f.key)
-                handleMenuOpenChange(false)
+                onMenuOpenChange?.(false)
               }}
               className={`cursor-pointer rounded-full border px-3 py-1.5 font-sans text-[11px] font-medium ${
                 filter === f.key
