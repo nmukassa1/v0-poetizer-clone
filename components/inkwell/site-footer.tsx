@@ -11,6 +11,7 @@ type FooterLink = {
 
 const productLinks: FooterLink[] = [
   { href: "/", label: "Feed" },
+  { href: "/browse", label: "Browse pieces" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/write", label: "Write", auth: "in" },

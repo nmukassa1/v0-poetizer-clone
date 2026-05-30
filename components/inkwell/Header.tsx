@@ -87,23 +87,18 @@ export function Header({
               )}
             </div>
           )}
-          {isLoggedIn ? (
-            <button
-              type="button"
-              onClick={toggleAuth}
-              className="shrink-0 cursor-pointer rounded-full border border-[var(--ink-fg)] bg-[var(--ink-fg)] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--ink-bg)] transition-colors lg:px-3.5 lg:py-1.5 lg:text-xs"
-              aria-pressed={isLoggedIn}
-            >
-              Sign out
-            </button>
-          ) : (
-            <Link
-              href="/sign-in"
-              className="shrink-0 rounded-full border border-[#ddd8ce] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--ink-fg)] transition-colors hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)] lg:px-3.5 lg:py-1.5 lg:text-xs"
-            >
-              Sign in
-            </Link>
-          )}
+          <button
+            type="button"
+            onClick={toggleAuth}
+            className={`shrink-0 cursor-pointer rounded-full border px-3 py-1 font-sans text-[11px] font-medium tracking-wide transition-colors lg:px-3.5 lg:py-1.5 lg:text-xs ${
+              isLoggedIn
+                ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
+                : "border-[#ddd8ce] text-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
+            }`}
+            aria-pressed={isLoggedIn}
+          >
+            {isLoggedIn ? "Sign out" : "Sign in"}
+          </button>
 
           {showFeedFilters && (
             <button

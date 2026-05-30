@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { BookIcon, PenIcon } from "@/components/inkwell/primitives"
 
 function WelcomePane({
@@ -6,12 +7,14 @@ function WelcomePane({
   headline,
   description,
   cta,
+  href,
 }: {
   label: string
   icon: React.ReactNode
   headline: string
   description: string
   cta: string
+  href: string
 }) {
   return (
     <div className="flex h-full flex-col rounded-xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-3.5 max-[479px]:flex-row max-[479px]:items-center max-[479px]:gap-4 min-[480px]:block min-[480px]:p-[18px]">
@@ -29,13 +32,13 @@ function WelcomePane({
         <p className="hidden text-[11px] leading-relaxed text-[var(--ink-muted)] min-[480px]:block">
           {description}
         </p>
-        <button
-          type="button"
-          className="mt-auto inline-flex w-fit cursor-pointer items-center gap-1 rounded-full border border-[var(--ink-fg)] bg-transparent px-3 py-1 text-[10px] font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)] min-[480px]:px-3.5 min-[480px]:py-1.5 min-[480px]:text-[11px]"
+        <Link
+          href={href}
+          className="mt-auto inline-flex w-fit items-center gap-1 rounded-full border border-[var(--ink-fg)] bg-transparent px-3 py-1 text-[10px] font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)] min-[480px]:px-3.5 min-[480px]:py-1.5 min-[480px]:text-[11px]"
         >
           {cta}
           <span aria-hidden>→</span>
-        </button>
+        </Link>
       </div>
     </div>
   )
@@ -54,6 +57,7 @@ export function WelcomeCard({ stacked = false }: { stacked?: boolean }) {
         headline="Share your work"
         description="Publish poems, stories and essays. Build a streak as you write."
         cta="Start writing"
+        href="/write"
       />
       <WelcomePane
         label="For readers"
@@ -61,6 +65,7 @@ export function WelcomeCard({ stacked = false }: { stacked?: boolean }) {
         headline="Find your next read"
         description="Save pieces you love and follow writers whose voices stay with you."
         cta="Browse pieces"
+        href="/browse"
       />
     </div>
   )
