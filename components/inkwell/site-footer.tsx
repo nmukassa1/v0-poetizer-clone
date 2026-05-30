@@ -17,6 +17,8 @@ const productLinks: FooterLink[] = [
 ]
 
 const accountLinks: FooterLink[] = [
+  { href: "/sign-in", label: "Sign in", auth: "out" },
+  { href: "/sign-up", label: "Sign up", auth: "out" },
   { href: "/profile", label: "My profile", auth: "in" },
   { href: "/profile/settings", label: "Settings", auth: "in" },
 ]
