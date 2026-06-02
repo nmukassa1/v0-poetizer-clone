@@ -1,4 +1,4 @@
-import { SignUpForm } from "@/components/inkwell/auth/auth-forms"
+import { SignUpForm } from "@/components/inkwell/auth/sign-up-form"
 import { AuthPageLayout } from "@/components/inkwell/auth/auth-page-layout"
 
 export const metadata = {

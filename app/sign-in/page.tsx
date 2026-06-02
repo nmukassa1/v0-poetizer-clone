@@ -1,4 +1,4 @@
-import { SignInForm } from "@/components/inkwell/auth/auth-forms"
+import { SignInForm } from "@/components/inkwell/auth/sign-in-form"
 import { AuthPageLayout } from "@/components/inkwell/auth/auth-page-layout"
 
 export const metadata = {
@@ -6,13 +6,19 @@ export const metadata = {
   description: "Sign in to your inkwell account.",
 }
 
-export default function SignInPage() {
+export default async function SignInPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>
+}) {
+  const { callbackUrl } = await searchParams
+
   return (
     <AuthPageLayout
       imageSrc="/images/auth-reading.png"
       imageAlt="Illustration of a person reading a book in an armchair"
     >
-      <SignInForm />
+      <SignInForm callbackUrl={callbackUrl ?? "/"} />
     </AuthPageLayout>
   )
 }

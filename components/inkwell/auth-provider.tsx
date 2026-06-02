@@ -4,49 +4,40 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
   type ReactNode,
 } from "react"
-
-const STORAGE_KEY = "inkwell-auth"
+import { authClient } from "@/lib/auth/client"
 
 type AuthContextValue = {
   isLoggedIn: boolean
-  signIn: () => void
-  signOut: () => void
-  toggleAuth: () => void
+  isLoading: boolean
+  userId: string | undefined
+  userName: string | undefined
+  userEmail: string | undefined
+  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-function readStoredAuth(): boolean {
-  if (typeof window === "undefined") return false
-  return sessionStorage.getItem(STORAGE_KEY) === "1"
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [hydrated, setHydrated] = useState(false)
+  const { data: session, isPending } = authClient.useSession()
 
-  useEffect(() => {
-    setIsLoggedIn(readStoredAuth())
-    setHydrated(true)
+  const signOut = useCallback(async () => {
+    await authClient.signOut()
+    window.location.href = "/"
   }, [])
 
-  useEffect(() => {
-    if (!hydrated) return
-    sessionStorage.setItem(STORAGE_KEY, isLoggedIn ? "1" : "0")
-  }, [isLoggedIn, hydrated])
-
-  const signIn = useCallback(() => setIsLoggedIn(true), [])
-  const signOut = useCallback(() => setIsLoggedIn(false), [])
-  const toggleAuth = useCallback(() => setIsLoggedIn((v) => !v), [])
-
-  const value = useMemo(
-    () => ({ isLoggedIn, signIn, signOut, toggleAuth }),
-    [isLoggedIn, signIn, signOut, toggleAuth],
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      isLoggedIn: Boolean(session?.user),
+      isLoading: isPending,
+      userId: session?.user?.id,
+      userName: session?.user?.name ?? undefined,
+      userEmail: session?.user?.email ?? undefined,
+      signOut,
+    }),
+    [session?.user, isPending, signOut],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

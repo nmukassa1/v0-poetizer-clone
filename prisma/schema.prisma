@@ -7,13 +7,15 @@ datasource db {
   provider = "postgresql"
 }
 
-// App models (profiles, pieces) are added in Step 3.
-// Neon Auth manages its own auth tables when enabled in the Neon console.
+/// Inkwell writer profile — linked to Neon Auth user id.
+model Profile {
+  id        String   @id
+  handle    String   @unique
+  name      String
+  bio       String?
+  location  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-/// Temporary model so Prisma can generate a client in Step 1.
-/// Dropped when app models are added in Step 3.
-model ConnectionCheck {
-  id String @id @default(cuid())
-
-  @@map("_connection_check")
+  @@map("profiles")
 }
