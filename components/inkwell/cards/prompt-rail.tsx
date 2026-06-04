@@ -1,4 +1,4 @@
-import type { WeeklyPrompt } from "@/lib/feed-data"
+import type { WeeklyPrompt } from "@/lib/feed"
 import Link from "next/link"
 import { CommentIcon, HeartIcon, Tag } from "@/components/inkwell/primitives"
 

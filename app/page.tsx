@@ -1,5 +1,5 @@
 import { InkwellFeed } from "@/components/inkwell/feed/inkwell-feed"
-import { featured as mockFeatured } from "@/lib/feed-data"
+import { featured as mockFeatured } from "@/lib/feed"
 import {
   getFeaturedPiece,
   listPublishedPieces,

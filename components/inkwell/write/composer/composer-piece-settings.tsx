@@ -1,5 +1,5 @@
 import { X } from "lucide-react"
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
 import { CONTENT_TYPES, VISIBILITIES } from "./constants"
 import { ComposerSection } from "./composer-section"
 import type { Visibility } from "./types"

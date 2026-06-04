@@ -1,5 +1,5 @@
 import { BrowsePage } from "@/components/inkwell/browse/browse-page"
-import { featured as mockFeatured } from "@/lib/feed-data"
+import { featured as mockFeatured } from "@/lib/feed"
 import {
   getFeaturedPiece,
   listPublishedPieces,

@@ -1,5 +1,5 @@
-import type { PiecePost } from "@/lib/feed-data"
-import { getProfileHrefByHandle } from "@/lib/profiles"
+import type { PiecePost } from "@/lib/feed"
+import { getProfileHrefByHandle } from "@/lib/profile"
 import { PieceCard } from "@/components/inkwell/piece-card"
 
 export function MoreFromAuthor({

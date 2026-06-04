@@ -1,4 +1,4 @@
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
 
 export function Avatar({ seed, size = 32 }: { seed: string; size?: number }) {
   return (

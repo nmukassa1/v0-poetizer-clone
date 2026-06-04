@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { listPublishedPieces } from "@/lib/piece/queries"
 import { pieceToFeedPost } from "@/lib/piece/map"
 import { publishPiece } from "@/lib/piece/publish"
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
 
 const VALID_TYPES = new Set(["poem", "story", "essay"])
 

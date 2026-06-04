@@ -1,5 +1,5 @@
-import { lovedPieces, type PiecePost } from "@/lib/feed-data"
-import { getHandleForAuthor } from "@/lib/profiles"
+import { lovedPieces, type PiecePost } from "@/lib/feed"
+import { getHandleForAuthor } from "@/lib/profile"
 
 export function lovedPieceToCard(item: (typeof lovedPieces)[number]): PiecePost {
   return {

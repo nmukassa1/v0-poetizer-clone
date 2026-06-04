@@ -1,4 +1,4 @@
-import type { Featured } from "@/lib/feed-data"
+import type { Featured } from "@/lib/feed"
 import Link from "next/link"
 import { Avatar, Tag } from "@/components/inkwell/primitives"
 

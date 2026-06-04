@@ -1,4 +1,4 @@
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
 import type { Visibility } from "./types"
 
 export const CONTENT_TYPES: {

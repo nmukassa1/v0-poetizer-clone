@@ -1,4 +1,4 @@
-import type { SocialPost } from "@/lib/feed-data"
+import type { SocialPost } from "@/lib/feed"
 import { Actions, Avatar } from "@/components/inkwell/primitives"
 
 export function SocialPostCard({ post }: { post: SocialPost }) {

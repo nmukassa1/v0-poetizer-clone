@@ -1,5 +1,5 @@
 import Link from "next/link"
-import type { PublicProfile } from "@/lib/profiles"
+import type { PublicProfile } from "@/lib/profile"
 import { Avatar } from "@/components/inkwell/primitives"
 import { DEMO_PROFILE_HANDLES } from "./constants"
 import { ProfileStatPill } from "./profile-stat-pill"

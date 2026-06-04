@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState, useTransition } from "react"
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
 import type { PublishPieceResult } from "@/lib/piece/publish"
 import type { ComposerAuthor, Phase, Visibility } from "./types"
 

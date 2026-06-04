@@ -1,10 +1,10 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import type { PiecePost } from "@/lib/feed-data"
+import type { PiecePost } from "@/lib/feed"
 import { bodyHtmlToParagraphs, readingTimeFromHtml } from "@/lib/piece/body"
 import type { ReadingRoomPiece } from "@/lib/piece/map"
-import { getProfileHrefByHandle } from "@/lib/profiles"
+import { getProfileHrefByHandle } from "@/lib/profile"
 import { AuthorBioCard } from "./author-bio-card"
 import { HighlightPopover } from "./highlight-popover"
 import { MoreFromAuthor } from "./more-from-author"

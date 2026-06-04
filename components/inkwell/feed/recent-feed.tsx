@@ -1,11 +1,11 @@
 "use client"
 
-import type { PiecePost } from "@/lib/feed-data"
+import type { PiecePost } from "@/lib/feed"
 import { QuoteCallout, ReadersLovingGrid } from "@/components/inkwell/features"
 import { PieceCard } from "@/components/inkwell/piece-card"
 import { Divider } from "@/components/inkwell/primitives"
 import { WriterSpotlight } from "@/components/inkwell/feed/writer-spotlight"
-import { getProfileHrefByHandle } from "@/lib/profiles"
+import { getProfileHrefByHandle } from "@/lib/profile"
 
 export function RecentFeed({
   items,

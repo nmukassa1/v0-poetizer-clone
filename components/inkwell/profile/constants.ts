@@ -1,4 +1,4 @@
-import type { PublicProfile } from "@/lib/profiles"
+import type { PublicProfile } from "@/lib/profile"
 
 export const DEFAULT_ME_PROFILE: PublicProfile = {
   name: "You",

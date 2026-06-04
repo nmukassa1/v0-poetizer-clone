@@ -1,4 +1,4 @@
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
 
 export type Visibility = "public" | "followers" | "draft"
 export type Phase = "edit" | "preview" | "published"

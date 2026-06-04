@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode } from "react"
+import type { ComponentProps, ReactNode } from "react"
 import Link from "next/link"
 import { useFormStatus } from "react-dom"
 import type { AuthFormState } from "@/lib/auth/form-state"
@@ -37,7 +37,7 @@ export function AuthFormShell({
 }: {
   title: string
   description: string
-  action: (prev: AuthFormState, formData: FormData) => Promise<AuthFormState>
+  action: NonNullable<ComponentProps<"form">["action"]>
   children: ReactNode
   footer: ReactNode
   hiddenFields?: ReactNode

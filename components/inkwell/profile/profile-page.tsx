@@ -1,9 +1,9 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { lovedPieces, type PiecePost } from "@/lib/feed-data"
-import type { PublicProfile } from "@/lib/profiles"
-import { getPublicProfileByHandle } from "@/lib/profiles"
+import { lovedPieces, type PiecePost } from "@/lib/feed"
+import type { PublicProfile } from "@/lib/profile"
+import { getPublicProfileByHandle } from "@/lib/profile"
 import { Divider } from "@/components/inkwell/primitives"
 import { StreakWidget } from "@/components/inkwell/streak-widget"
 import { DEFAULT_ME_PROFILE } from "./constants"
