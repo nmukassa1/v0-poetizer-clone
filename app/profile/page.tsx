@@ -28,9 +28,7 @@ export default async function MyProfilePage() {
               name: profile.name,
               handle: profile.handle,
               location: profile.location ?? "—",
-              bio:
-                profile.bio ??
-                "Writer on inkwell. Your bio appears in settings soon.",
+              bio: profile.bio ?? "",
               followers: "—",
               following: "—",
             }

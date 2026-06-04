@@ -31,3 +31,14 @@ export async function isHandleTaken(handle: string): Promise<boolean> {
   })
   return Boolean(existing)
 }
+
+export async function isHandleTakenByOther(
+  handle: string,
+  userId: string,
+): Promise<boolean> {
+  const existing = await prisma.profile.findUnique({
+    where: { handle },
+    select: { id: true },
+  })
+  return Boolean(existing && existing.id !== userId)
+}

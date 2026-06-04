@@ -41,6 +41,15 @@ export const auth = {
     getAuth().signOut(...args),
   getSession: (...args: Parameters<ReturnType<typeof createNeonAuth>["getSession"]>) =>
     getAuth().getSession(...args),
+  updateUser: (
+    ...args: Parameters<ReturnType<typeof createNeonAuth>["updateUser"]>
+  ) => getAuth().updateUser(...args),
+  changePassword: (
+    ...args: Parameters<ReturnType<typeof createNeonAuth>["changePassword"]>
+  ) => getAuth().changePassword(...args),
+  deleteUser: (
+    ...args: Parameters<ReturnType<typeof createNeonAuth>["deleteUser"]>
+  ) => getAuth().deleteUser(...args),
 }
 
 export async function getCurrentSession() {
