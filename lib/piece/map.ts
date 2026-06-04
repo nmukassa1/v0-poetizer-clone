@@ -1,5 +1,5 @@
 import type { Piece, Profile } from "@/lib/generated/prisma/client"
-import type { Featured, PiecePost } from "@/lib/feed-data"
+import type { Featured, PiecePost } from "@/lib/feed/types"
 import { pieceTypeToContentTag } from "@/lib/piece/types"
 
 export type PieceWithAuthor = Piece & {

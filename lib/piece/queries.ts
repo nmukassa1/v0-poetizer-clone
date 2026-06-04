@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db"
 import type { PieceType } from "@/lib/generated/prisma/client"
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed/types"
 import { contentTagToPieceType } from "@/lib/piece/types"
 
 const authorSelect = {

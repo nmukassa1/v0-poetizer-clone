@@ -1,6 +1,10 @@
-import type { ContentTag } from "@/lib/feed-data"
-import { Avatar, Tag } from "@/components/inkwell/primitives"
-import { composerLayoutForType, paragraphsFromBody } from "./utils"
+import type { ContentTag } from "@/lib/feed/types"
+import { htmlBlocksFromBody } from "@/lib/piece/body-html"
+import { pieceLayoutForType } from "@/lib/piece/layout"
+import { ArticleBodyHtml } from "@/components/inkwell/piece/article-body"
+import { ArticleMeta } from "@/components/inkwell/piece/article-meta"
+import { ArticleOrnament } from "@/components/inkwell/piece/article-ornament"
+import { ArticleTypeHeader } from "@/components/inkwell/piece/article-type-header"
 
 export function ComposerPreview({
   type,
@@ -19,77 +23,34 @@ export function ComposerPreview({
   date: string
   authorName: string
 }) {
-  const { isPoem, articleColumn, previewTitleSize, bodyClass } =
-    composerLayoutForType(type)
+  const { isPoem, articleColumn, titleSize } = pieceLayoutForType(type, "preview")
 
   const paragraphs =
-    typeof window !== "undefined" ? paragraphsFromBody(bodyHtml, type) : []
+    typeof window !== "undefined" ? htmlBlocksFromBody(bodyHtml, type) : []
 
   return (
     <article className={`pt-12 min-[480px]:pt-16 lg:pt-20 ${articleColumn}`}>
-      <div
-        className={`mb-8 flex items-center gap-3 ${
-          isPoem ? "justify-center" : ""
-        }`}
-      >
-        {!isPoem && <span className="h-px flex-1 bg-[var(--ink-border)]" />}
-        <Tag label={type} />
-        {!isPoem && <span className="h-px flex-1 bg-[var(--ink-border)]" />}
-      </div>
+      <ArticleTypeHeader type={type} isPoem={isPoem} />
 
       <h1
-        className={`mb-6 font-serif font-medium leading-[1.12] tracking-tight text-[var(--ink-fg)] ${previewTitleSize}`}
+        className={`mb-6 font-serif font-medium leading-[1.12] tracking-tight text-[var(--ink-fg)] ${titleSize}`}
       >
         {title || (
           <span className="text-[var(--ink-subtle)] italic">Untitled</span>
         )}
       </h1>
 
-      <div
-        className={`mb-12 flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-[var(--ink-muted)] ${
-          isPoem ? "justify-center" : ""
-        }`}
-      >
-        <Avatar seed={authorName} size={28} />
-        <span className="font-medium text-[var(--ink-fg)]">{authorName}</span>
-        <span className="text-[var(--ink-subtle)]">·</span>
-        <span>{date}</span>
+      <ArticleMeta author={authorName} date={date} isPoem={isPoem} />
+
+      <div className="mb-12">
+        <ArticleOrnament isPoem={isPoem} variant="triple" />
       </div>
 
-      <div
-        className={`mb-12 flex items-center gap-3 ${
-          isPoem ? "justify-center" : ""
-        }`}
-        aria-hidden
-      >
-        {!isPoem && <span className="h-px w-12 bg-[var(--ink-border)]" />}
-        <span className="select-none font-serif text-xs tracking-[0.6em] text-[var(--ink-subtle)]">
-          ◆ ◆ ◆
-        </span>
-        {!isPoem && <span className="h-px w-12 bg-[var(--ink-border)]" />}
-      </div>
-
-      {paragraphs.length === 0 ? (
-        <p className="font-serif text-[15px] italic text-[var(--ink-subtle)]">
-          No body yet — go back and start writing.
-        </p>
-      ) : (
-        <div
-          className={`space-y-7 ${bodyClass} ${isPoem ? "whitespace-pre-line" : ""}`}
-        >
-          {paragraphs.map((p, i) => (
-            <p
-              key={i}
-              className={
-                !isPoem && i === 0
-                  ? "first-letter:float-left first-letter:mr-2.5 first-letter:mt-1 first-letter:font-serif first-letter:text-[3.5rem] first-letter:font-semibold first-letter:leading-[0.85] first-letter:text-[var(--ink-fg)]"
-                  : ""
-              }
-              dangerouslySetInnerHTML={{ __html: p }}
-            />
-          ))}
-        </div>
-      )}
+      <ArticleBodyHtml
+        type={type}
+        paragraphs={paragraphs}
+        emptyMessage="No body yet — go back and start writing."
+      />
 
       {(excerpt || tags.length > 0) && (
         <div className="mx-auto mt-16 max-w-[640px] rounded-xl border border-[var(--ink-border)] bg-[var(--ink-inset)] p-5">
@@ -116,12 +77,8 @@ export function ComposerPreview({
         </div>
       )}
 
-      <div className="mt-12 flex items-center justify-center gap-3" aria-hidden>
-        {!isPoem && <span className="h-px w-12 bg-[var(--ink-border)]" />}
-        <span className="select-none font-serif text-xs tracking-[0.6em] text-[var(--ink-subtle)]">
-          ◆
-        </span>
-        {!isPoem && <span className="h-px w-12 bg-[var(--ink-border)]" />}
+      <div className="mt-12">
+        <ArticleOrnament isPoem={isPoem} variant="single" />
       </div>
     </article>
   )

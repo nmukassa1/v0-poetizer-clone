@@ -1,7 +1,7 @@
 import type { RefObject } from "react"
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed/types"
+import { pieceLayoutForType } from "@/lib/piece/layout"
 import { CONTENT_TYPES } from "./constants"
-import { composerLayoutForType } from "./utils"
 
 export function ComposerEditor({
   type,
@@ -18,7 +18,10 @@ export function ComposerEditor({
   bodyRef: RefObject<HTMLDivElement | null>
   onBodyInput: () => void
 }) {
-  const { isPoem, editorColumn, titleSize, bodyClass } = composerLayoutForType(type)
+  const { isPoem, editorColumn, titleSize, bodyClass } = pieceLayoutForType(
+    type,
+    "editor",
+  )
   const typeMeta = CONTENT_TYPES.find((t) => t.id === type)
 
   return (

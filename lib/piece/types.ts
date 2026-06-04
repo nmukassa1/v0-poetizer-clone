@@ -1,7 +1,7 @@
 import type { PieceType } from "@/lib/generated/prisma/client"
+import type { ContentTag } from "@/lib/feed/types"
 
-/** Matches `ContentTag` in `lib/feed-data.ts`. */
-export type ContentTag = "poem" | "story" | "essay"
+export type { ContentTag }
 
 const TAG_TO_PRISMA: Record<ContentTag, PieceType> = {
   poem: "POEM",

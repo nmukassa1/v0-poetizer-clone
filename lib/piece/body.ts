@@ -1,4 +1,4 @@
-import type { ContentTag } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed/types"
 
 /** Strip HTML and split into display paragraphs (plain text for reading view). */
 export function bodyHtmlToParagraphs(html: string, type: ContentTag): string[] {
