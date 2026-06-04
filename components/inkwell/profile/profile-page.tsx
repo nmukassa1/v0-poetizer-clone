@@ -1,81 +1,19 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { ArrowLeft, PenSquare } from "lucide-react";
-import {
-  lovedPieces,
-  type ContentTag,
-  type PiecePost,
-} from "@/lib/feed-data";
-import type { PublicProfile } from "@/lib/profiles";
-import { Avatar, Divider, Tag } from "@/components/inkwell/primitives";
-import { PieceCard } from "@/components/inkwell/piece-card";
-import { StreakWidget } from "@/components/inkwell/streak-widget";
-import {
-  getHandleForAuthor,
-  getPublicProfileByHandle,
-  getProfileHrefByHandle,
-} from "@/lib/profiles";
-
-type ProfileMode = "public" | "me";
-type TabKey = "pieces" | "saved" | "drafts" | "about";
-
-const defaultMeProfile = {
-  name: "You",
-  handle: "you",
-  location: "—",
-  bio: "Sign in and publish your first piece to fill out this profile.",
-  followers: "—",
-  following: "—",
-};
-
-function toPieceCardItem(item: (typeof lovedPieces)[number]): PiecePost {
-  return {
-    kind: "piece",
-    id: `saved-${item.title}`,
-    type: item.type,
-    date: "Saved",
-    title: item.title,
-    author: item.author,
-    authorHandle: getHandleForAuthor(item.author),
-    excerpt: item.excerpt,
-    likes: item.likes,
-    comments: Math.max(4, Math.round(item.likes / 20)),
-    shares: Math.max(2, Math.round(item.likes / 40)),
-  };
-}
-
-function EmptyState({
-  title,
-  copy,
-  ctaLabel,
-  ctaHref,
-}: {
-  title: string;
-  copy: string;
-  ctaLabel?: string;
-  ctaHref?: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] px-5 py-10 text-center min-[480px]:px-8">
-      <h3 className="font-serif text-xl font-semibold text-[var(--ink-fg)]">
-        {title}
-      </h3>
-      <p className="mx-auto mt-2 max-w-md font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
-        {copy}
-      </p>
-      {ctaLabel && ctaHref && (
-        <Link
-          href={ctaHref}
-          className="mt-5 inline-flex rounded-full bg-[var(--ink-fg)] px-4 py-2 text-xs font-semibold tracking-wide text-[var(--ink-bg)]"
-        >
-          {ctaLabel}
-        </Link>
-      )}
-    </div>
-  );
-}
+import { useMemo, useState } from "react"
+import { lovedPieces, type PiecePost } from "@/lib/feed-data"
+import type { PublicProfile } from "@/lib/profiles"
+import { getPublicProfileByHandle } from "@/lib/profiles"
+import { Divider } from "@/components/inkwell/primitives"
+import { StreakWidget } from "@/components/inkwell/streak-widget"
+import { DEFAULT_ME_PROFILE } from "./constants"
+import { ProfileHeader } from "./profile-header"
+import { ProfileSidebar } from "./profile-sidebar"
+import { ProfileTabContent } from "./profile-tab-content"
+import { ProfileTabsNav } from "./profile-tabs-nav"
+import { ProfileWriteFab } from "./profile-write-fab"
+import type { ProfileMode, ProfileTabKey } from "./types"
+import { lovedPieceToCard } from "./utils"
 
 export function ProfilePage({
   initialMode = "me",
@@ -86,26 +24,23 @@ export function ProfilePage({
   initialPublished = [],
   initialDrafts = [],
 }: {
-  initialMode?: ProfileMode;
-  lockMode?: boolean;
-  initialPublicHandle?: string;
-  meProfile?: PublicProfile;
-  publicProfile?: PublicProfile;
-  initialPublished?: PiecePost[];
-  initialDrafts?: PiecePost[];
+  initialMode?: ProfileMode
+  lockMode?: boolean
+  initialPublicHandle?: string
+  meProfile?: PublicProfile
+  publicProfile?: PublicProfile
+  initialPublished?: PiecePost[]
+  initialDrafts?: PiecePost[]
 }) {
-  const [mode, setMode] = useState<ProfileMode>(initialMode);
-  const [publicHandle, setPublicHandle] = useState(initialPublicHandle);
-  const [tab, setTab] = useState<TabKey>("pieces");
-  const mockPublicProfile = getPublicProfileByHandle(publicHandle);
+  const [mode] = useState<ProfileMode>(initialMode)
+  const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
+  const [tab, setTab] = useState<ProfileTabKey>("pieces")
+  const mockPublicProfile = getPublicProfileByHandle(publicHandle)
 
   const profile =
     mode === "me"
-      ? (meProfileProp ?? defaultMeProfile)
-      : (publicProfileProp ?? mockPublicProfile);
-
-  const pieces = initialPublished;
-  const drafts = initialDrafts;
+      ? (meProfileProp ?? DEFAULT_ME_PROFILE)
+      : (publicProfileProp ?? mockPublicProfile)
 
   const saved = useMemo(
     () =>
@@ -113,11 +48,11 @@ export function ProfilePage({
         .filter((item) =>
           mode === "public" ? item.author !== profile.name : true,
         )
-        .map(toPieceCardItem),
+        .map(lovedPieceToCard),
     [mode, profile.name],
-  );
+  )
 
-  const tabs: { key: TabKey; label: string }[] =
+  const tabs: { key: ProfileTabKey; label: string }[] =
     mode === "me"
       ? [
           { key: "pieces", label: "Pieces" },
@@ -129,83 +64,22 @@ export function ProfilePage({
           { key: "pieces", label: "Pieces" },
           { key: "saved", label: "Saved" },
           { key: "about", label: "About" },
-        ];
+        ]
 
-  if (!tabs.some((item) => item.key === tab)) {
-    setTab("pieces");
-  }
-
-  const pieceCount = pieces.length;
+  const activeTab = tabs.some((item) => item.key === tab) ? tab : "pieces"
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[760px] pb-24 lg:max-w-6xl lg:pb-28 xl:max-w-7xl">
       <div className="px-4 min-[480px]:px-6 lg:grid lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-10 lg:px-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:gap-12 xl:px-10">
         <main className="min-w-0">
-          <section className="pt-8 min-[480px]:pt-10 lg:pt-12">
-            <div className="rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-5 min-[480px]:p-6 lg:p-7">
-              {mode === "public" && !lockMode && (
-                <div className="mb-4">
-                  <label className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--ink-subtle)]">
-                    Viewing public profile
-                  </label>
-                  <select
-                    value={publicHandle}
-                    onChange={(e) => setPublicHandle(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--ink-border)] bg-[var(--ink-bg)] px-3 py-2 text-sm text-[var(--ink-fg)] outline-none min-[480px]:w-auto"
-                  >
-                    <option value="eleanorv">Eleanor Vance</option>
-                    <option value="lenaschreibt">Lena Muller</option>
-                    <option value="jinpark">Jin Park</option>
-                    <option value="tblake">Theodore Blake</option>
-                    <option value="kwamea">Kwame Asante</option>
-                    <option value="sofiac">Sofia Chen</option>
-                    <option value="jwhitmore">James Whitmore</option>
-                    <option value="maraosei">Mara Osei</option>
-                  </select>
-                </div>
-              )}
-              <div className="flex flex-wrap items-start gap-4 min-[480px]:gap-5">
-                <Avatar seed={profile.name} size={72} />
-                <div className="min-w-0 flex-1">
-                  <h1 className="font-serif text-2xl font-semibold leading-tight text-[var(--ink-fg)] min-[480px]:text-[30px]">
-                    {profile.name}
-                  </h1>
-                  <p className="mt-1 text-[12px] text-[var(--ink-subtle)]">
-                    @{profile.handle} · {profile.location}
-                  </p>
-                  <p className="mt-3 max-w-xl font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
-                    {profile.bio}
-                  </p>
-                </div>
-                {mode === "public" ? (
-                  <button
-                    type="button"
-                    className="shrink-0 rounded-full border border-[var(--ink-border)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
-                  >
-                    Follow
-                  </button>
-                ) : (
-                  <Link
-                    href={`/write`}
-                    className="shrink-0 rounded-full bg-[var(--ink-fg)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-bg)]"
-                  >
-                    New piece
-                  </Link>
-                )}
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-2 min-[480px]:gap-3">
-                <StatPill label="Pieces" value={pieceCount.toString()} />
-                <StatPill label="Followers" value={profile.followers} />
-                <StatPill label="Following" value={profile.following} />
-                <StatPill
-                  label="Top type"
-                  value={mode === "public" ? "poem" : "essay"}
-                  tag
-                />
-              </div>
-            </div>
-          </section>
+          <ProfileHeader
+            mode={mode}
+            lockMode={lockMode}
+            profile={profile}
+            pieceCount={initialPublished.length}
+            publicHandle={publicHandle}
+            onPublicHandleChange={setPublicHandle}
+          />
 
           {mode === "me" && (
             <section>
@@ -216,188 +90,26 @@ export function ProfilePage({
 
           <section>
             <Divider label="Library" />
-            <nav
-              className="mb-3 flex flex-wrap gap-1.5"
-              aria-label="Profile tabs"
-            >
-              {tabs.map((item) => (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => setTab(item.key)}
-                  className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold tracking-wide transition-colors ${
-                    tab === item.key
-                      ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-                      : "border-[var(--ink-border)] text-[var(--ink-muted)] hover:border-[var(--ink-fg)]/50"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </nav>
-
-            {tab === "pieces" &&
-              (pieces.length > 0 ? (
-                pieces.map((item) => (
-                  <PieceCard
-                    key={item.id}
-                    post={item}
-                    readHref={`/read/${item.id}`}
-                    authorHref={getProfileHrefByHandle(item.authorHandle)}
-                  />
-                ))
-              ) : (
-                <EmptyState
-                  title="No published pieces yet"
-                  copy="When a new piece is published, it will appear here."
-                  ctaLabel={
-                    mode === "me" ? "Write your first piece" : undefined
-                  }
-                  ctaHref={mode === "me" ? `/write` : undefined}
-                />
-              ))}
-
-            {tab === "saved" &&
-              (saved.length > 0 ? (
-                saved.map((item) => (
-                  <PieceCard
-                    key={item.id}
-                    post={item}
-                    readHref={`/read/${item.id}`}
-                    authorHref={getProfileHrefByHandle(item.authorHandle)}
-                  />
-                ))
-              ) : (
-                <EmptyState
-                  title="Nothing saved yet"
-                  copy="Saved pieces will gather here so you can return to them anytime."
-                />
-              ))}
-
-            {tab === "drafts" &&
-              (mode === "me" ? (
-                drafts.length > 0 ? (
-                  drafts.map((item) => (
-                    <PieceCard
-                      key={item.id}
-                      post={item}
-                      readHref="/write"
-                      authorHref={getProfileHrefByHandle(item.authorHandle)}
-                    />
-                  ))
-                ) : (
-                  <EmptyState
-                    title="No drafts yet"
-                    copy="Choose Draft visibility when publishing to save without going live."
-                    ctaLabel="Start writing"
-                    ctaHref="/write"
-                  />
-                )
-              ) : (
-                <EmptyState
-                  title="Drafts are private"
-                  copy="Only the author can see drafts."
-                />
-              ))}
-
-            {tab === "about" && (
-              <article className="rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-5 min-[480px]:p-6">
-                <h2 className="font-serif text-xl font-semibold text-[var(--ink-fg)]">
-                  About {profile.name.split(" ")[0]}
-                </h2>
-                <p className="mt-3 font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
-                  {mode === "public"
-                    ? "Eleanor writes poems about transition, domestic spaces, and the soft weather at the edge of evening. Her work appears in The Lantern Review and Night Window Journal."
-                    : "You write across essays and poems, mostly circling memory, language, and small moments that refuse to fade. This page grows as your body of work grows."}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {(["poem", "story", "essay"] as ContentTag[]).map((kind) => (
-                    <Tag key={kind} label={kind} />
-                  ))}
-                </div>
-              </article>
-            )}
+            <ProfileTabsNav
+              tabs={tabs}
+              activeTab={activeTab}
+              onTabChange={setTab}
+            />
+            <ProfileTabContent
+              tab={activeTab}
+              mode={mode}
+              profile={profile}
+              pieces={initialPublished}
+              saved={saved}
+              drafts={initialDrafts}
+            />
           </section>
         </main>
 
-        <aside className="hidden lg:block">
-          <div className="sticky top-[82px] space-y-6">
-            <section className="rounded-xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-4">
-              <h3 className="font-serif text-base font-semibold text-[var(--ink-fg)]">
-                {mode === "me" ? "Writing desk" : "About this writer"}
-              </h3>
-              <p className="mt-2 font-serif text-[13px] leading-relaxed text-[var(--ink-muted)]">
-                {mode === "me"
-                  ? "Continue your current draft or start a fresh piece."
-                  : "Follow to see new pieces as soon as they are published."}
-              </p>
-              {mode === "me" ? (
-                <Link
-                  href={`/write`}
-                  className="mt-4 inline-flex rounded-full bg-[var(--ink-fg)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-bg)]"
-                >
-                  New piece
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  className="mt-4 inline-flex rounded-full border border-[var(--ink-border)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-fg)]"
-                >
-                  Follow writer
-                </button>
-              )}
-            </section>
-
-            <section className="rounded-xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-4">
-              <h3 className="font-serif text-base font-semibold text-[var(--ink-fg)]">
-                Profile notes
-              </h3>
-              <ul className="mt-2 space-y-2 text-[12px] leading-relaxed text-[var(--ink-muted)]">
-                <li>• Pieces link into the reader view.</li>
-                <li>• Drafts open in the composer.</li>
-                <li>• Profile mode can be replaced by real auth later.</li>
-              </ul>
-            </section>
-          </div>
-        </aside>
+        <ProfileSidebar mode={mode} />
       </div>
 
-      {mode === "me" && (
-        <div className="pointer-events-none fixed bottom-5 right-5 z-20 lg:hidden">
-          <Link
-            href={`/write`}
-            className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-[var(--ink-fg)] px-4 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-bg)] shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
-          >
-            <PenSquare className="h-4 w-4" />
-            New piece
-          </Link>
-        </div>
-      )}
+      {mode === "me" && <ProfileWriteFab />}
     </div>
-  );
-}
-
-function StatPill({
-  label,
-  value,
-  tag = false,
-}: {
-  label: string;
-  value: string;
-  tag?: boolean;
-}) {
-  return (
-    <div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--ink-border)] bg-[var(--ink-bg)] px-3 py-1.5">
-      <span className="text-[10px] uppercase tracking-[0.08em] text-[var(--ink-subtle)]">
-        {label}
-      </span>
-      {tag ? (
-        <Tag label={value} />
-      ) : (
-        <span className="text-[12px] font-semibold text-[var(--ink-fg)]">
-          {value}
-        </span>
-      )}
-    </div>
-  );
+  )
 }
