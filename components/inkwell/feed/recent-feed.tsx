@@ -5,7 +5,7 @@ import { QuoteCallout, ReadersLovingGrid } from "@/components/inkwell/features"
 import { PieceCard } from "@/components/inkwell/piece-card"
 import { Divider } from "@/components/inkwell/primitives"
 import { WriterSpotlight } from "@/components/inkwell/feed/writer-spotlight"
-import { getPublicProfileHref } from "@/lib/profiles"
+import { getProfileHrefByHandle } from "@/lib/profiles"
 
 export function RecentFeed({
   items,
@@ -14,7 +14,6 @@ export function RecentFeed({
   items: PiecePost[]
   showFeatures: boolean
 }) {
-  const readHref = `/read`
   if (items.length === 0) {
     return (
       <p className="py-10 text-center font-sans text-[13px] text-[var(--ink-subtle)]">
@@ -26,12 +25,12 @@ export function RecentFeed({
   if (!showFeatures) {
     return (
       <>
-        {items.map((item, i) => (
+        {items.map((item) => (
           <PieceCard
-            key={i}
+            key={item.id}
             post={item}
-            readHref={readHref}
-            authorHref={getPublicProfileHref(item.author)}
+            readHref={`/read/${item.id}`}
+            authorHref={getProfileHrefByHandle(item.authorHandle)}
           />
         ))}
       </>
@@ -49,12 +48,12 @@ export function RecentFeed({
     <>
       {chunks.map((chunk, ci) => (
         <div key={ci}>
-          {chunk.items.map((item, i) => (
+          {chunk.items.map((item) => (
             <PieceCard
-              key={i}
+              key={item.id}
               post={item}
-              readHref={readHref}
-              authorHref={getPublicProfileHref(item.author)}
+              readHref={`/read/${item.id}`}
+              authorHref={getProfileHrefByHandle(item.authorHandle)}
             />
           ))}
           {chunk.feature === "spotlight" && chunk.items.length > 0 && (

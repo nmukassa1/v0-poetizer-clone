@@ -1,6 +1,8 @@
 export type ContentTag = "poem" | "story" | "essay"
 
 export interface Featured {
+  id?: string
+  authorHandle?: string
   type: ContentTag
   date: string
   title: string
@@ -37,10 +39,12 @@ export interface SocialPost {
 
 export interface PiecePost {
   kind: "piece"
+  id: string
   type: ContentTag
   date: string
   title: string
   author: string
+  authorHandle: string
   excerpt: string
   likes: number
   comments: number
@@ -86,10 +90,12 @@ export const feedItems: FeedItem[] = [
   },
   {
     kind: "piece",
+    id: "mock-last-train",
     type: "story",
     date: "May 21",
     title: "The Last Train Home",
     author: "James Whitmore",
+    authorHandle: "jwhitmore",
     excerpt:
       "The station platform stretched endlessly into the fog, its edges softened by the haze that crept in from the harbour. Margaret pulled her coat tighter, watching the empty tracks gleam under the amber lights…",
     likes: 56,
@@ -108,10 +114,12 @@ export const feedItems: FeedItem[] = [
   },
   {
     kind: "piece",
+    id: "mock-saltwater",
     type: "poem",
     date: "May 21",
     title: "Saltwater Memory",
     author: "Jin Park",
+    authorHandle: "jinpark",
     excerpt:
       "I left a version of myself\nby the sea that summer —\nshe is still there, I think,\nhands full of cold light\nand the names of fish I never learned…",
     likes: 94,
@@ -130,10 +138,12 @@ export const feedItems: FeedItem[] = [
   },
   {
     kind: "piece",
+    id: "mock-clockmaker",
     type: "story",
     date: "May 20",
     title: "The Clockmaker's Daughter",
     author: "Theodore Blake",
+    authorHandle: "tblake",
     excerpt:
       "Every evening at precisely six o'clock, when the sun painted long shadows across the cobblestones, Eliza would climb the narrow stairs to her father's workshop. Tonight, for the first time in forty years, every clock had stopped…",
     likes: 142,
@@ -152,10 +162,12 @@ export const feedItems: FeedItem[] = [
   },
   {
     kind: "piece",
+    id: "mock-second-language",
     type: "essay",
     date: "May 20",
     title: "On Writing in a Second Language",
     author: "Lena Müller",
+    authorHandle: "lenaschreibt",
     excerpt:
       "There is a particular grief in reaching for a word and finding only its outline — the shape of the feeling, not the feeling itself. Writing in English, for me, is always an act of translation. Not from German, exactly, but from something pre-verbal…",
     likes: 203,
@@ -174,10 +186,12 @@ export const feedItems: FeedItem[] = [
   },
   {
     kind: "piece",
+    id: "mock-threshold",
     type: "poem",
     date: "May 20",
     title: "Threshold",
     author: "Kwame Asante",
+    authorHandle: "kwamea",
     excerpt:
       "The door was always open\nbut we stood on either side of it\npretending the wind\nhad nothing to do with us —\npretending the distance\nwas a kind of grammar\nwe had both agreed to speak…",
     likes: 167,

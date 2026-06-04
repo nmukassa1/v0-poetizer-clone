@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
+import type { PublishPieceResult } from "@/lib/piece/publish";
 import {
   ArrowLeft,
   Bold,
@@ -29,11 +30,6 @@ const VISIBILITIES: { id: Visibility; label: string; hint: string }[] = [
   { id: "draft", label: "Draft", hint: "Only visible to you" },
 ];
 
-const AUTHOR = {
-  name: "You",
-  handle: "you",
-};
-
 function paragraphsFromBody(html: string, type: ContentTag): string[] {
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
@@ -56,7 +52,13 @@ function paragraphsFromBody(html: string, type: ContentTag): string[] {
     .filter((s) => s.replace(/<br\s*\/?>/g, "").trim().length > 0);
 }
 
-export function Composer() {
+export function Composer({
+  author,
+}: {
+  author: { name: string; handle: string } | null;
+}) {
+  const authorName = author?.name ?? "You";
+  const authorHandle = author?.handle ?? "you";
   const [type, setType] = useState<ContentTag>("essay");
   const [title, setTitle] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
@@ -70,6 +72,9 @@ export function Composer() {
   const [savedAgoText, setSavedAgoText] = useState<string>("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [phase, setPhase] = useState<Phase>("edit");
+  const [publishedPieceId, setPublishedPieceId] = useState<string | null>(null);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [isPublishing, startPublishTransition] = useTransition();
   const [popover, setPopover] = useState<{ x: number; y: number } | null>(null);
 
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -204,8 +209,46 @@ export function Composer() {
   }
 
   function confirmPublish() {
-    setPhase("published");
-    if (typeof window !== "undefined") window.scrollTo({ top: 0 });
+    setPublishError(null);
+    const body = bodyRef.current?.innerHTML ?? bodyHtml;
+    if (!body.replace(/<[^>]+>/g, "").trim()) {
+      setPublishError("Add some writing before publishing.");
+      return;
+    }
+
+    startPublishTransition(async () => {
+      try {
+        const response = await fetch("/api/pieces", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: title.trim() || "Untitled",
+            body,
+            type,
+            excerpt: excerpt.trim() || undefined,
+            visibility,
+            tags,
+          }),
+        })
+
+        const result = (await response.json()) as PublishPieceResult
+
+        if (!response.ok || !result.success) {
+          setPublishError(
+            result.success === false
+              ? result.error
+              : "Could not publish. Please try again.",
+          )
+          return
+        }
+
+        setPublishedPieceId(result.pieceId)
+        setPhase("published")
+        if (typeof window !== "undefined") window.scrollTo({ top: 0 })
+      } catch {
+        setPublishError("Could not reach the server. Check your connection.")
+      }
+    });
   }
 
   const isPoem = type === "poem";
@@ -236,8 +279,10 @@ export function Composer() {
             Your piece is live.
           </h2>
           <p className="mt-3 font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
-            &ldquo;{title || "Untitled"}&rdquo; is now in the world. May it find
-            the readers it&rsquo;s meant for.
+            &ldquo;{title || "Untitled"}&rdquo;{" "}
+            {visibility === "draft"
+              ? "is saved as a draft on your profile."
+              : "is now in the world. May it find the readers it\u2019s meant for."}
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
@@ -246,12 +291,21 @@ export function Composer() {
             >
               Back to feed
             </Link>
-            <Link
-              href={`/read`}
-              className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
-            >
-              View piece
-            </Link>
+            {publishedPieceId && visibility !== "draft" ? (
+              <Link
+                href={`/read/${publishedPieceId}`}
+                className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
+              >
+                View piece
+              </Link>
+            ) : (
+              <Link
+                href="/profile"
+                className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
+              >
+                View profile
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -461,8 +515,63 @@ export function Composer() {
           excerpt={excerpt}
           tags={tags}
           date={today}
+          authorName={authorName}
         />
       )}
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 flex justify-center px-4 pb-4 min-[480px]:pb-6">
+        <div className="pointer-events-auto flex w-full max-w-lg flex-col gap-2">
+          {publishError && phase === "preview" && (
+            <p
+              role="alert"
+              className="rounded-lg border border-[#e8d4d4] bg-[color-mix(in_srgb,#fff5f5_92%,var(--ink-bg))] px-3 py-2 text-center font-sans text-[12px] text-[#a33f3f]"
+            >
+              {publishError}
+            </p>
+          )}
+          <div className="flex items-center justify-between gap-2 rounded-full border border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_94%,transparent)] p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 rounded-full px-3 py-2 font-sans text-[11px] font-medium text-[var(--ink-muted)] transition-colors hover:text-[var(--ink-fg)]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Exit
+            </Link>
+            {phase === "edit" ? (
+              <button
+                type="button"
+                onClick={startPreview}
+                className="rounded-full bg-[var(--ink-fg)] px-4 py-2 font-sans text-[11px] font-semibold tracking-wide text-[var(--ink-bg)] transition-opacity hover:opacity-90"
+              >
+                Preview
+              </button>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={backToEdit}
+                  disabled={isPublishing}
+                  className="rounded-full border border-[var(--ink-border)] px-3.5 py-2 font-sans text-[11px] font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] disabled:opacity-50"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmPublish}
+                  disabled={isPublishing}
+                  className="rounded-full bg-[var(--ink-fg)] px-4 py-2 font-sans text-[11px] font-semibold tracking-wide text-[var(--ink-bg)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isPublishing
+                    ? "Saving…"
+                    : visibility === "draft"
+                      ? "Save draft"
+                      : "Publish"}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {phase === "edit" && (
         <div className="pointer-events-none fixed bottom-4 right-4 z-30 rounded-full border border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_94%,transparent)] px-3 py-1.5 font-sans text-[10px] tabular-nums text-[var(--ink-muted)] shadow-sm backdrop-blur-md min-[480px]:bottom-6 min-[480px]:right-6 min-[480px]:px-3.5 min-[480px]:text-[11px]">
@@ -708,6 +817,7 @@ function PreviewPane({
   excerpt,
   tags,
   date,
+  authorName,
 }: {
   type: ContentTag;
   title: string;
@@ -715,6 +825,7 @@ function PreviewPane({
   excerpt: string;
   tags: string[];
   date: string;
+  authorName: string;
 }) {
   const isPoem = type === "poem";
   const articleColumn = isPoem
@@ -755,8 +866,8 @@ function PreviewPane({
           isPoem ? "justify-center" : ""
         }`}
       >
-        <Avatar seed={AUTHOR.name} size={28} />
-        <span className="font-medium text-[var(--ink-fg)]">{AUTHOR.name}</span>
+        <Avatar seed={authorName} size={28} />
+        <span className="font-medium text-[var(--ink-fg)]">{authorName}</span>
         <span className="text-[var(--ink-subtle)]">·</span>
         <span>{date}</span>
       </div>

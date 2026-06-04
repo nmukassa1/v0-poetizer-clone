@@ -4,62 +4,41 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ArrowLeft, PenSquare } from "lucide-react";
 import {
-  feedItems,
   lovedPieces,
   type ContentTag,
   type PiecePost,
 } from "@/lib/feed-data";
+import type { PublicProfile } from "@/lib/profiles";
 import { Avatar, Divider, Tag } from "@/components/inkwell/primitives";
 import { PieceCard } from "@/components/inkwell/piece-card";
 import { StreakWidget } from "@/components/inkwell/streak-widget";
-import { getPublicProfileByHandle, getPublicProfileHref } from "@/lib/profiles";
+import {
+  getHandleForAuthor,
+  getPublicProfileByHandle,
+  getProfileHrefByHandle,
+} from "@/lib/profiles";
 
 type ProfileMode = "public" | "me";
 type TabKey = "pieces" | "saved" | "drafts" | "about";
 
-const meProfile = {
+const defaultMeProfile = {
   name: "You",
   handle: "you",
-  location: "London, UK",
-  bio: "Writer in progress. Chasing clarity through essays and quiet poems.",
-  followers: "126",
-  following: "84",
+  location: "—",
+  bio: "Sign in and publish your first piece to fill out this profile.",
+  followers: "—",
+  following: "—",
 };
-
-const drafts: PiecePost[] = [
-  {
-    kind: "piece",
-    type: "essay",
-    date: "Updated 2h ago",
-    title: "What We Keep Between Lines",
-    author: "You",
-    excerpt:
-      "There are pages we never publish because they were written for one room, one hour, one person we no longer are…",
-    likes: 0,
-    comments: 0,
-    shares: 0,
-  },
-  {
-    kind: "piece",
-    type: "poem",
-    date: "Updated yesterday",
-    title: "Small Weather",
-    author: "You",
-    excerpt:
-      "morning on the windowsill\ntea cooling to a memory\nsomeone laughs downstairs\nand the kettle answers…",
-    likes: 0,
-    comments: 0,
-    shares: 0,
-  },
-];
 
 function toPieceCardItem(item: (typeof lovedPieces)[number]): PiecePost {
   return {
     kind: "piece",
+    id: `saved-${item.title}`,
     type: item.type,
     date: "Saved",
     title: item.title,
     author: item.author,
+    authorHandle: getHandleForAuthor(item.author),
     excerpt: item.excerpt,
     likes: item.likes,
     comments: Math.max(4, Math.round(item.likes / 20)),
@@ -102,25 +81,31 @@ export function ProfilePage({
   initialMode = "me",
   lockMode = false,
   initialPublicHandle = "eleanorv",
+  meProfile: meProfileProp,
+  publicProfile: publicProfileProp,
+  initialPublished = [],
+  initialDrafts = [],
 }: {
   initialMode?: ProfileMode;
   lockMode?: boolean;
   initialPublicHandle?: string;
+  meProfile?: PublicProfile;
+  publicProfile?: PublicProfile;
+  initialPublished?: PiecePost[];
+  initialDrafts?: PiecePost[];
 }) {
   const [mode, setMode] = useState<ProfileMode>(initialMode);
   const [publicHandle, setPublicHandle] = useState(initialPublicHandle);
   const [tab, setTab] = useState<TabKey>("pieces");
-  const readHref = `/read`;
-  const publicProfile = getPublicProfileByHandle(publicHandle);
+  const mockPublicProfile = getPublicProfileByHandle(publicHandle);
 
-  const profile = mode === "me" ? meProfile : publicProfile;
+  const profile =
+    mode === "me"
+      ? (meProfileProp ?? defaultMeProfile)
+      : (publicProfileProp ?? mockPublicProfile);
 
-  const pieces = useMemo(() => {
-    const authorName = mode === "me" ? "Lena Müller" : publicProfile.name;
-    return feedItems
-      .filter((item): item is PiecePost => item.kind === "piece")
-      .filter((item) => item.author === authorName);
-  }, [mode, publicProfile.name]);
+  const pieces = initialPublished;
+  const drafts = initialDrafts;
 
   const saved = useMemo(
     () =>
@@ -150,7 +135,7 @@ export function ProfilePage({
     setTab("pieces");
   }
 
-  const pieceCount = mode === "me" ? pieces.length : Math.max(3, pieces.length);
+  const pieceCount = pieces.length;
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[760px] pb-24 lg:max-w-6xl lg:pb-28 xl:max-w-7xl">
@@ -253,12 +238,12 @@ export function ProfilePage({
 
             {tab === "pieces" &&
               (pieces.length > 0 ? (
-                pieces.map((item, i) => (
+                pieces.map((item) => (
                   <PieceCard
-                    key={`${item.title}-${i}`}
+                    key={item.id}
                     post={item}
-                    readHref={readHref}
-                    authorHref={getPublicProfileHref(item.author)}
+                    readHref={`/read/${item.id}`}
+                    authorHref={getProfileHrefByHandle(item.authorHandle)}
                   />
                 ))
               ) : (
@@ -274,12 +259,12 @@ export function ProfilePage({
 
             {tab === "saved" &&
               (saved.length > 0 ? (
-                saved.map((item, i) => (
+                saved.map((item) => (
                   <PieceCard
-                    key={`${item.title}-saved-${i}`}
+                    key={item.id}
                     post={item}
-                    readHref={readHref}
-                    authorHref={getPublicProfileHref(item.author)}
+                    readHref={`/read/${item.id}`}
+                    authorHref={getProfileHrefByHandle(item.authorHandle)}
                   />
                 ))
               ) : (
@@ -291,14 +276,23 @@ export function ProfilePage({
 
             {tab === "drafts" &&
               (mode === "me" ? (
-                drafts.map((item, i) => (
-                  <PieceCard
-                    key={`${item.title}-draft-${i}`}
-                    post={item}
-                    readHref={`/write`}
-                    authorHref={getPublicProfileHref(item.author)}
+                drafts.length > 0 ? (
+                  drafts.map((item) => (
+                    <PieceCard
+                      key={item.id}
+                      post={item}
+                      readHref="/write"
+                      authorHref={getProfileHrefByHandle(item.authorHandle)}
+                    />
+                  ))
+                ) : (
+                  <EmptyState
+                    title="No drafts yet"
+                    copy="Choose Draft visibility when publishing to save without going live."
+                    ctaLabel="Start writing"
+                    ctaHref="/write"
                   />
-                ))
+                )
               ) : (
                 <EmptyState
                   title="Drafts are private"

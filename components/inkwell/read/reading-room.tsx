@@ -9,79 +9,24 @@ import {
   MessageCircle,
   Share2,
 } from "lucide-react";
-import type { ContentTag, PiecePost } from "@/lib/feed-data";
+import type { PiecePost } from "@/lib/feed-data";
+import { bodyHtmlToParagraphs, readingTimeFromHtml } from "@/lib/piece/body";
+import type { ReadingRoomPiece } from "@/lib/piece/map";
+import { getProfileHrefByHandle } from "@/lib/profiles";
 import { Avatar, Tag } from "@/components/inkwell/primitives";
 import { PieceCard } from "@/components/inkwell/piece-card";
 
-const piece: {
-  type: ContentTag;
-  date: string;
-  title: string;
-  author: string;
-  authorBio: string;
-  authorHandle: string;
-  authorFollowers: string;
-  authorPieces: number;
-  body: string[];
-  likes: number;
-  comments: number;
-} = {
-  type: "essay",
-  date: "May 20, 2026",
-  title: "On Writing in a Second Language",
-  author: "Lena Müller",
-  authorBio:
-    "Berlin-born essayist. Writes about translation, memory, and the spaces between languages.",
-  authorHandle: "lenaschreibt",
-  authorFollowers: "1.2k",
-  authorPieces: 14,
-  body: [
-    "There is a particular grief in reaching for a word and finding only its outline — the shape of the feeling, not the feeling itself. Writing in English, for me, is always an act of translation. Not from German, exactly, but from something pre-verbal, a language of impression and weather that exists only inside me.",
-    "I came to English the way you come to a city you've only ever seen in postcards. The buildings are smaller than you imagined, but the light is exactly right. There were words I had collected for years before I knew how to use them — words like dusk, and longing, and the particular softness of perhaps.",
-    "My grandmother used to say that every language has its own weight. German, she said, presses down. It clarifies. English drifts. It suggests. I think she meant this as a warning about precision, but I have come to love the way English allows me to mean two things at once. To be uncertain on the page in a way I am not allowed to be in life.",
-    "The first essay I ever wrote in English took six weeks. Six weeks for what would have been an afternoon's work in my mother tongue. I sat at my desk in Berlin and watched the light move across the wall and tried to remember how it felt to think in a single language. I could not. The two languages had already begun to braid themselves together inside me, and there was no separating them again.",
-    "What I had not understood, then, was that this is not a deficit. The seam between languages is itself a place — a small kitchen, brightly lit, where the words from different lives sit at the same table. They do not always agree. Sometimes they pretend not to know each other. But they share the bread.",
-    "I think now that writing in a second language is, in the end, an exercise in tenderness. Toward the words you cannot quite reach. Toward the ones that arrive instead. Toward the version of yourself who is forever standing slightly outside her own sentences, watching them make their slow, imperfect way toward meaning.",
-    "When I read what I have written, sometimes I do not recognize the woman who wrote it. She is more careful than I am. More patient. She lingers at the edges of feelings I would, in German, have already named. There is, I think, a kind of mercy in that lingering — a refusal to close the door too quickly on what hasn't yet revealed itself.",
-    "The grief is real. But it is the grief of a translator, which is also the joy of one. I do not write to capture what I mean. I write to discover what English can hold of me — and what, in turn, it teaches me to hold.",
-  ],
-  likes: 203,
-  comments: 47,
-};
-
-const moreByAuthor: PiecePost[] = [
-  {
-    kind: "piece",
-    type: "essay",
-    date: "Apr 28",
-    title: "Notes on the Untranslatable",
-    author: "Lena Müller",
-    excerpt:
-      "Some words refuse to leave their countries. Saudade waits at the Lisbon docks. Hiraeth keeps watch on a Welsh hill. They send postcards but they will not move…",
-    likes: 152,
-    comments: 28,
-    shares: 19,
-  },
-  {
-    kind: "piece",
-    type: "essay",
-    date: "Apr 12",
-    title: "The Grammar of Forgetting",
-    author: "Lena Müller",
-    excerpt:
-      "There is a tense, in some languages, that English does not have — a way of speaking about events that happened to you but that you do not remember. I have been searching for it…",
-    likes: 187,
-    comments: 35,
-    shares: 24,
-  },
-];
-
-function readingTime(body: string[]) {
-  const words = body.join(" ").split(/\s+/).length;
-  return Math.max(1, Math.round(words / 220));
-}
-
-export function ReadingRoom() {
+export function ReadingRoom({
+  piece,
+  moreByAuthor,
+}: {
+  piece: ReadingRoomPiece;
+  moreByAuthor: PiecePost[];
+}) {
+  const paragraphs = useMemo(
+    () => bodyHtmlToParagraphs(piece.bodyHtml, piece.type),
+    [piece.bodyHtml, piece.type],
+  );
   const [progress, setProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -214,7 +159,8 @@ export function ReadingRoom() {
     ? "font-serif text-base leading-[2] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[2.1]"
     : "font-serif text-[16px] leading-[1.8] text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.85]";
 
-  const minutes = readingTime(piece.body);
+  const minutes = readingTimeFromHtml(piece.bodyHtml);
+  const authorProfileHref = getProfileHrefByHandle(piece.authorHandle);
 
   return (
     <div className="min-h-screen pb-32">
@@ -279,7 +225,7 @@ export function ReadingRoom() {
         </div>
 
         <div className={`space-y-7 ${bodyClass}`}>
-          {piece.body.map((paragraph, i) => {
+          {paragraphs.map((paragraph, i) => {
             const isFirst = i === 0;
             const showDropCap = !isPoem && isFirst;
             return (
@@ -322,8 +268,8 @@ export function ReadingRoom() {
                 {piece.author}
               </p>
               <p className="mt-0.5 text-[11px] text-[var(--ink-subtle)]">
-                @{piece.authorHandle} · {piece.authorPieces} pieces ·{" "}
-                {piece.authorFollowers} followers
+                @{piece.authorHandle} · {piece.authorPieces}{" "}
+                {piece.authorPieces === 1 ? "piece" : "pieces"}
               </p>
               <p className="mt-3 font-serif text-[14px] leading-relaxed text-[var(--ink-muted)] min-[480px]:text-[15px]">
                 {piece.authorBio}
@@ -337,12 +283,12 @@ export function ReadingRoom() {
             >
               Follow
             </button>
-            <button
-              type="button"
-              className="cursor-pointer rounded-full border border-[var(--ink-border)] bg-transparent px-4 py-2 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
+            <Link
+              href={authorProfileHref}
+              className="inline-flex rounded-full border border-[var(--ink-border)] bg-transparent px-4 py-2 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
             >
               View profile
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -355,8 +301,13 @@ export function ReadingRoom() {
           </span>
           <div className="h-px flex-1 bg-[var(--ink-border)]" />
         </div>
-        {moreByAuthor.map((p, i) => (
-          <PieceCard key={i} post={p} readHref={`/read`} />
+        {moreByAuthor.map((p) => (
+          <PieceCard
+            key={p.id}
+            post={p}
+            readHref={`/read/${p.id}`}
+            authorHref={getProfileHrefByHandle(p.authorHandle)}
+          />
         ))}
       </section>
 

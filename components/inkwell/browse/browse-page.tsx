@@ -2,11 +2,14 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { featured, feedItems, type ContentTag, type PiecePost } from "@/lib/feed-data"
+import type { ContentTag, Featured, PiecePost } from "@/lib/feed-data"
 import { FeaturedCard } from "@/components/inkwell/cards"
 import { MenuIcon } from "@/components/inkwell/primitives"
 import { BrowsePieceCard } from "@/components/inkwell/browse/browse-piece-card"
-import { getPublicProfileHref } from "@/lib/profiles"
+import {
+  getProfileHrefByHandle,
+  getPublicProfileHref,
+} from "@/lib/profiles"
 
 export type BrowseFilter = "all" | "poems" | "stories" | "essays"
 
@@ -16,10 +19,6 @@ const browseFilters: { key: BrowseFilter; label: string }[] = [
   { key: "stories", label: "Short stories" },
   { key: "essays", label: "Essays" },
 ]
-
-const allPieces: PiecePost[] = feedItems.filter(
-  (item): item is PiecePost => item.kind === "piece",
-)
 
 function filterPieces(items: PiecePost[], filter: BrowseFilter): PiecePost[] {
   if (filter === "all") return items
@@ -34,7 +33,15 @@ function typeLabel(type: ContentTag): string {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
-export function BrowsePage() {
+export function BrowsePage({
+  pieces,
+  featured,
+  featuredReadHref,
+}: {
+  pieces: PiecePost[]
+  featured: Featured
+  featuredReadHref?: string
+}) {
   const [filter, setFilter] = useState<BrowseFilter>("all")
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -43,13 +50,15 @@ export function BrowsePage() {
     if (filter === "poems") return featured.type === "poem"
     if (filter === "stories") return featured.type === "story"
     return featured.type === "essay"
-  }, [filter])
+  }, [filter, featured.type])
 
   const gridPieces = useMemo(() => {
-    const filtered = filterPieces(allPieces, filter)
-    const featuredTitle = featured.title
-    return filtered.filter((piece) => piece.title !== featuredTitle)
-  }, [filter])
+    const filtered = filterPieces(pieces, filter)
+    const featuredId = featured.id
+    return filtered.filter(
+      (piece) => piece.id !== featuredId && piece.title !== featured.title,
+    )
+  }, [pieces, filter, featured.id, featured.title])
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 pb-20 min-[480px]:px-6 lg:px-8 lg:pb-24 xl:px-10">
@@ -79,7 +88,7 @@ export function BrowsePage() {
               className={`cursor-pointer rounded-full border px-[11px] py-1 font-sans text-[11px] font-medium tracking-wide transition-all lg:px-4 lg:py-1.5 lg:text-sm ${
                 filter === f.key
                   ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-                  : "border-transparent text-[#8b8780] hover:text-[var(--ink-fg)]"
+                  : "border-[#ddd8ce] text-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
               }`}
             >
               {f.label}
@@ -87,14 +96,14 @@ export function BrowsePage() {
           ))}
         </nav>
 
-        <div className="flex items-center justify-between px-4 py-2.5 min-[480px]:hidden">
+        <div className="flex items-center justify-between gap-2 px-4 py-3 min-[480px]:hidden">
           <span className="font-sans text-[11px] font-medium text-[var(--ink-muted)]">
             {browseFilters.find((f) => f.key === filter)?.label}
           </span>
           <button
             type="button"
             className="flex cursor-pointer items-center border-0 bg-transparent p-1 text-[var(--ink-fg)]"
-            onClick={() => setMenuOpen(!menuOpen)}
+            onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle filters"
             aria-expanded={menuOpen}
           >
@@ -104,7 +113,7 @@ export function BrowsePage() {
 
         {menuOpen && (
           <nav
-            className="flex flex-wrap gap-1.5 border-t border-[var(--ink-border)] px-4 py-2.5 min-[480px]:hidden"
+            className="flex flex-wrap gap-1.5 border-t border-[var(--ink-border)] px-4 py-3 min-[480px]:hidden"
             aria-label="Browse filters"
           >
             {browseFilters.map((f) => (
@@ -115,10 +124,10 @@ export function BrowsePage() {
                   setFilter(f.key)
                   setMenuOpen(false)
                 }}
-                className={`cursor-pointer rounded-full border px-3 py-1.5 font-sans text-[11px] font-medium ${
+                className={`cursor-pointer rounded-full border px-3 py-1 font-sans text-[11px] font-medium tracking-wide ${
                   filter === f.key
                     ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-                    : "border-[#ddd8ce] text-[#8b8780]"
+                    : "border-[#ddd8ce] text-[var(--ink-fg)]"
                 }`}
               >
                 {f.label}
@@ -145,7 +154,12 @@ export function BrowsePage() {
           </div>
           <FeaturedCard
             post={featured}
-            authorHref={getPublicProfileHref(featured.author)}
+            authorHref={
+              featured.authorHandle
+                ? getProfileHrefByHandle(featured.authorHandle)
+                : getPublicProfileHref(featured.author)
+            }
+            readHref={featuredReadHref}
           />
         </section>
       )}
@@ -165,20 +179,20 @@ export function BrowsePage() {
           <p className="py-16 text-center font-serif text-[15px] text-[var(--ink-muted)]">
             No pieces in this category yet.{" "}
             <Link
-              href="/"
+              href="/write"
               className="font-semibold text-[var(--ink-fg)] underline-offset-2 hover:underline"
             >
-              Back to feed
+              Write the first one
             </Link>
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-4 min-[640px]:grid-cols-2 min-[640px]:gap-5 lg:gap-6">
             {gridPieces.map((piece) => (
               <BrowsePieceCard
-                key={`${piece.title}-${piece.author}`}
+                key={piece.id}
                 post={piece}
-                readHref="/read"
-                authorHref={getPublicProfileHref(piece.author)}
+                readHref={`/read/${piece.id}`}
+                authorHref={getProfileHrefByHandle(piece.authorHandle)}
               />
             ))}
           </div>

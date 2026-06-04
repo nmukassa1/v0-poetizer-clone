@@ -5,13 +5,33 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
+/**
+ * pg v8 treats require/prefer/verify-ca like verify-full; v9 will not.
+ * Neon URLs often use sslmode=require — upgrade explicitly to avoid the warning.
+ */
+function normalizeConnectionString(connectionString: string): string {
+  if (/sslmode=(require|prefer|verify-ca)(?:&|$)/.test(connectionString)) {
+    return connectionString.replace(
+      /sslmode=(require|prefer|verify-ca)/,
+      "sslmode=verify-full",
+    )
+  }
+  if (!/sslmode=/.test(connectionString)) {
+    const sep = connectionString.includes("?") ? "&" : "?"
+    return `${connectionString}${sep}sslmode=verify-full`
+  }
+  return connectionString
+}
+
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL
   if (!connectionString) {
     throw new Error("DATABASE_URL is not configured")
   }
 
-  const adapter = new PrismaPg({ connectionString })
+  const adapter = new PrismaPg({
+    connectionString: normalizeConnectionString(connectionString),
+  })
   return new PrismaClient({
     adapter,
     log:
@@ -21,11 +41,32 @@ function createPrismaClient() {
   })
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma
+/** Dev HMR can keep an old PrismaClient missing new models — recreate when stale. */
+function isPrismaClientReady(
+  client: PrismaClient | undefined,
+): client is PrismaClient {
+  return Boolean(
+    client &&
+      typeof client.profile?.findFirst === "function" &&
+      typeof client.piece?.findFirst === "function",
+  )
 }
+
+function getPrismaClient(): PrismaClient {
+  if (isPrismaClientReady(globalForPrisma.prisma)) {
+    return globalForPrisma.prisma
+  }
+
+  const client = createPrismaClient()
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = client
+  }
+
+  return client
+}
+
+export const prisma = getPrismaClient()
 
 export type DatabaseHealth = {
   ok: boolean

@@ -1,4 +1,10 @@
 import { BrowsePage } from "@/components/inkwell/browse/browse-page"
+import { featured as mockFeatured } from "@/lib/feed-data"
+import {
+  getFeaturedPiece,
+  listPublishedPieces,
+} from "@/lib/piece/queries"
+import { pieceToFeatured, pieceToFeedPost } from "@/lib/piece/map"
 
 export const metadata = {
   title: "Browse pieces | inkwell",
@@ -6,6 +12,23 @@ export const metadata = {
     "Explore poems, short stories, and essays from writers on inkwell.",
 }
 
-export default function BrowseRoutePage() {
-  return <BrowsePage />
+export default async function BrowseRoutePage() {
+  const [featuredRow, pieces] = await Promise.all([
+    getFeaturedPiece(),
+    listPublishedPieces({ limit: 48 }),
+  ])
+
+  const featured = featuredRow
+    ? pieceToFeatured(featuredRow)
+    : mockFeatured
+
+  const browsePieces = pieces.map(pieceToFeedPost)
+
+  return (
+    <BrowsePage
+      pieces={browsePieces}
+      featured={featured}
+      featuredReadHref={featuredRow ? `/read/${featuredRow.id}` : undefined}
+    />
+  )
 }

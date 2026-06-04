@@ -6,9 +6,11 @@ import { Actions, Avatar, CommentIcon, HeartIcon, Tag } from "@/components/inkwe
 export function FeaturedCard({
   post,
   authorHref,
+  readHref,
 }: {
   post: Featured
   authorHref?: string
+  readHref?: string
 }) {
   return (
     <div className="relative overflow-hidden rounded-[14px] bg-[var(--ink-featured-bg)] p-[18px] max-[479px]:px-[18px] max-[479px]:py-5 min-[480px]:p-7 min-[480px]:pb-[22px] lg:p-9 lg:pb-8">
@@ -57,12 +59,18 @@ export function FeaturedCard({
               <div className="hidden text-[10px] text-[#4a8070] min-[480px]:block">{post.bio}</div>
             </div>
           </div>
-          <button
-            type="button"
-            className="cursor-pointer rounded-full border-0 bg-[var(--ink-featured-accent)] px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.03em] text-[var(--ink-featured-bg)]"
-          >
-            Read →
-          </button>
+          {readHref ? (
+            <Link
+              href={readHref}
+              className="rounded-full border-0 bg-[var(--ink-featured-accent)] px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.03em] text-[var(--ink-featured-bg)] transition-opacity hover:opacity-90"
+            >
+              Read →
+            </Link>
+          ) : (
+            <span className="rounded-full border-0 bg-[var(--ink-featured-accent)] px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.03em] text-[var(--ink-featured-bg)]">
+              Read →
+            </span>
+          )}
         </div>
       </div>
     </div>
