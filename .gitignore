@@ -7,7 +7,15 @@ __v0_jsx-dev-runtime.ts
 .vercel/
 
 # Environment variables
+.env
 .env*.local
+
+# Prisma generated client
+/lib/generated/prisma
+
+# TypeScript / Next.js build artifacts
+*.tsbuildinfo
+next-env.d.ts
 
 # Common ignores
 node_modules

@@ -1,5 +1,5 @@
-import type { ContentTag } from "@/lib/feed-data"
-import { lovedPieces, quoteOfDay, trendingWriters } from "@/lib/feed-data"
+import type { ContentTag } from "@/lib/feed"
+import { lovedPieces, quoteOfDay, trendingWriters } from "@/lib/feed"
 import { Avatar, HeartIcon, Tag } from "@/components/inkwell/primitives"
 
 const lovedAccents: Record<

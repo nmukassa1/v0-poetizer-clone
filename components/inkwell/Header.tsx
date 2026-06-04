@@ -5,35 +5,20 @@ import { usePathname } from "next/navigation"
 import { Settings } from "lucide-react"
 import { MenuIcon } from "@/components/inkwell/primitives"
 import { useAuth } from "@/components/inkwell/auth-provider"
+import { FEED_FILTERS } from "@/components/inkwell/feed/constants"
+import { useFeedFilter } from "@/components/inkwell/feed/feed-filter-context"
+import type { FeedFilter } from "@/components/inkwell/feed/types"
 
-export type FeedFilter = "all" | "poems" | "stories" | "essays"
+export type { FeedFilter } from "@/components/inkwell/feed/types"
+/** @deprecated Use FEED_FILTERS from `@/components/inkwell/feed/constants` */
+export { FEED_FILTERS as feedFilters } from "@/components/inkwell/feed/constants"
 
-export const feedFilters: { key: FeedFilter; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "poems", label: "Poems" },
-  { key: "stories", label: "Stories" },
-  { key: "essays", label: "Essays" },
-]
-
-type HeaderProps = {
-  filter?: FeedFilter
-  onFilterChange?: (filter: FeedFilter) => void
-  menuOpen?: boolean
-  onMenuOpenChange?: (open: boolean) => void
-}
-
-export function Header({
-  filter,
-  onFilterChange,
-  menuOpen: menuOpenProp,
-  onMenuOpenChange,
-}: HeaderProps = {}) {
-  const { isLoggedIn, toggleAuth } = useAuth()
+export function Header() {
+  const { isLoggedIn, isLoading, signOut } = useAuth()
   const pathname = usePathname()
-  const showProfileSettings =
-    isLoggedIn && pathname === "/profile"
-
-  const showFeedFilters = filter !== undefined && onFilterChange !== undefined
+  const feedFilter = useFeedFilter()
+  const showProfileSettings = isLoggedIn && pathname === "/profile"
+  const showFeedFilters = pathname === "/" && feedFilter !== null
 
   return (
     <header className="sticky top-0 z-10 border-b border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_95%,transparent)] backdrop-blur-md">
@@ -50,13 +35,13 @@ export function Header({
             className="hidden gap-1 min-[480px]:flex lg:gap-2"
             aria-label="Feed filters"
           >
-            {feedFilters.map((f) => (
+            {FEED_FILTERS.map((f) => (
               <button
                 key={f.key}
                 type="button"
-                onClick={() => onFilterChange(f.key)}
+                onClick={() => feedFilter.setFilter(f.key)}
                 className={`cursor-pointer rounded-full border px-[11px] py-1 font-sans text-[11px] font-medium tracking-wide transition-all lg:px-4 lg:py-1.5 lg:text-sm ${
-                  filter === f.key
+                  feedFilter.filter === f.key
                     ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
                     : "border-transparent text-[#8b8780] hover:text-[var(--ink-fg)]"
                 }`}
@@ -87,26 +72,31 @@ export function Header({
               )}
             </div>
           )}
-          <button
-            type="button"
-            onClick={toggleAuth}
-            className={`shrink-0 cursor-pointer rounded-full border px-3 py-1 font-sans text-[11px] font-medium tracking-wide transition-colors lg:px-3.5 lg:py-1.5 lg:text-xs ${
-              isLoggedIn
-                ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-                : "border-[#ddd8ce] text-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
-            }`}
-            aria-pressed={isLoggedIn}
-          >
-            {isLoggedIn ? "Sign out" : "Sign in"}
-          </button>
+          {!isLoading &&
+            (isLoggedIn ? (
+              <button
+                type="button"
+                onClick={() => void signOut()}
+                className="shrink-0 cursor-pointer rounded-full border border-[var(--ink-fg)] bg-[var(--ink-fg)] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--ink-bg)] transition-colors lg:px-3.5 lg:py-1.5 lg:text-xs"
+              >
+                Sign out
+              </button>
+            ) : (
+              <Link
+                href="/sign-in"
+                className="shrink-0 rounded-full border border-[#ddd8ce] px-3 py-1 font-sans text-[11px] font-medium tracking-wide text-[var(--ink-fg)] transition-colors hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)] lg:px-3.5 lg:py-1.5 lg:text-xs"
+              >
+                Sign in
+              </Link>
+            ))}
 
           {showFeedFilters && (
             <button
               type="button"
               className="flex cursor-pointer items-center border-0 bg-transparent p-1 text-[var(--ink-fg)] min-[480px]:hidden"
-              onClick={() => onMenuOpenChange?.(!menuOpenProp)}
+              onClick={() => feedFilter.setMenuOpen(!feedFilter.menuOpen)}
               aria-label="Toggle filters"
-              aria-expanded={menuOpenProp}
+              aria-expanded={feedFilter.menuOpen}
             >
               <MenuIcon />
             </button>
@@ -114,21 +104,21 @@ export function Header({
         </div>
       </div>
 
-      {showFeedFilters && menuOpenProp && (
+      {showFeedFilters && feedFilter.menuOpen && (
         <nav
           className="flex flex-wrap gap-1.5 border-t border-[var(--ink-border)] px-4 py-2.5 min-[480px]:hidden"
           aria-label="Feed filters"
         >
-          {feedFilters.map((f) => (
+          {FEED_FILTERS.map((f) => (
             <button
               key={f.key}
               type="button"
               onClick={() => {
-                onFilterChange(f.key)
-                onMenuOpenChange?.(false)
+                feedFilter.setFilter(f.key)
+                feedFilter.setMenuOpen(false)
               }}
               className={`cursor-pointer rounded-full border px-3 py-1.5 font-sans text-[11px] font-medium ${
-                filter === f.key
+                feedFilter.filter === f.key
                   ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
                   : "border-[#ddd8ce] text-[#8b8780]"
               }`}

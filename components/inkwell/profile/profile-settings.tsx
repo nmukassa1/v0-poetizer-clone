@@ -20,17 +20,17 @@ import {
 } from "@/components/ui/alert-dialog"
 
 export function ProfileSettings() {
-  const { isLoggedIn, signOut } = useAuth()
+  const { isLoggedIn, isLoading, signOut } = useAuth()
   const router = useRouter()
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace("/")
+    if (!isLoading && !isLoggedIn) {
+      router.replace("/sign-in?callbackUrl=/profile/settings")
     }
-  }, [isLoggedIn, router])
+  }, [isLoggedIn, isLoading, router])
 
-  if (!isLoggedIn) {
+  if (isLoading || !isLoggedIn) {
     return null
   }
 

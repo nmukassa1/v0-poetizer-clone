@@ -1,5 +1,5 @@
-import { ReadingRoom } from "@/components/inkwell/read/reading-room"
+import { redirect } from "next/navigation"
 
-export default function ReadPage() {
-  return <ReadingRoom />
+export default function ReadIndexPage() {
+  redirect("/browse")
 }

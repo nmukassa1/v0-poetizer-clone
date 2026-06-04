@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Heart } from "lucide-react"
-import type { PiecePost } from "@/lib/feed-data"
+import type { PiecePost } from "@/lib/feed"
 import { Avatar, Tag } from "@/components/inkwell/primitives"
 
 export function BrowsePieceCard({

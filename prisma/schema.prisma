@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Inkwell writer profile — linked to Neon Auth user id.
+model Profile {
+  id        String   @id
+  handle    String   @unique
+  name      String
+  bio       String?
+  location  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pieces    Piece[]
+
+  @@map("profiles")
+}
+
+/// Published or draft writing (poem, story, essay).
+model Piece {
+  id          String          @id @default(cuid())
+  title       String
+  body        String          @db.Text
+  excerpt     String
+  type        PieceType
+  status      PieceStatus     @default(DRAFT)
+  visibility  PieceVisibility @default(PUBLIC)
+  tags        String[]        @default([])
+  likeCount    Int            @default(0) @map("like_count")
+  commentCount Int            @default(0) @map("comment_count")
+  shareCount   Int            @default(0) @map("share_count")
+  publishedAt DateTime?       @map("published_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  authorId    String          @map("author_id")
+  author      Profile         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([type])
+  @@map("pieces")
+}
+
+enum PieceType {
+  POEM
+  STORY
+  ESSAY
+
+  @@map("piece_type")
+}
+
+enum PieceStatus {
+  DRAFT
+  PUBLISHED
+
+  @@map("piece_status")
+}
+
+enum PieceVisibility {
+  PUBLIC
+  FOLLOWERS
+  PRIVATE
+
+  @@map("piece_visibility")
+}
