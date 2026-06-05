@@ -14,7 +14,9 @@
     "db:generate": "node scripts/prisma-generate.mjs",
     "db:push": "node scripts/with-env.mjs prisma db push",
     "db:migrate": "node scripts/with-env.mjs prisma migrate dev",
-    "db:studio": "node scripts/with-env.mjs prisma studio"
+    "db:studio": "node scripts/with-env.mjs prisma studio",
+    "db:seed": "node scripts/with-env.mjs npx --yes tsx lib/seed/run.ts",
+    "db:seed:clear": "node scripts/with-env.mjs npx --yes tsx lib/seed/run.ts --clear"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
