@@ -1,7 +1,10 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
+import { Trash2 } from "lucide-react"
 import type { PiecePost } from "@/lib/feed"
+import { DeletePieceDialog } from "@/components/inkwell/delete-piece-dialog"
 import { bodyHtmlToParagraphs, readingTimeFromHtml } from "@/lib/piece/body"
 import type { ReadingRoomPiece } from "@/lib/piece/map"
 import { getProfileHrefByHandle } from "@/lib/profile"
@@ -17,10 +20,13 @@ import { useScrollProgress } from "./use-scroll-progress"
 export function ReadingRoom({
   piece,
   moreByAuthor,
+  canDelete = false,
 }: {
   piece: ReadingRoomPiece
   moreByAuthor: PiecePost[]
+  canDelete?: boolean
 }) {
+  const router = useRouter()
   const paragraphs = useMemo(
     () => bodyHtmlToParagraphs(piece.bodyHtml, piece.type),
     [piece.bodyHtml, piece.type],
@@ -48,6 +54,25 @@ export function ReadingRoom({
         paragraphs={paragraphs}
         renderParagraph={renderParagraph}
       />
+
+      {canDelete ? (
+        <div className="mx-auto mt-8 max-w-2xl px-6 min-[480px]:px-8 lg:max-w-3xl lg:px-10">
+          <DeletePieceDialog
+            pieceId={piece.id}
+            title={piece.title}
+            onDeleted={() => router.push("/profile")}
+            trigger={
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full border border-[#e8d4d4] px-4 py-2 font-sans text-[11px] font-semibold tracking-wide text-[#a33f3f] transition-colors hover:bg-[#fff5f5]"
+              >
+                <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
+                Delete piece
+              </button>
+            }
+          />
+        </div>
+      ) : null}
 
       <AuthorBioCard
         author={piece.author}

@@ -1,3 +1,6 @@
+"use client"
+
+import { useRouter } from "next/navigation"
 import type { ContentTag, PiecePost } from "@/lib/feed"
 import type { PublicProfile } from "@/lib/profile"
 import { getProfileHrefByHandle } from "@/lib/profile"
@@ -21,6 +24,12 @@ export function ProfileTabContent({
   saved: PiecePost[]
   drafts: PiecePost[]
 }) {
+  const router = useRouter()
+
+  function handleDeleted() {
+    router.refresh()
+  }
+
   if (tab === "pieces") {
     if (pieces.length === 0) {
       return (
@@ -38,6 +47,8 @@ export function ProfileTabContent({
         post={item}
         readHref={`/read/${item.id}`}
         authorHref={getProfileHrefByHandle(item.authorHandle)}
+        showDelete={mode === "me"}
+        onDeleted={handleDeleted}
       />
     ))
   }
@@ -87,6 +98,8 @@ export function ProfileTabContent({
         readHref={`/write?pieceId=${item.id}`}
         authorHref={getProfileHrefByHandle(item.authorHandle)}
         ctaLabel="Continue draft"
+        showDelete
+        onDeleted={handleDeleted}
       />
     ))
   }

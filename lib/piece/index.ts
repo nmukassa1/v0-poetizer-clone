@@ -11,6 +11,7 @@ export {
 } from "./visibility"
 export { publishPiece, type PublishPieceResult } from "./publish"
 export { updatePiece } from "./update-piece"
+export { deletePiece, type DeletePieceResult } from "./delete-piece"
 export {
   pieceToComposerInitial,
   type ComposerInitialDraft,

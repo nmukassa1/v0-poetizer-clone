@@ -1,23 +1,30 @@
-import Link from "next/link";
-import { MessageCircle, Heart } from "lucide-react";
-import type { PiecePost } from "@/lib/feed";
-import { Avatar, Tag } from "@/components/inkwell/primitives";
+"use client"
+
+import Link from "next/link"
+import { MessageCircle, Heart, Trash2 } from "lucide-react"
+import type { PiecePost } from "@/lib/feed"
+import { Avatar, Tag } from "@/components/inkwell/primitives"
+import { DeletePieceDialog } from "@/components/inkwell/delete-piece-dialog"
 
 export function PieceCard({
   post,
   readHref = "#",
   authorHref,
   ctaLabel = "Read",
+  showDelete = false,
+  onDeleted,
 }: {
-  post: PiecePost;
-  readHref?: string;
-  authorHref?: string;
-  ctaLabel?: string;
+  post: PiecePost
+  readHref?: string
+  authorHref?: string
+  ctaLabel?: string
+  showDelete?: boolean
+  onDeleted?: () => void
 }) {
-  const lines = post.excerpt.split("\n").filter(Boolean);
+  const lines = post.excerpt.split("\n").filter(Boolean)
 
   return (
-    <article className="border-b border-[var(--ink-border-soft)] py-10 first:pt-6 min-[480px]:py-12 lg:py-14 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7] focus-visible:ring-offset-2 ">
+    <article className="border-b border-[var(--ink-border-soft)] py-10 first:pt-6 min-[480px]:py-12 lg:py-14 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7] focus-visible:ring-offset-2">
       <div className="transition-transform duration-200 ease-out hover:scale-[1.025]">
         <Link href={readHref}>
           <div className="mx-auto max-w-2xl lg:max-w-none">
@@ -69,6 +76,23 @@ export function PieceCard({
         </div>
 
         <div className="flex items-center gap-4 min-[480px]:gap-5">
+          {showDelete ? (
+            <DeletePieceDialog
+              pieceId={post.id}
+              title={post.title}
+              onDeleted={onDeleted}
+              trigger={
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 text-[var(--ink-subtle)] transition-colors hover:text-[#a33f3f]"
+                  aria-label={`Delete ${post.title}`}
+                >
+                  <Trash2 className="h-4 w-4" strokeWidth={1.25} />
+                  <span className="text-xs font-medium">Delete</span>
+                </button>
+              }
+            />
+          ) : null}
           <button
             type="button"
             className="group flex items-center gap-2 text-[var(--ink-subtle)] transition-colors hover:text-[#534AB7]"
@@ -92,5 +116,5 @@ export function PieceCard({
         </div>
       </div>
     </article>
-  );
+  )
 }

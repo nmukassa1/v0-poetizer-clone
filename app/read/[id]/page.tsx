@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import { ReadingRoom } from "@/components/inkwell/read/reading-room"
+import { getCurrentUser } from "@/lib/auth/server"
 import {
   countPublishedPiecesByAuthorId,
   getMoreByAuthor,
@@ -36,15 +37,17 @@ export default async function ReadPiecePage({
     notFound()
   }
 
-  const [authorPieces, related] = await Promise.all([
+  const [authorPieces, related, user] = await Promise.all([
     countPublishedPiecesByAuthorId(piece.authorId),
     getMoreByAuthor(piece.authorId, piece.id, piece.type, 2),
+    getCurrentUser(),
   ])
 
   return (
     <ReadingRoom
       piece={pieceToReadingRoom(piece, authorPieces)}
       moreByAuthor={related.map(pieceToFeedPost)}
+      canDelete={user?.id === piece.authorId}
     />
   )
 }
