@@ -23,6 +23,7 @@ export function ProfilePage({
   publicProfile: publicProfileProp,
   initialPublished = [],
   initialDrafts = [],
+  latestDraftId = null,
 }: {
   initialMode?: ProfileMode
   lockMode?: boolean
@@ -31,6 +32,7 @@ export function ProfilePage({
   publicProfile?: PublicProfile
   initialPublished?: PiecePost[]
   initialDrafts?: PiecePost[]
+  latestDraftId?: string | null
 }) {
   const [mode] = useState<ProfileMode>(initialMode)
   const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
@@ -106,7 +108,7 @@ export function ProfilePage({
           </section>
         </main>
 
-        <ProfileSidebar mode={mode} />
+        <ProfileSidebar mode={mode} latestDraftId={latestDraftId} />
       </div>
 
       {mode === "me" && <ProfileWriteFab />}

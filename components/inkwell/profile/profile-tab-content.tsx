@@ -28,7 +28,7 @@ export function ProfileTabContent({
           title="No published pieces yet"
           copy="When a new piece is published, it will appear here."
           ctaLabel={mode === "me" ? "Write your first piece" : undefined}
-          ctaHref={mode === "me" ? "/write" : undefined}
+          ctaHref={mode === "me" ? "/write?new=1" : undefined}
         />
       )
     }
@@ -76,7 +76,7 @@ export function ProfileTabContent({
           title="No drafts yet"
           copy="Choose Draft visibility when publishing to save without going live."
           ctaLabel="Start writing"
-          ctaHref="/write"
+          ctaHref="/write?new=1"
         />
       )
     }
@@ -84,8 +84,9 @@ export function ProfileTabContent({
       <PieceCard
         key={item.id}
         post={item}
-        readHref="/write"
+        readHref={`/write?pieceId=${item.id}`}
         authorHref={getProfileHrefByHandle(item.authorHandle)}
+        ctaLabel="Continue draft"
       />
     ))
   }

@@ -5,19 +5,21 @@ export function ComposerPublished({
   title,
   visibility,
   publishedPieceId,
+  editingPieceId,
 }: {
   title: string
   visibility: Visibility
   publishedPieceId: string | null
+  editingPieceId?: string | null
 }) {
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-20">
       <div className="mx-auto max-w-md text-center">
         <span className="font-serif text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink-accent)]">
-          Published
+          {visibility === "draft" ? "Saved" : "Published"}
         </span>
         <h2 className="mt-4 font-serif text-3xl font-medium leading-tight text-[var(--ink-fg)] min-[480px]:text-[36px]">
-          Your piece is live.
+          {visibility === "draft" ? "Draft saved." : "Your piece is live."}
         </h2>
         <p className="mt-3 font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
           &ldquo;{title || "Untitled"}&rdquo;{" "}
@@ -39,14 +41,20 @@ export function ComposerPublished({
             >
               View piece
             </Link>
-          ) : (
+          ) : editingPieceId ? (
             <Link
-              href="/profile"
+              href={`/write?pieceId=${editingPieceId}`}
               className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
             >
-              View profile
+              Continue editing
             </Link>
-          )}
+          ) : null}
+          <Link
+            href="/profile"
+            className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
+          >
+            View profile
+          </Link>
         </div>
       </div>
     </div>

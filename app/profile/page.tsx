@@ -36,6 +36,7 @@ export default async function MyProfilePage() {
       }
       initialPublished={published.map(pieceToFeedPost)}
       initialDrafts={drafts.map(draftToFeedPost)}
+      latestDraftId={drafts[0]?.id ?? null}
     />
   )
 }

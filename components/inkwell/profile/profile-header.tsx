@@ -63,7 +63,7 @@ export function ProfileHeader({
             </button>
           ) : (
             <Link
-              href="/write"
+              href="/write?new=1"
               className="shrink-0 rounded-full bg-[var(--ink-fg)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-bg)]"
             >
               New piece

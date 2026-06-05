@@ -104,6 +104,14 @@ export async function getDraftPiecesByUserId(authorId: string, limit = 20) {
   })
 }
 
+export async function getLatestDraftByUserId(authorId: string) {
+  return prisma.piece.findFirst({
+    where: { authorId, status: "DRAFT" },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true },
+  })
+}
+
 export async function countPublishedPiecesByAuthorId(authorId: string) {
   return prisma.piece.count({
     where: { authorId, ...publishedPublicWhere },
