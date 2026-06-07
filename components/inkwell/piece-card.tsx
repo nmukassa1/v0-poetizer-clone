@@ -1,10 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { MessageCircle, Heart, Trash2 } from "lucide-react"
+import { MessageCircle, Trash2 } from "lucide-react"
 import type { PiecePost } from "@/lib/feed"
 import { Avatar, Tag } from "@/components/inkwell/primitives"
 import { DeletePieceDialog } from "@/components/inkwell/delete-piece-dialog"
+import { FeedLikeButton } from "@/components/inkwell/social/feed-like-button"
 
 export function PieceCard({
   post,
@@ -93,16 +94,11 @@ export function PieceCard({
               }
             />
           ) : null}
-          <button
-            type="button"
-            className="group flex items-center gap-2 text-[var(--ink-subtle)] transition-colors hover:text-[#534AB7]"
-          >
-            <Heart
-              className="h-4 w-4 min-[480px]:h-[18px] min-[480px]:w-[18px] group-hover:fill-[#534AB7]/15"
-              strokeWidth={1.25}
-            />
-            <span className="text-xs tabular-nums">{post.likes}</span>
-          </button>
+          <FeedLikeButton
+            pieceId={post.id}
+            initialCount={post.likes}
+            initialLiked={post.likedByMe}
+          />
           <button
             type="button"
             className="flex items-center gap-2 text-[var(--ink-subtle)] transition-colors hover:text-[#534AB7]"

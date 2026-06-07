@@ -1,7 +1,7 @@
 import Link from "next/link"
-import { Heart } from "lucide-react"
 import type { PiecePost } from "@/lib/feed"
 import { Avatar, Tag } from "@/components/inkwell/primitives"
+import { FeedLikeButton } from "@/components/inkwell/social/feed-like-button"
 
 export function BrowsePieceCard({
   post,
@@ -52,10 +52,12 @@ export function BrowsePieceCard({
             </span>
           )}
         </div>
-        <span className="flex shrink-0 items-center gap-1 font-sans text-[11px] tabular-nums text-[var(--ink-subtle)]">
-          <Heart className="h-3.5 w-3.5" strokeWidth={1.25} />
-          {post.likes}
-        </span>
+        <FeedLikeButton
+          pieceId={post.id}
+          initialCount={post.likes}
+          initialLiked={post.likedByMe}
+          size="sm"
+        />
       </div>
     </article>
   )

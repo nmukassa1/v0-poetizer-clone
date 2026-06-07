@@ -1,39 +1,52 @@
+"use client"
+
 import {
   Bookmark,
   Heart,
   MessageCircle,
   Share2,
 } from "lucide-react"
+import { usePieceLike } from "@/components/inkwell/social/piece-like-button"
 
 export function ReadingActionsBar({
+  pieceId,
   likes,
   comments,
-  liked,
+  initialLiked = false,
+  isLoggedIn,
   saved,
   highlightCount,
-  onLikeToggle,
   onSaveToggle,
 }: {
+  pieceId: string
   likes: number
   comments: number
-  liked: boolean
+  initialLiked?: boolean
+  isLoggedIn: boolean
   saved: boolean
   highlightCount: number
-  onLikeToggle: () => void
   onSaveToggle: () => void
 }) {
+  const { liked, count, pending, toggle } = usePieceLike({
+    pieceId,
+    initialCount: likes,
+    initialLiked,
+    isLoggedIn,
+  })
+
   return (
     <div className="pointer-events-none fixed bottom-4 left-0 right-0 z-30 flex justify-center px-4 min-[480px]:bottom-6">
       <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-bg)_94%,transparent)] p-1 shadow-[0_8px_24px_rgba(0,0,0,0.08)] backdrop-blur-md">
         <button
           type="button"
-          onClick={onLikeToggle}
-          className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium tabular-nums transition-colors ${
+          onClick={() => void toggle()}
+          disabled={pending}
+          className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium tabular-nums transition-colors disabled:cursor-wait ${
             liked
               ? "bg-[var(--ink-accent-soft)] text-[var(--ink-accent)]"
               : "text-[var(--ink-fg)] hover:bg-[var(--ink-accent-soft)]"
           }`}
-          aria-label="Like"
+          aria-label={liked ? "Unlike" : "Like"}
           aria-pressed={liked}
         >
           <Heart
@@ -41,7 +54,7 @@ export function ReadingActionsBar({
             strokeWidth={1.5}
             fill={liked ? "currentColor" : "none"}
           />
-          {likes + (liked ? 1 : 0)}
+          {count}
         </button>
 
         <span className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium tabular-nums text-[var(--ink-muted)]">

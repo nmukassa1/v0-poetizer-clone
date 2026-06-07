@@ -9,14 +9,15 @@ datasource db {
 
 /// Inkwell writer profile — linked to Neon Auth user id.
 model Profile {
-  id        String   @id
-  handle    String   @unique
+  id        String      @id
+  handle    String      @unique
   name      String
   bio       String?
   location  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   pieces    Piece[]
+  likes     PieceLike[]
 
   @@map("profiles")
 }
@@ -39,11 +40,26 @@ model Piece {
   updatedAt   DateTime        @updatedAt @map("updated_at")
   authorId    String          @map("author_id")
   author      Profile         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes       PieceLike[]
 
   @@index([authorId])
   @@index([status, publishedAt(sort: Desc)])
   @@index([type])
   @@map("pieces")
+}
+
+/// One like per profile per published piece. Undo = delete this row.
+model PieceLike {
+  profileId String   @map("profile_id")
+  pieceId   String   @map("piece_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  piece   Piece   @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, pieceId])
+  @@index([pieceId])
+  @@map("piece_likes")
 }
 
 enum PieceType {

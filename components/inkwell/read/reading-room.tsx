@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuth } from "@/components/inkwell/auth-provider"
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Trash2 } from "lucide-react"
@@ -21,18 +22,20 @@ export function ReadingRoom({
   piece,
   moreByAuthor,
   canDelete = false,
+  initialLiked = false,
 }: {
   piece: ReadingRoomPiece
   moreByAuthor: PiecePost[]
   canDelete?: boolean
+  initialLiked?: boolean
 }) {
   const router = useRouter()
+  const { isLoggedIn } = useAuth()
   const paragraphs = useMemo(
     () => bodyHtmlToParagraphs(piece.bodyHtml, piece.type),
     [piece.bodyHtml, piece.type],
   )
   const progress = useScrollProgress()
-  const [liked, setLiked] = useState(false)
   const [saved, setSaved] = useState(false)
   const { articleRef, highlights, popover, addHighlight, renderParagraph } =
     useReadingHighlights()
@@ -88,12 +91,13 @@ export function ReadingRoom({
       />
 
       <ReadingActionsBar
+        pieceId={piece.id}
         likes={piece.likes}
         comments={piece.comments}
-        liked={liked}
+        initialLiked={initialLiked}
+        isLoggedIn={isLoggedIn}
         saved={saved}
         highlightCount={highlights.length}
-        onLikeToggle={() => setLiked((v) => !v)}
         onSaveToggle={() => setSaved((v) => !v)}
       />
 
