@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
-import { useAuth } from "@/components/inkwell/auth-provider"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import Link from "next/link";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { useAuth } from "@/components/inkwell/auth-provider";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,27 +17,137 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import {
+  ProfileEditForm,
+  ProfileFieldError,
+  ProfileStatusMessage,
+  profileFieldClassName,
+  type ProfileEditData,
+} from "./profile-edit-form";
 
-export function ProfileSettings() {
-  const { isLoggedIn, isLoading, signOut } = useAuth()
-  const router = useRouter()
-  const [deleteOpen, setDeleteOpen] = useState(false)
+export type ProfileSettingsData = ProfileEditData;
+
+const fieldClassName = profileFieldClassName;
+
+function FieldError({ message }: { message?: string }) {
+  return <ProfileFieldError message={message} />;
+}
+
+function StatusMessage({
+  type,
+  message,
+}: {
+  type: "success" | "error";
+  message: string;
+}) {
+  return <ProfileStatusMessage type={type} message={message} />;
+}
+
+export function ProfileSettings({
+  email,
+  initialProfile,
+}: {
+  email: string;
+  initialProfile: ProfileSettingsData;
+}) {
+  const { isLoggedIn, isLoading, signOut } = useAuth();
+  const router = useRouter();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+  const [passwordFieldErrors, setPasswordFieldErrors] = useState<
+    Record<string, string[] | undefined>
+  >({});
+  const [isChangingPassword, startPasswordTransition] = useTransition();
+
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, startDeleteTransition] = useTransition();
 
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
-      router.replace("/sign-in?callbackUrl=/profile/settings")
+      router.replace("/sign-in?callbackUrl=/profile/settings");
     }
-  }, [isLoggedIn, isLoading, router])
+  }, [isLoggedIn, isLoading, router]);
 
   if (isLoading || !isLoggedIn) {
-    return null
+    return null;
+  }
+
+  function changePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setPasswordMessage(null);
+    setPasswordFieldErrors({});
+
+    startPasswordTransition(async () => {
+      try {
+        const response = await fetch("/api/account/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+            confirmPassword,
+          }),
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          setPasswordFieldErrors(result.fieldErrors ?? {});
+          setPasswordMessage({
+            type: "error",
+            text: result.error ?? "Could not update password.",
+          });
+          return;
+        }
+
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setPasswordMessage({
+          type: "success",
+          text: "Password updated.",
+        });
+      } catch {
+        setPasswordMessage({
+          type: "error",
+          text: "Could not reach the server.",
+        });
+      }
+    });
   }
 
   function handleDeleteAccount() {
-    signOut()
-    setDeleteOpen(false)
-    router.replace("/")
+    setDeleteError(null);
+
+    startDeleteTransition(async () => {
+      try {
+        const response = await fetch("/api/account/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: deletePassword }),
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          setDeleteError(result.error ?? "Could not delete account.");
+          return;
+        }
+
+        setDeleteOpen(false);
+        await signOut();
+        router.replace("/");
+      } catch {
+        setDeleteError("Could not reach the server.");
+      }
+    });
   }
 
   return (
@@ -52,14 +162,14 @@ export function ProfileSettings() {
 
       <header className="mt-6">
         <h1 className="font-serif text-2xl font-semibold text-[var(--ink-fg)] min-[480px]:text-3xl">
-          Profile settings
+          Account settings
         </h1>
         <p className="mt-2 font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
-          Manage your account security and preferences.
+          Update account security.
         </p>
       </header>
 
-      <section className="mt-8 rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-5 min-[480px]:p-6">
+      <section className="mt-6 rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-5 min-[480px]:p-6">
         <h2 className="font-serif text-lg font-semibold text-[var(--ink-fg)]">
           Change password
         </h2>
@@ -67,7 +177,16 @@ export function ProfileSettings() {
           Update the password you use to sign in.
         </p>
 
-        <form className="mt-5 space-y-4" onSubmit={(e) => e.preventDefault()}>
+        {passwordMessage && (
+          <div className="mt-4">
+            <StatusMessage
+              type={passwordMessage.type}
+              message={passwordMessage.text}
+            />
+          </div>
+        )}
+
+        <form className="mt-5 space-y-4" onSubmit={changePasswordSubmit}>
           <div className="space-y-2">
             <Label
               htmlFor="current-password"
@@ -79,8 +198,12 @@ export function ProfileSettings() {
               id="current-password"
               type="password"
               autoComplete="current-password"
-              className="border-[var(--ink-border)] bg-transparent font-sans text-sm text-[var(--ink-fg)]"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              className={fieldClassName}
             />
+            <FieldError message={passwordFieldErrors.currentPassword?.[0]} />
           </div>
           <div className="space-y-2">
             <Label
@@ -93,8 +216,12 @@ export function ProfileSettings() {
               id="new-password"
               type="password"
               autoComplete="new-password"
-              className="border-[var(--ink-border)] bg-transparent font-sans text-sm text-[var(--ink-fg)]"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className={fieldClassName}
             />
+            <FieldError message={passwordFieldErrors.newPassword?.[0]} />
           </div>
           <div className="space-y-2">
             <Label
@@ -107,14 +234,19 @@ export function ProfileSettings() {
               id="confirm-password"
               type="password"
               autoComplete="new-password"
-              className="border-[var(--ink-border)] bg-transparent font-sans text-sm text-[var(--ink-fg)]"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className={fieldClassName}
             />
+            <FieldError message={passwordFieldErrors.confirmPassword?.[0]} />
           </div>
           <button
             type="submit"
-            className="inline-flex rounded-full bg-[var(--ink-fg)] px-4 py-2 font-sans text-[11px] font-semibold tracking-wide text-[var(--ink-bg)]"
+            disabled={isChangingPassword}
+            className="inline-flex rounded-full bg-[var(--ink-fg)] px-4 py-2 font-sans text-[11px] font-semibold tracking-wide text-[var(--ink-bg)] disabled:opacity-60"
           >
-            Update password
+            {isChangingPassword ? "Updating…" : "Update password"}
           </button>
         </form>
       </section>
@@ -137,30 +269,58 @@ export function ProfileSettings() {
               Delete account
             </button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="border-[var(--ink-border)] bg-[var(--ink-bg)]">
+          <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle className="font-serif text-[var(--ink-fg)]">
+              <AlertDialogTitle className="font-serif">
                 Delete your account?
               </AlertDialogTitle>
-              <AlertDialogDescription className="font-serif text-[var(--ink-muted)]">
-                All of your writing, saved pieces, and profile data will be
-                removed permanently. You will be signed out immediately.
+              <AlertDialogDescription className="font-serif">
+                All of your writing, drafts, and profile data will be removed
+                permanently. Enter your password to confirm.
               </AlertDialogDescription>
             </AlertDialogHeader>
+            <div className="space-y-2 py-2">
+              <Label
+                htmlFor="delete-password"
+                className="font-sans text-[11px] font-medium tracking-wide text-[var(--ink-muted)]"
+              >
+                Password
+              </Label>
+              <Input
+                id="delete-password"
+                type="password"
+                autoComplete="current-password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className={fieldClassName}
+              />
+              {deleteError && (
+                <p className="font-sans text-[12px] text-[#a33f3f]">
+                  {deleteError}
+                </p>
+              )}
+            </div>
             <AlertDialogFooter>
-              <AlertDialogCancel className="font-sans text-[11px]">
+              <AlertDialogCancel
+                className="font-sans text-[11px]"
+                disabled={isDeleting}
+              >
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
-                onClick={handleDeleteAccount}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDeleteAccount();
+                }}
+                disabled={isDeleting || !deletePassword}
                 className="bg-[#a33f3f] font-sans text-[11px] hover:bg-[#8a3333]"
               >
-                Delete account
+                {isDeleting ? "Deleting…" : "Delete account"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </section>
     </div>
-  )
+  );
 }

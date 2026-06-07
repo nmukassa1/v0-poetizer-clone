@@ -5,8 +5,12 @@ import {
   listPublishedPieces,
 } from "@/lib/piece/queries"
 import { pieceToFeatured, pieceToFeedPost } from "@/lib/piece/map"
+import { getCurrentUser } from "@/lib/auth/server"
+import { attachLikedToFeedPosts } from "@/lib/social"
 
 export default async function HomePage() {
+  const user = await getCurrentUser()
+
   const [featuredRow, pieces] = await Promise.all([
     getFeaturedPiece(),
     listPublishedPieces({ limit: 20 }),
@@ -16,7 +20,10 @@ export default async function HomePage() {
     ? pieceToFeatured(featuredRow)
     : mockFeatured
 
-  const feedPieces = pieces.map(pieceToFeedPost)
+  const feedPieces = await attachLikedToFeedPosts(
+    pieces.map(pieceToFeedPost),
+    user?.id,
+  )
 
   return (
     <InkwellFeed

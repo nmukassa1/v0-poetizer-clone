@@ -1,9 +1,12 @@
 import type { ContentTag } from "@/lib/feed"
+import type { ComposerInitialDraft } from "@/lib/piece/composer"
 
 export type Visibility = "public" | "followers" | "draft"
 export type Phase = "edit" | "preview" | "published"
 
 export type ComposerAuthor = { name: string; handle: string } | null
+
+export type { ComposerInitialDraft }
 
 export type ComposerState = {
   type: ContentTag

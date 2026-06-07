@@ -23,6 +23,9 @@ export function ProfilePage({
   publicProfile: publicProfileProp,
   initialPublished = [],
   initialDrafts = [],
+  latestDraftId = null,
+  canFollow = false,
+  initialFollowing = false,
 }: {
   initialMode?: ProfileMode
   lockMode?: boolean
@@ -31,6 +34,9 @@ export function ProfilePage({
   publicProfile?: PublicProfile
   initialPublished?: PiecePost[]
   initialDrafts?: PiecePost[]
+  latestDraftId?: string | null
+  canFollow?: boolean
+  initialFollowing?: boolean
 }) {
   const [mode] = useState<ProfileMode>(initialMode)
   const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
@@ -79,6 +85,8 @@ export function ProfilePage({
             pieceCount={initialPublished.length}
             publicHandle={publicHandle}
             onPublicHandleChange={setPublicHandle}
+            canFollow={canFollow}
+            initialFollowing={initialFollowing}
           />
 
           {mode === "me" && (
@@ -106,7 +114,7 @@ export function ProfilePage({
           </section>
         </main>
 
-        <ProfileSidebar mode={mode} />
+        <ProfileSidebar mode={mode} latestDraftId={latestDraftId} />
       </div>
 
       {mode === "me" && <ProfileWriteFab />}

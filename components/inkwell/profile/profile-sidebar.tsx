@@ -1,7 +1,13 @@
 import Link from "next/link"
 import type { ProfileMode } from "./types"
 
-export function ProfileSidebar({ mode }: { mode: ProfileMode }) {
+export function ProfileSidebar({
+  mode,
+  latestDraftId,
+}: {
+  mode: ProfileMode
+  latestDraftId?: string | null
+}) {
   return (
     <aside className="hidden lg:block">
       <div className="sticky top-[82px] space-y-6">
@@ -11,16 +17,32 @@ export function ProfileSidebar({ mode }: { mode: ProfileMode }) {
           </h3>
           <p className="mt-2 font-serif text-[13px] leading-relaxed text-[var(--ink-muted)]">
             {mode === "me"
-              ? "Continue your current draft or start a fresh piece."
+              ? latestDraftId
+                ? "Pick up your latest draft or start something new."
+                : "Start a fresh piece whenever inspiration strikes."
               : "Follow to see new pieces as soon as they are published."}
           </p>
           {mode === "me" ? (
-            <Link
-              href="/write"
-              className="mt-4 inline-flex rounded-full bg-[var(--ink-fg)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-bg)]"
-            >
-              New piece
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {latestDraftId ? (
+                <Link
+                  href={`/write?pieceId=${latestDraftId}`}
+                  className="inline-flex rounded-full bg-[var(--ink-fg)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-bg)]"
+                >
+                  Continue draft
+                </Link>
+              ) : null}
+              <Link
+                href="/write?new=1"
+                className={`inline-flex rounded-full px-3.5 py-1.5 text-[11px] font-semibold tracking-wide ${
+                  latestDraftId
+                    ? "border border-[var(--ink-border)] text-[var(--ink-fg)]"
+                    : "bg-[var(--ink-fg)] text-[var(--ink-bg)]"
+                }`}
+              >
+                New piece
+              </Link>
+            </div>
           ) : (
             <button
               type="button"

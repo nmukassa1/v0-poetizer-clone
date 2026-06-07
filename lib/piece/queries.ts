@@ -65,6 +65,8 @@ export async function getProfileByHandle(handle: string) {
       name: true,
       bio: true,
       location: true,
+      followerCount: true,
+      followingCount: true,
       _count: { select: { pieces: { where: publishedPublicWhere } } },
     },
   })
@@ -79,6 +81,8 @@ export async function getProfileByUserId(userId: string) {
       name: true,
       bio: true,
       location: true,
+      followerCount: true,
+      followingCount: true,
     },
   })
 }
@@ -101,6 +105,14 @@ export async function getDraftPiecesByUserId(authorId: string, limit = 20) {
     orderBy: { updatedAt: "desc" },
     take: limit,
     include: { author: { select: authorSelect } },
+  })
+}
+
+export async function getLatestDraftByUserId(authorId: string) {
+  return prisma.piece.findFirst({
+    where: { authorId, status: "DRAFT" },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true },
   })
 }
 

@@ -6,6 +6,7 @@ import {
   getPublishedPiecesByHandle,
 } from "@/lib/piece/queries"
 import { draftToFeedPost, pieceToFeedPost } from "@/lib/piece/map"
+import { attachLikedToFeedPosts, formatSocialCount } from "@/lib/social"
 
 export default async function MyProfilePage() {
   const user = await getCurrentUser()
@@ -18,6 +19,11 @@ export default async function MyProfilePage() {
       ])
     : [[], []]
 
+  const publishedPosts = await attachLikedToFeedPosts(
+    published.map(pieceToFeedPost),
+    user?.id,
+  )
+
   return (
     <ProfilePage
       initialMode="me"
@@ -28,16 +34,15 @@ export default async function MyProfilePage() {
               name: profile.name,
               handle: profile.handle,
               location: profile.location ?? "—",
-              bio:
-                profile.bio ??
-                "Writer on inkwell. Your bio appears in settings soon.",
-              followers: "—",
-              following: "—",
+              bio: profile.bio ?? "",
+              followers: formatSocialCount(profile.followerCount),
+              following: formatSocialCount(profile.followingCount),
             }
           : undefined
       }
-      initialPublished={published.map(pieceToFeedPost)}
+      initialPublished={publishedPosts}
       initialDrafts={drafts.map(draftToFeedPost)}
+      latestDraftId={drafts[0]?.id ?? null}
     />
   )
 }

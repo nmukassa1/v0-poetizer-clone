@@ -49,6 +49,7 @@ export interface PiecePost {
   likes: number
   comments: number
   shares: number
+  likedByMe?: boolean
 }
 
 export type FeedItem = SocialPost | PiecePost

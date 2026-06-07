@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import { ReadingRoom } from "@/components/inkwell/read/reading-room"
+import { getCurrentUser } from "@/lib/auth/server"
 import {
   countPublishedPiecesByAuthorId,
   getMoreByAuthor,
@@ -9,6 +10,7 @@ import {
   pieceToFeedPost,
   pieceToReadingRoom,
 } from "@/lib/piece/map"
+import { attachLikedToFeedPosts, isFollowingUser, isPieceLikedByUser, listCommentsForPiece } from "@/lib/social"
 
 export async function generateMetadata({
   params,
@@ -36,15 +38,33 @@ export default async function ReadPiecePage({
     notFound()
   }
 
-  const [authorPieces, related] = await Promise.all([
+  const user = await getCurrentUser()
+
+  const [authorPieces, related, initialLiked, initialComments, initialFollowingAuthor] =
+    await Promise.all([
     countPublishedPiecesByAuthorId(piece.authorId),
     getMoreByAuthor(piece.authorId, piece.id, piece.type, 2),
+    user ? isPieceLikedByUser(user.id, piece.id) : Promise.resolve(false),
+    listCommentsForPiece(piece.id, user?.id),
+    user && user.id !== piece.authorId
+      ? isFollowingUser(user.id, piece.authorId)
+      : Promise.resolve(false),
   ])
+
+  const relatedPosts = await attachLikedToFeedPosts(
+    related.map(pieceToFeedPost),
+    user?.id,
+  )
 
   return (
     <ReadingRoom
       piece={pieceToReadingRoom(piece, authorPieces)}
-      moreByAuthor={related.map(pieceToFeedPost)}
+      moreByAuthor={relatedPosts}
+      canDelete={user?.id === piece.authorId}
+      initialLiked={initialLiked}
+      initialComments={initialComments}
+      canFollowAuthor={Boolean(user && user.id !== piece.authorId)}
+      initialFollowingAuthor={initialFollowingAuthor}
     />
   )
 }

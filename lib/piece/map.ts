@@ -66,6 +66,7 @@ export type ReadingRoomPiece = {
   bodyHtml: string
   likes: number
   comments: number
+  likedByMe?: boolean
 }
 
 export function pieceToReadingRoom(

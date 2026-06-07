@@ -3,18 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=20.19.0",
+    "npm": ">=10.0.0"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/prisma-generate.mjs && next build",
+    "build": "node scripts/build.mjs",
     "start": "next start",
     "lint": "eslint .",
     "postinstall": "node scripts/prisma-generate.mjs",
     "db:generate": "node scripts/prisma-generate.mjs",
-    "db:push": "node scripts/with-env.mjs prisma db push",
-    "db:migrate": "node scripts/with-env.mjs prisma migrate dev",
-    "db:studio": "node scripts/with-env.mjs prisma studio"
+    "db:push": "node scripts/prisma-cli.mjs db push",
+    "db:migrate": "node scripts/prisma-cli.mjs migrate dev",
+    "db:studio": "node scripts/prisma-cli.mjs studio",
+    "db:seed": "node scripts/with-env.mjs npx --yes tsx lib/seed/run.ts",
+    "db:seed:clear": "node scripts/with-env.mjs npx --yes tsx lib/seed/run.ts --clear"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

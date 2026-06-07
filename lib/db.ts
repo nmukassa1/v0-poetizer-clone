@@ -48,7 +48,10 @@ function isPrismaClientReady(
   return Boolean(
     client &&
       typeof client.profile?.findFirst === "function" &&
-      typeof client.piece?.findFirst === "function",
+      typeof client.piece?.findFirst === "function" &&
+      typeof client.pieceLike?.findMany === "function" &&
+      typeof client.pieceComment?.findMany === "function" &&
+      typeof client.profileFollow?.findMany === "function",
   )
 }
 

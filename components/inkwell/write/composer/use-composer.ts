@@ -1,23 +1,44 @@
 "use client"
 
 import { useEffect, useRef, useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import type { ContentTag } from "@/lib/feed"
 import type { PublishPieceResult } from "@/lib/piece/publish"
-import type { ComposerAuthor, Phase, Visibility } from "./types"
+import type { ComposerAuthor, ComposerInitialDraft, Phase, Visibility } from "./types"
 
-export function useComposer(author: ComposerAuthor) {
+function wordCountFromHtml(html: string): number {
+  const text = html.replace(/<[^>]+>/g, " ")
+  return text.trim().split(/\s+/).filter(Boolean).length
+}
+
+export function useComposer(
+  author: ComposerAuthor,
+  initialDraft?: ComposerInitialDraft | null,
+) {
+  const router = useRouter()
   const authorName = author?.name ?? "You"
 
-  const [type, setType] = useState<ContentTag>("essay")
-  const [title, setTitle] = useState("")
-  const [bodyHtml, setBodyHtml] = useState("")
-  const [excerpt, setExcerpt] = useState("")
-  const [excerptOverridden, setExcerptOverridden] = useState(false)
-  const [tags, setTags] = useState<string[]>([])
+  const [pieceId, setPieceId] = useState<string | null>(
+    initialDraft?.pieceId ?? null,
+  )
+  const [type, setType] = useState<ContentTag>(initialDraft?.type ?? "essay")
+  const [title, setTitle] = useState(initialDraft?.title ?? "")
+  const [bodyHtml, setBodyHtml] = useState(initialDraft?.bodyHtml ?? "")
+  const [excerpt, setExcerpt] = useState(initialDraft?.excerpt ?? "")
+  const [excerptOverridden, setExcerptOverridden] = useState(
+    initialDraft?.excerptOverridden ?? false,
+  )
+  const [tags, setTags] = useState<string[]>(initialDraft?.tags ?? [])
   const [tagDraft, setTagDraft] = useState("")
-  const [visibility, setVisibility] = useState<Visibility>("public")
-  const [wordCount, setWordCount] = useState(0)
-  const [savedAt, setSavedAt] = useState<Date | null>(null)
+  const [visibility, setVisibility] = useState<Visibility>(
+    initialDraft?.visibility ?? "public",
+  )
+  const [wordCount, setWordCount] = useState(
+    initialDraft ? wordCountFromHtml(initialDraft.bodyHtml) : 0,
+  )
+  const [savedAt, setSavedAt] = useState<Date | null>(
+    initialDraft?.updatedAt ?? null,
+  )
   const [savedAgoText, setSavedAgoText] = useState("")
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [phase, setPhase] = useState<Phase>("edit")
@@ -32,9 +53,9 @@ export function useComposer(author: ComposerAuthor) {
 
   useEffect(() => {
     if (!bodyRef.current || initialBodySet.current) return
-    bodyRef.current.innerHTML = ""
+    bodyRef.current.innerHTML = bodyHtml
     initialBodySet.current = true
-  }, [])
+  }, [bodyHtml])
 
   function recalcFromEditor() {
     if (!bodyRef.current) return
@@ -161,20 +182,25 @@ export function useComposer(author: ComposerAuthor) {
       return
     }
 
+    const payload = {
+      title: title.trim() || "Untitled",
+      body,
+      type,
+      excerpt: excerpt.trim() || undefined,
+      visibility,
+      tags,
+    }
+
     startPublishTransition(async () => {
       try {
-        const response = await fetch("/api/pieces", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: title.trim() || "Untitled",
-            body,
-            type,
-            excerpt: excerpt.trim() || undefined,
-            visibility,
-            tags,
-          }),
-        })
+        const response = await fetch(
+          pieceId ? `/api/pieces/${pieceId}` : "/api/pieces",
+          {
+            method: pieceId ? "PATCH" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          },
+        )
 
         const result = (await response.json()) as PublishPieceResult
 
@@ -187,7 +213,13 @@ export function useComposer(author: ComposerAuthor) {
           return
         }
 
+        if (!pieceId) {
+          setPieceId(result.pieceId)
+          router.replace(`/write?pieceId=${result.pieceId}`)
+        }
+
         setPublishedPieceId(result.pieceId)
+        setSavedAt(new Date())
         setPhase("published")
         if (typeof window !== "undefined") window.scrollTo({ top: 0 })
       } catch {
@@ -225,6 +257,7 @@ export function useComposer(author: ComposerAuthor) {
   return {
     authorName,
     phase,
+    pieceId,
     title,
     setTitle,
     type,
