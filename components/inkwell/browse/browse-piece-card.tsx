@@ -2,6 +2,7 @@ import Link from "next/link"
 import type { PiecePost } from "@/lib/feed"
 import { Avatar, Tag } from "@/components/inkwell/primitives"
 import { FeedLikeButton } from "@/components/inkwell/social/feed-like-button"
+import { FeedCommentButton } from "@/components/inkwell/social/feed-comment-button"
 
 export function BrowsePieceCard({
   post,
@@ -52,12 +53,20 @@ export function BrowsePieceCard({
             </span>
           )}
         </div>
-        <FeedLikeButton
-          pieceId={post.id}
-          initialCount={post.likes}
-          initialLiked={post.likedByMe}
-          size="sm"
-        />
+        <div className="flex items-center gap-3">
+          <FeedLikeButton
+            pieceId={post.id}
+            initialCount={post.likes}
+            initialLiked={post.likedByMe}
+            size="sm"
+          />
+          <FeedCommentButton
+            pieceId={post.id}
+            pieceTitle={post.title}
+            initialCount={post.comments}
+            size="sm"
+          />
+        </div>
       </div>
     </article>
   )

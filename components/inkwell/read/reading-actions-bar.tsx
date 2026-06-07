@@ -17,6 +17,7 @@ export function ReadingActionsBar({
   saved,
   highlightCount,
   onSaveToggle,
+  onCommentClick,
 }: {
   pieceId: string
   likes: number
@@ -26,6 +27,7 @@ export function ReadingActionsBar({
   saved: boolean
   highlightCount: number
   onSaveToggle: () => void
+  onCommentClick?: () => void
 }) {
   const { liked, count, pending, toggle } = usePieceLike({
     pieceId,
@@ -57,10 +59,15 @@ export function ReadingActionsBar({
           {count}
         </button>
 
-        <span className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium tabular-nums text-[var(--ink-muted)]">
+        <button
+          type="button"
+          onClick={onCommentClick}
+          className="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium tabular-nums text-[var(--ink-muted)] transition-colors hover:bg-[var(--ink-accent-soft)] hover:text-[var(--ink-fg)]"
+          aria-label="View comments"
+        >
           <MessageCircle className="h-4 w-4" strokeWidth={1.5} />
           {comments}
-        </span>
+        </button>
 
         <span className="mx-1 h-5 w-px bg-[var(--ink-border)]" aria-hidden />
 

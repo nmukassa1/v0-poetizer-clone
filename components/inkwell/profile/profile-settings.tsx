@@ -269,12 +269,12 @@ export function ProfileSettings({
               Delete account
             </button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="border-[var(--ink-border)] bg-[var(--ink-bg)]">
+          <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle className="font-serif text-[var(--ink-fg)]">
+              <AlertDialogTitle className="font-serif">
                 Delete your account?
               </AlertDialogTitle>
-              <AlertDialogDescription className="font-serif text-[var(--ink-muted)]">
+              <AlertDialogDescription className="font-serif">
                 All of your writing, drafts, and profile data will be removed
                 permanently. Enter your password to confirm.
               </AlertDialogDescription>

@@ -8,6 +8,7 @@ import type { PiecePost } from "@/lib/feed"
 import { DeletePieceDialog } from "@/components/inkwell/delete-piece-dialog"
 import { bodyHtmlToParagraphs, readingTimeFromHtml } from "@/lib/piece/body"
 import type { ReadingRoomPiece } from "@/lib/piece/map"
+import type { PieceCommentView } from "@/lib/social/types"
 import { getProfileHrefByHandle } from "@/lib/profile"
 import { AuthorBioCard } from "./author-bio-card"
 import { HighlightPopover } from "./highlight-popover"
@@ -16,6 +17,7 @@ import { PieceArticle } from "./piece-article"
 import { ReadingActionsBar } from "./reading-actions-bar"
 import { ReadingProgressBar } from "./reading-progress-bar"
 import { useReadingHighlights } from "./use-reading-highlights"
+import { PieceCommentsSection } from "./piece-comments-section"
 import { useScrollProgress } from "./use-scroll-progress"
 
 export function ReadingRoom({
@@ -23,11 +25,13 @@ export function ReadingRoom({
   moreByAuthor,
   canDelete = false,
   initialLiked = false,
+  initialComments = [],
 }: {
   piece: ReadingRoomPiece
   moreByAuthor: PiecePost[]
   canDelete?: boolean
   initialLiked?: boolean
+  initialComments?: PieceCommentView[]
 }) {
   const router = useRouter()
   const { isLoggedIn } = useAuth()
@@ -37,6 +41,7 @@ export function ReadingRoom({
   )
   const progress = useScrollProgress()
   const [saved, setSaved] = useState(false)
+  const [commentCount, setCommentCount] = useState(piece.comments)
   const { articleRef, highlights, popover, addHighlight, renderParagraph } =
     useReadingHighlights()
 
@@ -77,6 +82,15 @@ export function ReadingRoom({
         </div>
       ) : null}
 
+      <PieceCommentsSection
+        pieceId={piece.id}
+        pieceTitle={piece.title}
+        initialComments={initialComments}
+        initialCount={commentCount}
+        isLoggedIn={isLoggedIn}
+        onCountChange={setCommentCount}
+      />
+
       <AuthorBioCard
         author={piece.author}
         authorHandle={piece.authorHandle}
@@ -93,12 +107,17 @@ export function ReadingRoom({
       <ReadingActionsBar
         pieceId={piece.id}
         likes={piece.likes}
-        comments={piece.comments}
+        comments={commentCount}
         initialLiked={initialLiked}
         isLoggedIn={isLoggedIn}
         saved={saved}
         highlightCount={highlights.length}
         onSaveToggle={() => setSaved((v) => !v)}
+        onCommentClick={() => {
+          document
+            .getElementById("piece-comments")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" })
+        }}
       />
 
       {popover && (

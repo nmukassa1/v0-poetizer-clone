@@ -62,12 +62,12 @@ export function DeletePieceDialog({
       }}
     >
       <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-      <AlertDialogContent className="border-[var(--ink-border)] bg-[var(--ink-bg)]">
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-serif text-[var(--ink-fg)]">
+          <AlertDialogTitle className="font-serif">
             Delete this piece?
           </AlertDialogTitle>
-          <AlertDialogDescription className="font-serif text-[var(--ink-muted)]">
+          <AlertDialogDescription className="font-serif">
             &ldquo;{title || "Untitled"}&rdquo; will be removed permanently.
             This cannot be undone.
           </AlertDialogDescription>
@@ -80,7 +80,7 @@ export function DeletePieceDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             disabled={isDeleting}
-            className="rounded-full border-[var(--ink-border)] font-sans text-[11px] font-semibold tracking-wide"
+            className="rounded-full border-neutral-200 font-sans text-[11px] font-semibold tracking-wide text-neutral-950"
           >
             Cancel
           </AlertDialogCancel>

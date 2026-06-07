@@ -10,7 +10,7 @@ import {
   pieceToFeedPost,
   pieceToReadingRoom,
 } from "@/lib/piece/map"
-import { attachLikedToFeedPosts, isPieceLikedByUser } from "@/lib/social"
+import { attachLikedToFeedPosts, isPieceLikedByUser, listCommentsForPiece } from "@/lib/social"
 
 export async function generateMetadata({
   params,
@@ -40,10 +40,11 @@ export default async function ReadPiecePage({
 
   const user = await getCurrentUser()
 
-  const [authorPieces, related, initialLiked] = await Promise.all([
+  const [authorPieces, related, initialLiked, initialComments] = await Promise.all([
     countPublishedPiecesByAuthorId(piece.authorId),
     getMoreByAuthor(piece.authorId, piece.id, piece.type, 2),
     user ? isPieceLikedByUser(user.id, piece.id) : Promise.resolve(false),
+    listCommentsForPiece(piece.id, user?.id),
   ])
 
   const relatedPosts = await attachLikedToFeedPosts(
@@ -57,6 +58,7 @@ export default async function ReadPiecePage({
       moreByAuthor={relatedPosts}
       canDelete={user?.id === piece.authorId}
       initialLiked={initialLiked}
+      initialComments={initialComments}
     />
   )
 }

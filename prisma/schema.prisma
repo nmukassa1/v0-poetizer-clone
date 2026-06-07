@@ -18,6 +18,7 @@ model Profile {
   updatedAt DateTime    @updatedAt
   pieces    Piece[]
   likes     PieceLike[]
+  comments  PieceComment[]
 
   @@map("profiles")
 }
@@ -41,6 +42,7 @@ model Piece {
   authorId    String          @map("author_id")
   author      Profile         @relation(fields: [authorId], references: [id], onDelete: Cascade)
   likes       PieceLike[]
+  comments    PieceComment[]
 
   @@index([authorId])
   @@index([status, publishedAt(sort: Desc)])
@@ -60,6 +62,22 @@ model PieceLike {
   @@id([profileId, pieceId])
   @@index([pieceId])
   @@map("piece_likes")
+}
+
+/// Comment on a published piece. Undo = delete this row (own comments only).
+model PieceComment {
+  id        String   @id @default(cuid())
+  pieceId   String   @map("piece_id")
+  profileId String   @map("profile_id")
+  body      String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  piece   Piece   @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([pieceId, createdAt(sort: Asc)])
+  @@map("piece_comments")
 }
 
 enum PieceType {

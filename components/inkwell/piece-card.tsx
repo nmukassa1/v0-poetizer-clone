@@ -1,11 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import { MessageCircle, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import type { PiecePost } from "@/lib/feed"
 import { Avatar, Tag } from "@/components/inkwell/primitives"
 import { DeletePieceDialog } from "@/components/inkwell/delete-piece-dialog"
 import { FeedLikeButton } from "@/components/inkwell/social/feed-like-button"
+import { FeedCommentButton } from "@/components/inkwell/social/feed-comment-button"
 
 export function PieceCard({
   post,
@@ -99,16 +100,11 @@ export function PieceCard({
             initialCount={post.likes}
             initialLiked={post.likedByMe}
           />
-          <button
-            type="button"
-            className="flex items-center gap-2 text-[var(--ink-subtle)] transition-colors hover:text-[#534AB7]"
-          >
-            <MessageCircle
-              className="h-4 w-4 min-[480px]:h-[18px] min-[480px]:w-[18px]"
-              strokeWidth={1.25}
-            />
-            <span className="text-xs tabular-nums">{post.comments}</span>
-          </button>
+          <FeedCommentButton
+            pieceId={post.id}
+            pieceTitle={post.title}
+            initialCount={post.comments}
+          />
         </div>
       </div>
     </article>
