@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { BookIcon, PenIcon } from "@/components/inkwell/primitives"
+import Link from "next/link";
+import { BookIcon, PenIcon } from "@/components/inkwell/primitives";
 
 function WelcomePane({
   label,
@@ -9,12 +9,12 @@ function WelcomePane({
   cta,
   href,
 }: {
-  label: string
-  icon: React.ReactNode
-  headline: string
-  description: string
-  cta: string
-  href: string
+  label: string;
+  icon: React.ReactNode;
+  headline: string;
+  description: string;
+  cta: string;
+  href: string;
 }) {
   return (
     <div className="flex h-full flex-col rounded-xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-3.5 max-[479px]:flex-row max-[479px]:items-center max-[479px]:gap-4 min-[480px]:block min-[480px]:p-[18px]">
@@ -41,14 +41,16 @@ function WelcomePane({
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
 export function WelcomeCard({ stacked = false }: { stacked?: boolean }) {
   return (
     <div
-      className={`grid gap-2 ${
-        stacked ? "grid-cols-1 gap-3" : "grid-cols-1 min-[480px]:grid-cols-2 min-[480px]:gap-3"
+      className={`hidden lg:grid gap-2 ${
+        stacked
+          ? "grid-cols-1 gap-3"
+          : "grid-cols-1 min-[480px]:grid-cols-2 min-[480px]:gap-3"
       }`}
     >
       <WelcomePane
@@ -68,5 +70,5 @@ export function WelcomeCard({ stacked = false }: { stacked?: boolean }) {
         href="/browse"
       />
     </div>
-  )
+  );
 }
