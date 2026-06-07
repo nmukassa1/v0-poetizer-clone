@@ -65,6 +65,8 @@ export async function getProfileByHandle(handle: string) {
       name: true,
       bio: true,
       location: true,
+      followerCount: true,
+      followingCount: true,
       _count: { select: { pieces: { where: publishedPublicWhere } } },
     },
   })
@@ -79,6 +81,8 @@ export async function getProfileByUserId(userId: string) {
       name: true,
       bio: true,
       location: true,
+      followerCount: true,
+      followingCount: true,
     },
   })
 }

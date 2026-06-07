@@ -6,7 +6,7 @@ import {
   getPublishedPiecesByHandle,
 } from "@/lib/piece/queries"
 import { pieceToFeedPost } from "@/lib/piece/map"
-import { attachLikedToFeedPosts } from "@/lib/social"
+import { attachLikedToFeedPosts, formatSocialCount, isFollowingUser } from "@/lib/social"
 
 export default async function PublicProfilePage({
   params,
@@ -22,6 +22,11 @@ export default async function PublicProfilePage({
 
   const user = await getCurrentUser()
   const published = await getPublishedPiecesByHandle(handle)
+  const initialFollowing =
+    user && user.id !== profile.id
+      ? await isFollowingUser(user.id, profile.id)
+      : false
+
   const publishedPosts = await attachLikedToFeedPosts(
     published.map(pieceToFeedPost),
     user?.id,
@@ -32,13 +37,15 @@ export default async function PublicProfilePage({
       initialMode="public"
       initialPublicHandle={handle}
       lockMode
+      canFollow={Boolean(user && user.id !== profile.id)}
+      initialFollowing={initialFollowing}
       publicProfile={{
         handle: profile.handle,
         name: profile.name,
         location: profile.location ?? "—",
         bio: profile.bio ?? "Writer on inkwell.",
-        followers: "—",
-        following: "—",
+        followers: formatSocialCount(profile.followerCount),
+        following: formatSocialCount(profile.followingCount),
       }}
       initialPublished={publishedPosts}
     />

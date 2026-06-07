@@ -16,6 +16,8 @@ import {
 import { DEMO_PROFILE_HANDLES } from "./constants"
 import { ProfileEditForm } from "./profile-edit-form"
 import { ProfileStatPill } from "./profile-stat-pill"
+import { ProfileFollowButton } from "@/components/inkwell/social/profile-follow-button"
+import { formatSocialCount } from "@/lib/social/format-count"
 import type { ProfileMode } from "./types"
 
 export function ProfileHeader({
@@ -25,6 +27,9 @@ export function ProfileHeader({
   pieceCount,
   publicHandle,
   onPublicHandleChange,
+  canFollow = false,
+  initialFollowing = false,
+  onFollowerCountChange,
 }: {
   mode: ProfileMode
   lockMode: boolean
@@ -32,10 +37,14 @@ export function ProfileHeader({
   pieceCount: number
   publicHandle: string
   onPublicHandleChange: (handle: string) => void
+  canFollow?: boolean
+  initialFollowing?: boolean
+  onFollowerCountChange?: (count: number) => void
 }) {
   const locationLabel = profile.location?.trim() || "—"
   const [editOpen, setEditOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
+  const [followerCountLabel, setFollowerCountLabel] = useState(profile.followers)
 
   const editProfile = {
     name: profile.name,
@@ -43,6 +52,10 @@ export function ProfileHeader({
     bio: profile.bio,
     location: profile.location === "—" ? "" : profile.location,
   }
+
+  useEffect(() => {
+    setFollowerCountLabel(profile.followers)
+  }, [profile.followers])
 
   useEffect(() => {
     if (editOpen) {
@@ -86,14 +99,17 @@ export function ProfileHeader({
               </p>
             ) : null}
           </div>
-          {mode === "public" ? (
-            <button
-              type="button"
-              className="shrink-0 rounded-full border border-[var(--ink-border)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
-            >
-              Follow
-            </button>
-          ) : (
+          {mode === "public" && canFollow ? (
+            <ProfileFollowButton
+              handle={profile.handle}
+              initialFollowing={initialFollowing}
+              onFollowerCountChange={(count) => {
+                const label = formatSocialCount(count)
+                setFollowerCountLabel(label)
+                onFollowerCountChange?.(count)
+              }}
+            />
+          ) : mode === "public" ? null : (
             <div className="flex shrink-0 flex-wrap items-center gap-2">
               <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogTrigger asChild>
@@ -132,7 +148,7 @@ export function ProfileHeader({
 
         <div className="mt-6 flex flex-wrap gap-2 min-[480px]:gap-3">
           <ProfileStatPill label="Pieces" value={pieceCount.toString()} />
-          <ProfileStatPill label="Followers" value={profile.followers} />
+          <ProfileStatPill label="Followers" value={followerCountLabel} />
           <ProfileStatPill label="Following" value={profile.following} />
           <ProfileStatPill
             label="Top type"

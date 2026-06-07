@@ -26,12 +26,16 @@ export function ReadingRoom({
   canDelete = false,
   initialLiked = false,
   initialComments = [],
+  canFollowAuthor = false,
+  initialFollowingAuthor = false,
 }: {
   piece: ReadingRoomPiece
   moreByAuthor: PiecePost[]
   canDelete?: boolean
   initialLiked?: boolean
   initialComments?: PieceCommentView[]
+  canFollowAuthor?: boolean
+  initialFollowingAuthor?: boolean
 }) {
   const router = useRouter()
   const { isLoggedIn } = useAuth()
@@ -97,6 +101,8 @@ export function ReadingRoom({
         authorPieces={piece.authorPieces}
         authorBio={piece.authorBio}
         profileHref={authorProfileHref}
+        canFollow={canFollowAuthor}
+        initialFollowing={initialFollowingAuthor}
       />
 
       <MoreFromAuthor

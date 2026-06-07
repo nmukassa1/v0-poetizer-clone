@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Avatar } from "@/components/inkwell/primitives"
+import { ProfileFollowButton } from "@/components/inkwell/social/profile-follow-button"
 
 export function AuthorBioCard({
   author,
@@ -7,12 +8,16 @@ export function AuthorBioCard({
   authorPieces,
   authorBio,
   profileHref,
+  canFollow = false,
+  initialFollowing = false,
 }: {
   author: string
   authorHandle: string
   authorPieces: number
   authorBio: string
   profileHref: string
+  canFollow?: boolean
+  initialFollowing?: boolean
 }) {
   return (
     <section className="mx-auto mb-12 mt-16 max-w-[640px] px-5 min-[480px]:px-6 lg:max-w-[680px]">
@@ -33,12 +38,13 @@ export function AuthorBioCard({
           </div>
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="cursor-pointer rounded-full bg-[var(--ink-fg)] px-4 py-2 text-xs font-semibold tracking-wide text-[var(--ink-bg)] transition-opacity hover:opacity-90"
-          >
-            Follow
-          </button>
+          {canFollow ? (
+            <ProfileFollowButton
+              handle={authorHandle}
+              initialFollowing={initialFollowing}
+              variant="bio"
+            />
+          ) : null}
           <Link
             href={profileHref}
             className="inline-flex rounded-full border border-[var(--ink-border)] bg-transparent px-4 py-2 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"

@@ -6,7 +6,7 @@ import {
   getPublishedPiecesByHandle,
 } from "@/lib/piece/queries"
 import { draftToFeedPost, pieceToFeedPost } from "@/lib/piece/map"
-import { attachLikedToFeedPosts } from "@/lib/social"
+import { attachLikedToFeedPosts, formatSocialCount } from "@/lib/social"
 
 export default async function MyProfilePage() {
   const user = await getCurrentUser()
@@ -35,8 +35,8 @@ export default async function MyProfilePage() {
               handle: profile.handle,
               location: profile.location ?? "—",
               bio: profile.bio ?? "",
-              followers: "—",
-              following: "—",
+              followers: formatSocialCount(profile.followerCount),
+              following: formatSocialCount(profile.followingCount),
             }
           : undefined
       }

@@ -24,6 +24,8 @@ export function ProfilePage({
   initialPublished = [],
   initialDrafts = [],
   latestDraftId = null,
+  canFollow = false,
+  initialFollowing = false,
 }: {
   initialMode?: ProfileMode
   lockMode?: boolean
@@ -33,6 +35,8 @@ export function ProfilePage({
   initialPublished?: PiecePost[]
   initialDrafts?: PiecePost[]
   latestDraftId?: string | null
+  canFollow?: boolean
+  initialFollowing?: boolean
 }) {
   const [mode] = useState<ProfileMode>(initialMode)
   const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
@@ -81,6 +85,8 @@ export function ProfilePage({
             pieceCount={initialPublished.length}
             publicHandle={publicHandle}
             onPublicHandleChange={setPublicHandle}
+            canFollow={canFollow}
+            initialFollowing={initialFollowing}
           />
 
           {mode === "me" && (

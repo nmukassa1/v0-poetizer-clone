@@ -11,3 +11,15 @@ export {
 export { listCommentsForPiece } from "./comment-queries"
 export { mapCommentRow } from "./map-comment"
 export type { PieceCommentView } from "./types"
+export {
+  followProfileByHandle,
+  unfollowProfileByHandle,
+  getFollowStateByHandle,
+  type FollowProfileResult,
+} from "./follow-profile"
+export {
+  getFollowCounts,
+  getFollowingIdsForUser,
+  isFollowingUser,
+} from "./follow-queries"
+export { formatSocialCount } from "./format-count"

@@ -13,12 +13,16 @@ model Profile {
   handle    String      @unique
   name      String
   bio       String?
-  location  String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  pieces    Piece[]
-  likes     PieceLike[]
-  comments  PieceComment[]
+  location       String?
+  followerCount  Int             @default(0) @map("follower_count")
+  followingCount Int             @default(0) @map("following_count")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  pieces         Piece[]
+  likes          PieceLike[]
+  comments       PieceComment[]
+  followers      ProfileFollow[] @relation("Following")
+  following      ProfileFollow[] @relation("Follower")
 
   @@map("profiles")
 }
@@ -78,6 +82,20 @@ model PieceComment {
 
   @@index([pieceId, createdAt(sort: Asc)])
   @@map("piece_comments")
+}
+
+/// One follow per profile pair. Undo = delete this row.
+model ProfileFollow {
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  Profile @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following Profile @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@index([followingId])
+  @@map("profile_follows")
 }
 
 enum PieceType {
