@@ -46,11 +46,13 @@ export default async function PublicProfilePage({
         name: profile.name,
         location: profile.location ?? "—",
         bio: profile.bio ?? "Writer on inkwell.",
+        about: profile.about ?? "",
         followers: formatSocialCount(profile.followerCount),
         following: formatSocialCount(profile.followingCount),
       }}
       initialPublished={publishedPosts}
       initialLikes={likedPosts}
+      canEditAbout={Boolean(user && user.id === profile.id)}
     />
   )
 }

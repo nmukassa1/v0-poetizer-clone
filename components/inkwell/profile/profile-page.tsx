@@ -26,6 +26,7 @@ export function ProfilePage({
   latestDraftId = null,
   canFollow = false,
   initialFollowing = false,
+  canEditAbout = false,
 }: {
   initialMode?: ProfileMode
   lockMode?: boolean
@@ -38,6 +39,7 @@ export function ProfilePage({
   latestDraftId?: string | null
   canFollow?: boolean
   initialFollowing?: boolean
+  canEditAbout?: boolean
 }) {
   const [mode] = useState<ProfileMode>(initialMode)
   const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
@@ -101,6 +103,7 @@ export function ProfilePage({
               pieces={initialPublished}
               likes={initialLikes}
               drafts={initialDrafts}
+              canEditAbout={canEditAbout}
             />
           </section>
         </main>

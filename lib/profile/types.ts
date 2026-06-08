@@ -3,6 +3,7 @@ export type PublicProfile = {
   name: string
   location: string
   bio: string
+  about: string
   followers: string
   following: string
 }

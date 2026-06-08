@@ -36,6 +36,7 @@ export default async function MyProfilePage() {
               handle: profile.handle,
               location: profile.location ?? "—",
               bio: profile.bio ?? "",
+              about: profile.about ?? "",
               followers: formatSocialCount(profile.followerCount),
               following: formatSocialCount(profile.followingCount),
             }
@@ -45,6 +46,7 @@ export default async function MyProfilePage() {
       initialLikes={likedPosts}
       initialDrafts={drafts.map(draftToFeedPost)}
       latestDraftId={drafts[0]?.id ?? null}
+      canEditAbout={Boolean(profile && user)}
     />
   )
 }

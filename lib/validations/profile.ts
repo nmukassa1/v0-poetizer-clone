@@ -13,7 +13,12 @@ export const updateProfileSchema = z.object({
       "Handle must be 3–30 characters: lowercase letters, numbers, _ or -",
     ),
   bio: z.string().trim().max(500).optional(),
+  about: z.string().trim().max(2000).optional(),
   location: z.string().trim().max(80).optional(),
+})
+
+export const updateProfileAboutSchema = z.object({
+  about: z.string().trim().max(2000),
 })
 
 export const changePasswordSchema = z

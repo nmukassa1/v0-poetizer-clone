@@ -1,12 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import type { ContentTag, PiecePost } from "@/lib/feed"
+import type { PiecePost } from "@/lib/feed"
 import type { PublicProfile } from "@/lib/profile"
 import { getProfileHrefByHandle } from "@/lib/profile"
-import { Tag } from "@/components/inkwell/primitives"
 import { PieceCard } from "@/components/inkwell/piece-card"
 import { ProfileEmptyState } from "./profile-empty-state"
+import { ProfileAboutSection } from "./profile-about-section"
 import type { ProfileMode, ProfileTabKey } from "./types"
 
 export function ProfileTabContent({
@@ -16,6 +16,7 @@ export function ProfileTabContent({
   pieces,
   likes,
   drafts,
+  canEditAbout = false,
 }: {
   tab: ProfileTabKey
   mode: ProfileMode
@@ -23,6 +24,7 @@ export function ProfileTabContent({
   pieces: PiecePost[]
   likes: PiecePost[]
   drafts: PiecePost[]
+  canEditAbout?: boolean
 }) {
   const router = useRouter()
 
@@ -110,21 +112,12 @@ export function ProfileTabContent({
 
   if (tab === "about") {
     return (
-      <article className="rounded-2xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-5 min-[480px]:p-6">
-        <h2 className="font-serif text-xl font-semibold text-[var(--ink-fg)]">
-          About {profile.name.split(" ")[0]}
-        </h2>
-        <p className="mt-3 font-serif text-[15px] leading-relaxed text-[var(--ink-muted)]">
-          {mode === "public"
-            ? "Eleanor writes poems about transition, domestic spaces, and the soft weather at the edge of evening. Her work appears in The Lantern Review and Night Window Journal."
-            : "You write across essays and poems, mostly circling memory, language, and small moments that refuse to fade. This page grows as your body of work grows."}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {(["poem", "story", "essay"] as ContentTag[]).map((kind) => (
-            <Tag key={kind} label={kind} />
-          ))}
-        </div>
-      </article>
+      <ProfileAboutSection
+        mode={mode}
+        profile={profile}
+        pieces={pieces}
+        canEdit={canEditAbout}
+      />
     )
   }
 

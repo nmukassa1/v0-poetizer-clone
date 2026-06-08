@@ -6,6 +6,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Eleanor Vance",
     location: "Portland, OR",
     bio: "Editor of The Lantern Review. Writing at dusk, where memory loosens.",
+    about: "",
     followers: "284",
     following: "162",
   },
@@ -14,6 +15,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Lena Müller",
     location: "Berlin, DE",
     bio: "Essayist writing at the seam between languages and memory.",
+    about: "",
     followers: "1.2k",
     following: "318",
   },
@@ -22,6 +24,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Jin Park",
     location: "Seoul, KR",
     bio: "Poet of tide-lines, departure, and weather-worn tenderness.",
+    about: "",
     followers: "940",
     following: "211",
   },
@@ -30,6 +33,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Theodore Blake",
     location: "Brighton, UK",
     bio: "Story writer drawn to old workshops, clocks, and haunted rooms.",
+    about: "",
     followers: "1.5k",
     following: "280",
   },
@@ -38,6 +42,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Kwame Asante",
     location: "Accra / London",
     bio: "Fiction writer exploring distance, grammar, and belonging.",
+    about: "",
     followers: "1.8k",
     following: "390",
   },
@@ -46,6 +51,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Sofia Chen",
     location: "San Francisco, US",
     bio: "Poet writing in dawn light before the city wakes.",
+    about: "",
     followers: "2.4k",
     following: "401",
   },
@@ -54,6 +60,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "James Whitmore",
     location: "Liverpool, UK",
     bio: "Short fiction focused on stations, harbors, and quiet departures.",
+    about: "",
     followers: "730",
     following: "126",
   },
@@ -62,6 +69,7 @@ export const publicProfiles: PublicProfile[] = [
     name: "Mara Osei",
     location: "Accra, GH",
     bio: "Poet and essayist writing through what remains unsaid.",
+    about: "",
     followers: "3.1k",
     following: "502",
   },
@@ -81,5 +89,6 @@ export function getHandleForAuthor(name: string): string {
 }
 
 export function getPublicProfileByHandle(handle: string): PublicProfile {
-  return profileByHandle.get(handle) ?? publicProfiles[0]
+  const profile = profileByHandle.get(handle) ?? publicProfiles[0]
+  return { ...profile, about: profile.about ?? "" }
 }
