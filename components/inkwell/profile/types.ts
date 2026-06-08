@@ -1,2 +1,2 @@
 export type ProfileMode = "public" | "me"
-export type ProfileTabKey = "pieces" | "saved" | "drafts" | "about"
+export type ProfileTabKey = "pieces" | "likes" | "drafts" | "about"

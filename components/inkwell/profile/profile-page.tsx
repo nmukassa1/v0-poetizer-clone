@@ -1,7 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { lovedPieces, type PiecePost } from "@/lib/feed"
+import { useState } from "react"
+import type { PiecePost } from "@/lib/feed"
 import type { PublicProfile } from "@/lib/profile"
 import { getPublicProfileByHandle } from "@/lib/profile"
 import { Divider } from "@/components/inkwell/primitives"
@@ -13,7 +13,6 @@ import { ProfileTabContent } from "./profile-tab-content"
 import { ProfileTabsNav } from "./profile-tabs-nav"
 import { ProfileWriteFab } from "./profile-write-fab"
 import type { ProfileMode, ProfileTabKey } from "./types"
-import { lovedPieceToCard } from "./utils"
 
 export function ProfilePage({
   initialMode = "me",
@@ -22,10 +21,12 @@ export function ProfilePage({
   meProfile: meProfileProp,
   publicProfile: publicProfileProp,
   initialPublished = [],
+  initialLikes = [],
   initialDrafts = [],
   latestDraftId = null,
   canFollow = false,
   initialFollowing = false,
+  canEditAbout = false,
 }: {
   initialMode?: ProfileMode
   lockMode?: boolean
@@ -33,10 +34,12 @@ export function ProfilePage({
   meProfile?: PublicProfile
   publicProfile?: PublicProfile
   initialPublished?: PiecePost[]
+  initialLikes?: PiecePost[]
   initialDrafts?: PiecePost[]
   latestDraftId?: string | null
   canFollow?: boolean
   initialFollowing?: boolean
+  canEditAbout?: boolean
 }) {
   const [mode] = useState<ProfileMode>(initialMode)
   const [publicHandle, setPublicHandle] = useState(initialPublicHandle)
@@ -48,27 +51,17 @@ export function ProfilePage({
       ? (meProfileProp ?? DEFAULT_ME_PROFILE)
       : (publicProfileProp ?? mockPublicProfile)
 
-  const saved = useMemo(
-    () =>
-      lovedPieces
-        .filter((item) =>
-          mode === "public" ? item.author !== profile.name : true,
-        )
-        .map(lovedPieceToCard),
-    [mode, profile.name],
-  )
-
   const tabs: { key: ProfileTabKey; label: string }[] =
     mode === "me"
       ? [
           { key: "pieces", label: "Pieces" },
-          { key: "saved", label: "Saved" },
+          { key: "likes", label: "Likes" },
           { key: "drafts", label: "Drafts" },
           { key: "about", label: "About" },
         ]
       : [
           { key: "pieces", label: "Pieces" },
-          { key: "saved", label: "Saved" },
+          { key: "likes", label: "Likes" },
           { key: "about", label: "About" },
         ]
 
@@ -108,13 +101,20 @@ export function ProfilePage({
               mode={mode}
               profile={profile}
               pieces={initialPublished}
-              saved={saved}
+              likes={initialLikes}
               drafts={initialDrafts}
+              canEditAbout={canEditAbout}
             />
           </section>
         </main>
 
-        <ProfileSidebar mode={mode} latestDraftId={latestDraftId} />
+        <ProfileSidebar
+          mode={mode}
+          latestDraftId={latestDraftId}
+          canFollow={canFollow}
+          initialFollowing={initialFollowing}
+          followHandle={mode === "public" ? profile.handle : undefined}
+        />
       </div>
 
       {mode === "me" && <ProfileWriteFab />}

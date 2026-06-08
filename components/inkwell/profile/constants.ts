@@ -5,6 +5,7 @@ export const DEFAULT_ME_PROFILE: PublicProfile = {
   handle: "you",
   location: "—",
   bio: "Sign in and publish your first piece to fill out this profile.",
+  about: "",
   followers: "—",
   following: "—",
 }

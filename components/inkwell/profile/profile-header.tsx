@@ -16,6 +16,7 @@ import {
 import { DEMO_PROFILE_HANDLES } from "./constants"
 import { ProfileEditForm } from "./profile-edit-form"
 import { ProfileStatPill } from "./profile-stat-pill"
+import { ProfileFollowListDialog } from "./profile-follow-list-dialog"
 import { ProfileFollowButton } from "@/components/inkwell/social/profile-follow-button"
 import { formatSocialCount } from "@/lib/social/format-count"
 import type { ProfileMode } from "./types"
@@ -45,6 +46,7 @@ export function ProfileHeader({
   const [editOpen, setEditOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
   const [followerCountLabel, setFollowerCountLabel] = useState(profile.followers)
+  const [followingCountLabel, setFollowingCountLabel] = useState(profile.following)
 
   const editProfile = {
     name: profile.name,
@@ -55,7 +57,8 @@ export function ProfileHeader({
 
   useEffect(() => {
     setFollowerCountLabel(profile.followers)
-  }, [profile.followers])
+    setFollowingCountLabel(profile.following)
+  }, [profile.followers, profile.following])
 
   useEffect(() => {
     if (editOpen) {
@@ -103,6 +106,7 @@ export function ProfileHeader({
             <ProfileFollowButton
               handle={profile.handle}
               initialFollowing={initialFollowing}
+              variant="header"
               onFollowerCountChange={(count) => {
                 const label = formatSocialCount(count)
                 setFollowerCountLabel(label)
@@ -148,8 +152,18 @@ export function ProfileHeader({
 
         <div className="mt-6 flex flex-wrap gap-2 min-[480px]:gap-3">
           <ProfileStatPill label="Pieces" value={pieceCount.toString()} />
-          <ProfileStatPill label="Followers" value={followerCountLabel} />
-          <ProfileStatPill label="Following" value={profile.following} />
+          <ProfileFollowListDialog
+            handle={profile.handle}
+            profileName={profile.name}
+            kind="followers"
+            countLabel={followerCountLabel}
+          />
+          <ProfileFollowListDialog
+            handle={profile.handle}
+            profileName={profile.name}
+            kind="following"
+            countLabel={followingCountLabel}
+          />
           <ProfileStatPill
             label="Top type"
             value={mode === "public" ? "poem" : "essay"}

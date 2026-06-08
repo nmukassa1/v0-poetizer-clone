@@ -13,6 +13,7 @@ model Profile {
   handle    String      @unique
   name      String
   bio       String?
+  about     String?     @db.Text
   location       String?
   followerCount  Int             @default(0) @map("follower_count")
   followingCount Int             @default(0) @map("following_count")
