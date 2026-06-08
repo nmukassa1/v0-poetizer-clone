@@ -9,3 +9,10 @@ export type PieceCommentView = {
   }
   isMine: boolean
 }
+
+export type ProfileListItem = {
+  id: string
+  handle: string
+  name: string
+  bio: string | null
+}

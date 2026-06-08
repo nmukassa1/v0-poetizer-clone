@@ -1,4 +1,12 @@
 import { prisma } from "@/lib/db"
+import type { ProfileListItem } from "@/lib/social/types"
+
+const profileListSelect = {
+  id: true,
+  handle: true,
+  name: true,
+  bio: true,
+} as const
 
 export async function isFollowingUser(
   followerId: string,
@@ -43,4 +51,50 @@ export async function getFollowingIdsForUser(
   })
 
   return new Set(rows.map((row) => row.followingId))
+}
+
+async function getProfileIdByHandle(handle: string) {
+  const profile = await prisma.profile.findUnique({
+    where: { handle },
+    select: { id: true },
+  })
+  return profile?.id ?? null
+}
+
+export async function listFollowersForHandle(
+  handle: string,
+  limit = 100,
+): Promise<ProfileListItem[] | null> {
+  const profileId = await getProfileIdByHandle(handle)
+  if (!profileId) return null
+
+  const rows = await prisma.profileFollow.findMany({
+    where: { followingId: profileId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: {
+      follower: { select: profileListSelect },
+    },
+  })
+
+  return rows.map((row) => row.follower)
+}
+
+export async function listFollowingForHandle(
+  handle: string,
+  limit = 100,
+): Promise<ProfileListItem[] | null> {
+  const profileId = await getProfileIdByHandle(handle)
+  if (!profileId) return null
+
+  const rows = await prisma.profileFollow.findMany({
+    where: { followerId: profileId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+    select: {
+      following: { select: profileListSelect },
+    },
+  })
+
+  return rows.map((row) => row.following)
 }
