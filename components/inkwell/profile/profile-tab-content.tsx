@@ -14,14 +14,14 @@ export function ProfileTabContent({
   mode,
   profile,
   pieces,
-  saved,
+  likes,
   drafts,
 }: {
   tab: ProfileTabKey
   mode: ProfileMode
   profile: PublicProfile
   pieces: PiecePost[]
-  saved: PiecePost[]
+  likes: PiecePost[]
   drafts: PiecePost[]
 }) {
   const router = useRouter()
@@ -53,16 +53,20 @@ export function ProfileTabContent({
     ))
   }
 
-  if (tab === "saved") {
-    if (saved.length === 0) {
+  if (tab === "likes") {
+    if (likes.length === 0) {
       return (
         <ProfileEmptyState
-          title="Nothing saved yet"
-          copy="Saved pieces will gather here so you can return to them anytime."
+          title="No likes yet"
+          copy={
+            mode === "me"
+              ? "Pieces you like will appear here."
+              : `${profile.name.split(" ")[0]} hasn't liked any pieces yet.`
+          }
         />
       )
     }
-    return saved.map((item) => (
+    return likes.map((item) => (
       <PieceCard
         key={item.id}
         post={item}

@@ -1,12 +1,21 @@
+"use client"
+
 import Link from "next/link"
+import { ProfileFollowButton } from "@/components/inkwell/social/profile-follow-button"
 import type { ProfileMode } from "./types"
 
 export function ProfileSidebar({
   mode,
   latestDraftId,
+  canFollow = false,
+  initialFollowing = false,
+  followHandle,
 }: {
   mode: ProfileMode
   latestDraftId?: string | null
+  canFollow?: boolean
+  initialFollowing?: boolean
+  followHandle?: string
 }) {
   return (
     <aside className="hidden lg:block">
@@ -43,14 +52,15 @@ export function ProfileSidebar({
                 New piece
               </Link>
             </div>
-          ) : (
-            <button
-              type="button"
-              className="mt-4 inline-flex rounded-full border border-[var(--ink-border)] px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-[var(--ink-fg)]"
-            >
-              Follow writer
-            </button>
-          )}
+          ) : canFollow && followHandle ? (
+            <div className="mt-4">
+              <ProfileFollowButton
+                handle={followHandle}
+                initialFollowing={initialFollowing}
+                variant="header"
+              />
+            </div>
+          ) : null}
         </section>
 
         <section className="rounded-xl border border-[var(--ink-border)] bg-[var(--ink-bg)] p-4">

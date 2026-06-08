@@ -106,6 +106,7 @@ export function ProfileHeader({
             <ProfileFollowButton
               handle={profile.handle}
               initialFollowing={initialFollowing}
+              variant="header"
               onFollowerCountChange={(count) => {
                 const label = formatSocialCount(count)
                 setFollowerCountLabel(label)

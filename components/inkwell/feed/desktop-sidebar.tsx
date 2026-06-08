@@ -2,14 +2,17 @@ import { QuoteCallout, ReadersLovingGrid } from "@/components/inkwell/features"
 import { Divider } from "@/components/inkwell/primitives"
 import { StreakWidget } from "@/components/inkwell/streak-widget"
 import { WelcomeCard } from "@/components/inkwell/feed/welcome-card"
+import type { WriterSpotlightData } from "@/lib/feed"
 import { WriterSpotlight } from "@/components/inkwell/feed/writer-spotlight"
 
 export function DesktopSidebar({
   isLoggedIn,
   showFirstSlot,
+  spotlight,
 }: {
   isLoggedIn: boolean
   showFirstSlot: boolean
+  spotlight?: WriterSpotlightData | null
 }) {
   return (
     <aside className="hidden lg:block">
@@ -23,7 +26,7 @@ export function DesktopSidebar({
 
         <section>
           <Divider label="Writer spotlight" />
-          <WriterSpotlight />
+          <WriterSpotlight spotlight={spotlight ?? undefined} />
         </section>
 
         <section>

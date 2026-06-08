@@ -1,6 +1,6 @@
 "use client"
 
-import type { PiecePost } from "@/lib/feed"
+import type { PiecePost, WriterSpotlightData } from "@/lib/feed"
 import { QuoteCallout, ReadersLovingGrid } from "@/components/inkwell/features"
 import { PieceCard } from "@/components/inkwell/piece-card"
 import { Divider } from "@/components/inkwell/primitives"
@@ -10,9 +10,11 @@ import { getProfileHrefByHandle } from "@/lib/profile"
 export function RecentFeed({
   items,
   showFeatures,
+  spotlight,
 }: {
   items: PiecePost[]
   showFeatures: boolean
+  spotlight?: WriterSpotlightData | null
 }) {
   if (items.length === 0) {
     return (
@@ -60,7 +62,7 @@ export function RecentFeed({
             <>
               <Divider label="Writer spotlight" className="lg:hidden" />
               <div className="lg:hidden">
-                <WriterSpotlight />
+                <WriterSpotlight spotlight={spotlight ?? undefined} />
               </div>
             </>
           )}

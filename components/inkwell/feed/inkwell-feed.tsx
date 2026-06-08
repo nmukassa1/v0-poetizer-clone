@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useAuth } from "@/components/inkwell/auth-provider";
-import type { Featured, PiecePost } from "@/lib/feed/types";
+import type { Featured, PiecePost, WriterSpotlightData } from "@/lib/feed";
 import { DesktopSidebar } from "@/components/inkwell/feed/desktop-sidebar";
 import { useFeedFilter } from "@/components/inkwell/feed/feed-filter-context";
 import { FeedFeaturedSection } from "@/components/inkwell/feed/feed-featured-section";
@@ -15,10 +15,12 @@ export function InkwellFeed({
   pieces,
   featured,
   featuredReadHref,
+  spotlight,
 }: {
   pieces: PiecePost[];
   featured: Featured;
   featuredReadHref?: string;
+  spotlight?: WriterSpotlightData | null;
 }) {
   const { isLoggedIn } = useAuth();
   const feedFilter = useFeedFilter();
@@ -47,6 +49,7 @@ export function InkwellFeed({
           <FeedRecentSection
             items={visibleItems}
             showFeatures={filter === "all"}
+            spotlight={spotlight}
           />
         </main>
 
@@ -54,6 +57,7 @@ export function InkwellFeed({
           <DesktopSidebar
             isLoggedIn={isLoggedIn}
             showFirstSlot={showFirstSlot}
+            spotlight={spotlight}
           />
         )}
       </div>
