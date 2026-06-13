@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db"
 import { contentTagToPieceType } from "@/lib/piece/types"
 import { SEED_PROFILES, SEED_USER_ID_PREFIX } from "./profiles"
 import { SEED_PIECES } from "./pieces"
+import { seedPrompts } from "./prompts"
 
 function publishedAt(daysAgo: number): Date {
   const date = new Date()
@@ -14,19 +15,39 @@ export async function clearSeedData() {
   const deletedPieces = await prisma.piece.deleteMany({
     where: { author: { id: { startsWith: SEED_USER_ID_PREFIX } } },
   })
+  const deletedPrompts = await prisma.prompt.deleteMany({
+    where: {
+      slug: {
+        in: [
+          "things-left-unsaid",
+          "first-light",
+          "a-door-left-open",
+          "salt-and-memory",
+          "the-last-train-home",
+          "letters-never-sent",
+        ],
+      },
+    },
+  })
   const deletedProfiles = await prisma.profile.deleteMany({
     where: { id: { startsWith: SEED_USER_ID_PREFIX } },
   })
-  return { deletedPieces: deletedPieces.count, deletedProfiles: deletedProfiles.count }
+  return {
+    deletedPieces: deletedPieces.count,
+    deletedPrompts: deletedPrompts.count,
+    deletedProfiles: deletedProfiles.count,
+  }
 }
 
 export async function seedDatabase(options?: { clear?: boolean }) {
   if (options?.clear) {
     const cleared = await clearSeedData()
     console.log(
-      `Cleared ${cleared.deletedPieces} pieces and ${cleared.deletedProfiles} seed profiles.`,
+      `Cleared ${cleared.deletedPieces} pieces, ${cleared.deletedPrompts} prompts, and ${cleared.deletedProfiles} seed profiles.`,
     )
   }
+
+  const promptCount = await seedPrompts(prisma)
 
   for (const profile of SEED_PROFILES) {
     await prisma.profile.upsert({
@@ -98,6 +119,7 @@ export async function seedDatabase(options?: { clear?: boolean }) {
   return {
     profiles: SEED_PROFILES.length,
     pieces: SEED_PIECES.length,
+    prompts: promptCount,
   }
 }
 
@@ -107,7 +129,7 @@ async function main() {
   console.log("Seeding inkwell database…")
   const result = await seedDatabase({ clear })
   console.log(
-    `Done. Upserted ${result.profiles} profiles and ${result.pieces} published pieces.`,
+    `Done. Upserted ${result.profiles} profiles, ${result.pieces} published pieces, and ${result.prompts} prompts.`,
   )
 }
 

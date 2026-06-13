@@ -1,10 +1,10 @@
-import type { Piece, Profile } from "@/lib/generated/prisma/client"
+import type { Piece, Profile, Prompt } from "@/lib/generated/prisma/client"
 import type { Featured, PiecePost } from "@/lib/feed/types"
-import { getPiecePrompt } from "@/lib/prompts/registry"
 import { pieceTypeToContentTag } from "@/lib/piece/types"
 
 export type PieceWithAuthor = Piece & {
   author: Pick<Profile, "name" | "handle" | "bio" | "location">
+  prompt?: Pick<Prompt, "slug" | "title"> | null
 }
 
 function formatPieceDate(date: Date): string {
@@ -32,7 +32,9 @@ export function pieceToFeedPost(piece: PieceWithAuthor): PiecePost {
     likes: piece.likeCount,
     comments: piece.commentCount,
     shares: piece.shareCount,
-    prompt: getPiecePrompt(piece.promptSlug),
+    prompt: piece.prompt
+      ? { slug: piece.prompt.slug, title: piece.prompt.title }
+      : undefined,
   }
 }
 

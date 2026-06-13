@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useAuth } from "@/components/inkwell/auth-provider";
 import type { Featured, PiecePost, WriterSpotlightData } from "@/lib/feed";
+import type { LivePromptView } from "@/lib/prompts/types";
 import { DesktopSidebar } from "@/components/inkwell/feed/desktop-sidebar";
 import { FeedFeaturedSection } from "@/components/inkwell/feed/feed-featured-section";
 import { FeedMobileStreakSection } from "@/components/inkwell/feed/feed-mobile-streak-section";
@@ -15,11 +16,13 @@ export function InkwellFeed({
   featured,
   featuredReadHref,
   spotlight,
+  livePrompt = null,
 }: {
   pieces: PiecePost[];
   featured: Featured;
   featuredReadHref?: string;
   spotlight?: WriterSpotlightData | null;
+  livePrompt?: LivePromptView | null;
 }) {
   const { isLoggedIn } = useAuth();
   const filter = "all";
@@ -42,7 +45,7 @@ export function InkwellFeed({
             />
           )}
 
-          <FeedPromptSection />
+          <FeedPromptSection livePrompt={livePrompt} />
 
           <FeedRecentSection
             items={visibleItems}

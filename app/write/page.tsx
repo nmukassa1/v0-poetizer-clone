@@ -8,21 +8,21 @@ import {
   getPieceByIdForAuthor,
   getProfileByUserId,
 } from "@/lib/piece/queries"
-import { getPromptBySlug } from "@/lib/prompts/registry"
+import { getLinkedPromptForComposer } from "@/lib/prompts/resolve-prompt-slug"
 
 export const dynamic = "force-dynamic"
 
-function resolveLinkedPrompt(options: {
+async function resolveLinkedPrompt(options: {
   promptParam?: string
   piecePromptSlug?: string | null
-}): ComposerLinkedPrompt | null {
+}): Promise<ComposerLinkedPrompt | null> {
   const slug = options.piecePromptSlug ?? options.promptParam
   if (!slug) return null
 
-  const prompt = getPromptBySlug(slug)
+  const prompt = await getLinkedPromptForComposer(slug)
   if (!prompt) return null
 
-  if (!options.piecePromptSlug && prompt.status !== "active") {
+  if (!options.piecePromptSlug && prompt.status !== "ACTIVE") {
     return null
   }
 
@@ -68,7 +68,7 @@ export default async function WritePage({
     }
   }
 
-  const linkedPrompt = resolveLinkedPrompt({
+  const linkedPrompt = await resolveLinkedPrompt({
     promptParam,
     piecePromptSlug: piecePromptSlug ?? initialDraft?.promptSlug,
   })

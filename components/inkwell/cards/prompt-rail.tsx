@@ -1,4 +1,4 @@
-import type { WeeklyPrompt } from "@/lib/feed"
+import type { LivePromptView } from "@/lib/prompts/types"
 import Link from "next/link"
 import { CommentIcon, HeartIcon, Tag } from "@/components/inkwell/primitives"
 import {
@@ -7,7 +7,7 @@ import {
   getSubmissionReadHref,
 } from "@/lib/prompts/registry"
 
-export function PromptRail({ prompt }: { prompt: WeeklyPrompt }) {
+export function PromptRail({ prompt }: { prompt: LivePromptView }) {
   const promptHref = getPromptHref(prompt.slug)
 
   return (
@@ -31,31 +31,37 @@ export function PromptRail({ prompt }: { prompt: WeeklyPrompt }) {
           Write now
         </Link>
       </div>
-      <div className="ink-scrollbar-hide flex gap-2.5 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] lg:grid lg:grid-cols-2 lg:overflow-visible lg:pb-0 xl:grid-cols-4">
-        {prompt.submissions.map((submission) => (
-          <Link
-            key={submission.id}
-            href={getSubmissionReadHref(prompt.slug, submission.id)}
-            className="min-w-[150px] shrink-0 rounded-[10px] border border-[var(--ink-prompt-border)] bg-white p-3 transition-colors hover:border-[var(--ink-prompt-btn)]/40 min-[480px]:min-w-[170px] min-[480px]:px-3.5 lg:min-w-0"
-          >
-            <Tag label={submission.type} />
-            <div className="my-1.5 font-serif text-[13px] font-semibold text-[var(--ink-prompt-title)]">
-              {submission.title}
-            </div>
-            <div className="mb-2 text-[11px] text-[var(--ink-prompt-meta)]">
-              {submission.author}
-            </div>
-            <div className="flex gap-2.5 text-[11px] text-[var(--ink-subtle)]">
-              <span className="flex items-center gap-1">
-                <HeartIcon /> {submission.likes}
-              </span>
-              <span className="flex items-center gap-1">
-                <CommentIcon /> {submission.comments}
-              </span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      {prompt.submissions.length > 0 ? (
+        <div className="ink-scrollbar-hide flex gap-2.5 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] lg:grid lg:grid-cols-2 lg:overflow-visible lg:pb-0 xl:grid-cols-4">
+          {prompt.submissions.map((submission) => (
+            <Link
+              key={submission.id}
+              href={getSubmissionReadHref(prompt.slug, submission.id)}
+              className="min-w-[150px] shrink-0 rounded-[10px] border border-[var(--ink-prompt-border)] bg-white p-3 transition-colors hover:border-[var(--ink-prompt-btn)]/40 min-[480px]:min-w-[170px] min-[480px]:px-3.5 lg:min-w-0"
+            >
+              <Tag label={submission.type} />
+              <div className="my-1.5 font-serif text-[13px] font-semibold text-[var(--ink-prompt-title)]">
+                {submission.title}
+              </div>
+              <div className="mb-2 text-[11px] text-[var(--ink-prompt-meta)]">
+                {submission.author}
+              </div>
+              <div className="flex gap-2.5 text-[11px] text-[var(--ink-subtle)]">
+                <span className="flex items-center gap-1">
+                  <HeartIcon /> {submission.likes}
+                </span>
+                <span className="flex items-center gap-1">
+                  <CommentIcon /> {submission.comments}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-[var(--ink-prompt-border)] px-4 py-6 text-center font-sans text-[12px] text-[var(--ink-prompt-meta)]">
+          No submissions yet. Be the first to write a response.
+        </div>
+      )}
     </div>
   )
 }

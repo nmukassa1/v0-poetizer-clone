@@ -42,7 +42,7 @@ export async function updatePiece(
   const { status, visibility: pieceVisibility } = visibilityFromInput(visibility)
   const excerptText = excerpt?.trim() || excerptFromBody(body)
 
-  const resolvedPrompt = resolvePromptSlugForSave(
+  const resolvedPrompt = await resolvePromptSlugForSave(
     promptSlug,
     existing.promptSlug,
   )

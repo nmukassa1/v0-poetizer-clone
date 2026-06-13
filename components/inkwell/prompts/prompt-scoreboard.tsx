@@ -1,5 +1,6 @@
 import Link from "next/link"
-import type { PastPrompt, PromptStatus, WeeklyPrompt } from "@/lib/feed"
+import type { PastPrompt, PromptStatus } from "@/lib/feed"
+import type { LivePromptView } from "@/lib/prompts/types"
 import { getPromptHref } from "@/lib/prompts/registry"
 
 function statusLabel(status: PromptStatus) {
@@ -141,7 +142,7 @@ export function PromptScoreboard({
   variant = "rail",
 }: {
   pastPrompts: PastPrompt[]
-  currentPrompt: WeeklyPrompt | null
+  currentPrompt: LivePromptView | null
   activeSlug: string
   variant?: "rail" | "sidebar"
 }) {

@@ -1,5 +1,5 @@
-import type { PastPrompt, PiecePost, WeeklyPrompt } from "@/lib/feed";
-import type { PromptDetail } from "@/lib/prompts/types";
+import type { PastPrompt, PiecePost } from "@/lib/feed";
+import type { LivePromptView, PromptDetail } from "@/lib/prompts/types";
 import { PromptHero } from "./prompt-hero";
 import { PromptScoreboard } from "./prompt-scoreboard";
 import { PromptSubmissionsList } from "./prompt-submissions-list";
@@ -13,7 +13,7 @@ export function PromptsPage({
 }: {
   prompt: PromptDetail;
   pastPrompts: PastPrompt[];
-  currentPrompt: WeeklyPrompt | null;
+  currentPrompt: LivePromptView | null;
   activeSlug: string;
   submissions: PiecePost[];
 }) {

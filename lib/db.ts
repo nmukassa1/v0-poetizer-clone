@@ -5,8 +5,11 @@ const globalForPrisma = globalThis as unknown as {
   prisma: TaggedPrismaClient | undefined
 }
 
-/** Busts the dev HMR singleton when generated Piece fields change. */
-const PRISMA_CLIENT_SCHEMA_KEY = Object.keys(Prisma.PieceScalarFieldEnum)
+/** Busts the dev HMR singleton when generated models or fields change. */
+const PRISMA_CLIENT_SCHEMA_KEY = [
+  ...Object.keys(Prisma.PieceScalarFieldEnum),
+  ...Object.keys(Prisma.PromptScalarFieldEnum),
+]
   .sort()
   .join(",")
 
@@ -60,6 +63,7 @@ function isPrismaClientReady(
       client.__schemaKey === PRISMA_CLIENT_SCHEMA_KEY &&
       typeof client.profile?.findFirst === "function" &&
       typeof client.piece?.findFirst === "function" &&
+      typeof client.prompt?.findUnique === "function" &&
       typeof client.pieceLike?.findMany === "function" &&
       typeof client.pieceComment?.findMany === "function" &&
       typeof client.profileFollow?.findMany === "function",

@@ -43,7 +43,7 @@ export async function publishPiece(
   const { status, visibility: pieceVisibility } = visibilityFromInput(visibility)
   const excerptText = excerpt?.trim() || excerptFromBody(body)
 
-  const resolvedPrompt = resolvePromptSlugForSave(promptSlug, null)
+  const resolvedPrompt = await resolvePromptSlugForSave(promptSlug, null)
   if (!resolvedPrompt.ok) {
     return { success: false, error: resolvedPrompt.error }
   }

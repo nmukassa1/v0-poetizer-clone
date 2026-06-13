@@ -1,11 +1,14 @@
 import Link from "next/link"
 import { PromptRail } from "@/components/inkwell/cards"
-import { getCurrentPrompt, getPromptHref } from "@/lib/prompts/registry"
+import type { LivePromptView } from "@/lib/prompts/types"
+import { getPromptHref } from "@/lib/prompts/registry"
 
-export function FeedPromptSection() {
-  const currentPrompt = getCurrentPrompt()
-
-  if (!currentPrompt) {
+export function FeedPromptSection({
+  livePrompt,
+}: {
+  livePrompt: LivePromptView | null
+}) {
+  if (!livePrompt) {
     return null
   }
 
@@ -20,13 +23,13 @@ export function FeedPromptSection() {
           <div className="h-px flex-1 bg-[var(--ink-border)]" />
         </div>
         <Link
-          href={getPromptHref(currentPrompt.slug)}
+          href={getPromptHref(livePrompt.slug)}
           className="shrink-0 font-sans text-[11px] font-medium text-[var(--ink-prompt-btn)] underline-offset-4 hover:underline"
         >
           View all
         </Link>
       </div>
-      <PromptRail prompt={currentPrompt} />
+      <PromptRail prompt={livePrompt} />
     </section>
   )
 }
