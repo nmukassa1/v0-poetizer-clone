@@ -13,7 +13,7 @@ export function PromptsPage({
 }: {
   prompt: PromptDetail;
   pastPrompts: PastPrompt[];
-  currentPrompt: WeeklyPrompt;
+  currentPrompt: WeeklyPrompt | null;
   activeSlug: string;
   submissions: PiecePost[];
 }) {

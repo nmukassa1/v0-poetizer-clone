@@ -1,9 +1,9 @@
 import { getCurrentUser } from "@/lib/auth/server"
-import { pastPrompts, weeklyPrompt } from "@/lib/feed"
+import { pastPrompts } from "@/lib/feed"
 import { pieceToFeedPost } from "@/lib/piece/map"
 import { listPublishedPiecesByPromptSlug } from "@/lib/piece/queries"
 import { attachLikedToFeedPosts } from "@/lib/social"
-import { getPromptBySlug } from "@/lib/prompts/registry"
+import { getCurrentPrompt, getPromptBySlug } from "@/lib/prompts/registry"
 import { promptSubmissionToPiecePost } from "@/lib/prompts/map"
 
 export async function loadPromptPageData(slug: string) {
@@ -37,7 +37,7 @@ export async function loadPromptPageData(slug: string) {
       count: Math.max(prompt.count, submissions.length),
     },
     pastPrompts,
-    currentPrompt: weeklyPrompt,
+    currentPrompt: getCurrentPrompt(),
     activeSlug: slug,
     submissions,
   }

@@ -141,7 +141,7 @@ export function PromptScoreboard({
   variant = "rail",
 }: {
   pastPrompts: PastPrompt[]
-  currentPrompt: WeeklyPrompt
+  currentPrompt: WeeklyPrompt | null
   activeSlug: string
   variant?: "rail" | "sidebar"
 }) {
@@ -161,26 +161,30 @@ export function PromptScoreboard({
         active={prompt.slug === activeSlug}
       />
     )),
-    <ScoreboardCard
-      key={currentPrompt.id}
-      slug={currentPrompt.slug}
-      sidebar={sidebar}
-      dateLabel={currentPrompt.startsAt}
-      status="active"
-      title={currentPrompt.title}
-      submissionCount={currentPrompt.count}
-      active={currentPrompt.slug === activeSlug}
-    />,
+    ...(currentPrompt
+      ? [
+          <ScoreboardCard
+            key={currentPrompt.id}
+            slug={currentPrompt.slug}
+            sidebar={sidebar}
+            dateLabel={currentPrompt.startsAt}
+            status="active"
+            title={currentPrompt.title}
+            submissionCount={currentPrompt.count}
+            active={currentPrompt.slug === activeSlug}
+          />,
+        ]
+      : []),
   ]
 
   return (
     <section aria-label="Previous prompts">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h2 className="font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ink-subtle)]">
-          Previous prompts
+          {currentPrompt ? "Previous prompts" : "Prompt archive"}
         </h2>
         <span className="font-sans text-[10px] text-[var(--ink-subtle)]">
-          {pastPrompts.length + 1} weeks
+          {pastPrompts.length + (currentPrompt ? 1 : 0)} weeks
         </span>
       </div>
 

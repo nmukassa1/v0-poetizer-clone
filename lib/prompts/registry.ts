@@ -63,12 +63,12 @@ function pastPromptToDetail(prompt: PastPrompt): PromptDetail {
   }
 }
 
-export function getCurrentPrompt(): WeeklyPrompt {
-  return weeklyPrompt
+export function getCurrentPrompt(): WeeklyPrompt | null {
+  return weeklyPrompt ?? null
 }
 
-export function getCurrentPromptSlug(): string {
-  return weeklyPrompt.slug
+export function getCurrentPromptSlug(): string | null {
+  return getCurrentPrompt()?.slug ?? null
 }
 
 export function getPastPrompts(): PastPrompt[] {
@@ -76,8 +76,9 @@ export function getPastPrompts(): PastPrompt[] {
 }
 
 export function getPromptBySlug(slug: string): PromptDetail | null {
-  if (weeklyPrompt.slug === slug) {
-    return weeklyPromptToDetail(weeklyPrompt)
+  const current = getCurrentPrompt()
+  if (current?.slug === slug) {
+    return weeklyPromptToDetail(current)
   }
 
   const past = pastPrompts.find((entry) => entry.slug === slug)
@@ -101,4 +102,15 @@ export function getPiecePrompt(slug: string | null | undefined) {
   if (!prompt) return undefined
 
   return { slug: prompt.slug, title: prompt.title }
+}
+
+export function getSubmissionReadHref(
+  promptSlug: string,
+  submissionId: string,
+): string {
+  if (submissionId.startsWith("mock-")) {
+    return getPromptHref(promptSlug)
+  }
+
+  return `/read/${submissionId}`
 }
