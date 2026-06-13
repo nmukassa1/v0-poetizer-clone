@@ -93,3 +93,12 @@ export function getPromptHref(slug: string): string {
 export function getPromptWriteHref(slug: string): string {
   return `/write?prompt=${slug}&new=1`
 }
+
+export function getPiecePrompt(slug: string | null | undefined) {
+  if (!slug) return undefined
+
+  const prompt = getPromptBySlug(slug)
+  if (!prompt) return undefined
+
+  return { slug: prompt.slug, title: prompt.title }
+}

@@ -1,5 +1,6 @@
 import type { Piece, Profile } from "@/lib/generated/prisma/client"
 import type { Featured, PiecePost } from "@/lib/feed/types"
+import { getPiecePrompt } from "@/lib/prompts/registry"
 import { pieceTypeToContentTag } from "@/lib/piece/types"
 
 export type PieceWithAuthor = Piece & {
@@ -31,6 +32,7 @@ export function pieceToFeedPost(piece: PieceWithAuthor): PiecePost {
     likes: piece.likeCount,
     comments: piece.commentCount,
     shares: piece.shareCount,
+    prompt: getPiecePrompt(piece.promptSlug),
   }
 }
 

@@ -124,6 +124,21 @@ export async function countPublishedPiecesByAuthorId(authorId: string) {
   })
 }
 
+export async function listPublishedPiecesByPromptSlug(
+  promptSlug: string,
+  limit = 50,
+) {
+  return prisma.piece.findMany({
+    where: {
+      ...publishedPublicWhere,
+      promptSlug,
+    },
+    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    take: limit,
+    include: { author: { select: authorSelect } },
+  })
+}
+
 export async function getMoreByAuthor(
   authorId: string,
   excludeId: string,

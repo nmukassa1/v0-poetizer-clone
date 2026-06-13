@@ -4,6 +4,7 @@ import { getPieceByIdForAuthor } from "@/lib/piece/queries"
 import type { PublishPieceResult } from "@/lib/piece/publish"
 import { contentTagToPieceType } from "@/lib/piece/types"
 import { visibilityFromInput } from "@/lib/piece/visibility"
+import { resolvePromptSlugForSave } from "@/lib/prompts/resolve-prompt-slug"
 import { prisma } from "@/lib/db"
 import { publishPieceSchema } from "@/lib/validations/piece"
 
@@ -37,9 +38,17 @@ export async function updatePiece(
     }
   }
 
-  const { title, body, type, excerpt, visibility, tags } = parsed.data
+  const { title, body, type, excerpt, visibility, tags, promptSlug } = parsed.data
   const { status, visibility: pieceVisibility } = visibilityFromInput(visibility)
   const excerptText = excerpt?.trim() || excerptFromBody(body)
+
+  const resolvedPrompt = resolvePromptSlugForSave(
+    promptSlug,
+    existing.promptSlug,
+  )
+  if (!resolvedPrompt.ok) {
+    return { success: false, error: resolvedPrompt.error }
+  }
 
   try {
     const piece = await prisma.piece.update({
@@ -52,6 +61,7 @@ export async function updatePiece(
         status,
         visibility: pieceVisibility,
         tags,
+        promptSlug: resolvedPrompt.promptSlug,
         publishedAt: status === "PUBLISHED" ? new Date() : null,
       },
       select: { id: true, status: true },

@@ -11,6 +11,7 @@ export const publishPieceSchema = z.object({
   excerpt: z.string().trim().max(500).optional(),
   visibility: visibilitySchema.default("public"),
   tags: z.array(z.string().trim().min(1).max(40)).max(12).default([]),
+  promptSlug: z.string().trim().min(1).max(80).optional().nullable(),
 })
 
 export const saveDraftPieceSchema = publishPieceSchema.partial({

@@ -6,25 +6,28 @@ import { ComposerEditor } from "./composer-editor"
 import { ComposerFormatToolbar } from "./composer-format-toolbar"
 import { ComposerGlobalStyles } from "./composer-global-styles"
 import { ComposerPreview } from "./composer-preview"
+import { ComposerPromptBanner } from "./composer-prompt-banner"
 import { ComposerPublished } from "./composer-published"
 import { ComposerSettingsSheet } from "./composer-settings-sheet"
 import { ComposerSidebar } from "./composer-sidebar"
 import { ComposerWordCount } from "./composer-word-count"
-import type { ComposerAuthor, ComposerInitialDraft } from "./types"
+import type { ComposerAuthor, ComposerInitialDraft, ComposerLinkedPrompt } from "./types"
 import { useComposer } from "./use-composer"
 
 export function Composer({
   author,
   initialDraft = null,
+  linkedPrompt = null,
   draftError = null,
   publishedPieceId: loadPublishedPieceId = null,
 }: {
   author: ComposerAuthor
   initialDraft?: ComposerInitialDraft | null
+  linkedPrompt?: ComposerLinkedPrompt | null
   draftError?: string | null
   publishedPieceId?: string | null
 }) {
-  const c = useComposer(author, initialDraft)
+  const c = useComposer(author, initialDraft, linkedPrompt)
 
   if (draftError) {
     return (
@@ -68,12 +71,15 @@ export function Composer({
         visibility={c.visibility}
         publishedPieceId={c.publishedPieceId}
         editingPieceId={c.pieceId}
+        linkedPrompt={c.linkedPrompt}
       />
     )
   }
 
   return (
     <div className="min-h-screen pb-32">
+      {linkedPrompt ? <ComposerPromptBanner prompt={linkedPrompt} /> : null}
+
       {c.phase === "edit" ? (
         <div className="mx-auto grid max-w-7xl gap-0 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-10 lg:px-8 xl:grid-cols-[minmax(0,1fr)_360px]">
           <ComposerEditor

@@ -38,6 +38,7 @@ model Piece {
   status      PieceStatus     @default(DRAFT)
   visibility  PieceVisibility @default(PUBLIC)
   tags        String[]        @default([])
+  promptSlug  String?         @map("prompt_slug")
   likeCount    Int            @default(0) @map("like_count")
   commentCount Int            @default(0) @map("comment_count")
   shareCount   Int            @default(0) @map("share_count")
@@ -52,6 +53,7 @@ model Piece {
   @@index([authorId])
   @@index([status, publishedAt(sort: Desc)])
   @@index([type])
+  @@index([promptSlug, status, publishedAt(sort: Desc)])
   @@map("pieces")
 }
 

@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth/server"
 import { excerptFromBody } from "@/lib/piece/excerpt"
 import { visibilityFromInput } from "@/lib/piece/visibility"
 import { contentTagToPieceType } from "@/lib/piece/types"
+import { resolvePromptSlugForSave } from "@/lib/prompts/resolve-prompt-slug"
 import { prisma } from "@/lib/db"
 import { publishPieceSchema } from "@/lib/validations/piece"
 
@@ -38,9 +39,14 @@ export async function publishPiece(
     }
   }
 
-  const { title, body, type, excerpt, visibility, tags } = parsed.data
+  const { title, body, type, excerpt, visibility, tags, promptSlug } = parsed.data
   const { status, visibility: pieceVisibility } = visibilityFromInput(visibility)
   const excerptText = excerpt?.trim() || excerptFromBody(body)
+
+  const resolvedPrompt = resolvePromptSlugForSave(promptSlug, null)
+  if (!resolvedPrompt.ok) {
+    return { success: false, error: resolvedPrompt.error }
+  }
 
   try {
     const piece = await prisma.piece.create({
@@ -52,6 +58,7 @@ export async function publishPiece(
         status,
         visibility: pieceVisibility,
         tags,
+        promptSlug: resolvedPrompt.promptSlug,
         authorId: profile.id,
         publishedAt: status === "PUBLISHED" ? new Date() : null,
       },
