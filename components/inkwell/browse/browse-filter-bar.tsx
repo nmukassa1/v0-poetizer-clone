@@ -1,17 +1,26 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
 import { MenuIcon } from "@/components/inkwell/primitives"
-import { BROWSE_FILTERS } from "./constants"
+import { BROWSE_FILTERS, browseFilterHref } from "./constants"
 import type { BrowseFilter } from "./types"
 
-export function BrowseFilterBar({
-  filter,
-  onFilterChange,
-}: {
-  filter: BrowseFilter
-  onFilterChange: (filter: BrowseFilter) => void
-}) {
+function filterLinkClass(active: boolean, compact = false) {
+  const base = compact
+    ? "rounded-full border px-3 py-1 font-sans text-[11px] font-medium tracking-wide"
+    : "rounded-full border px-[11px] py-1 font-sans text-[11px] font-medium tracking-wide transition-all lg:px-4 lg:py-1.5 lg:text-sm"
+
+  return `${base} ${
+    active
+      ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
+      : compact
+        ? "border-[#ddd8ce] text-[var(--ink-fg)]"
+        : "border-[#ddd8ce] text-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
+  }`
+}
+
+export function BrowseFilterBar({ filter }: { filter: BrowseFilter }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
@@ -21,12 +30,13 @@ export function BrowseFilterBar({
         aria-label="Browse filters"
       >
         {BROWSE_FILTERS.map((f) => (
-          <FilterButton
+          <Link
             key={f.key}
-            label={f.label}
-            active={filter === f.key}
-            onClick={() => onFilterChange(f.key)}
-          />
+            href={browseFilterHref(f.key)}
+            className={filterLinkClass(filter === f.key)}
+          >
+            {f.label}
+          </Link>
         ))}
       </nav>
 
@@ -37,7 +47,7 @@ export function BrowseFilterBar({
         <button
           type="button"
           className="flex cursor-pointer items-center border-0 bg-transparent p-1 text-[var(--ink-fg)]"
-          onClick={() => setMenuOpen((o) => !o)}
+          onClick={() => setMenuOpen((open) => !open)}
           aria-label="Toggle filters"
           aria-expanded={menuOpen}
         >
@@ -51,47 +61,17 @@ export function BrowseFilterBar({
           aria-label="Browse filters"
         >
           {BROWSE_FILTERS.map((f) => (
-            <FilterButton
+            <Link
               key={f.key}
-              label={f.label}
-              active={filter === f.key}
-              compact
-              onClick={() => {
-                onFilterChange(f.key)
-                setMenuOpen(false)
-              }}
-            />
+              href={browseFilterHref(f.key)}
+              onClick={() => setMenuOpen(false)}
+              className={filterLinkClass(filter === f.key, true)}
+            >
+              {f.label}
+            </Link>
           ))}
         </nav>
       )}
     </div>
-  )
-}
-
-function FilterButton({
-  label,
-  active,
-  onClick,
-  compact = false,
-}: {
-  label: string
-  active: boolean
-  onClick: () => void
-  compact?: boolean
-}) {
-  const base = compact
-    ? "cursor-pointer rounded-full border px-3 py-1 font-sans text-[11px] font-medium tracking-wide"
-    : "cursor-pointer rounded-full border px-[11px] py-1 font-sans text-[11px] font-medium tracking-wide transition-all lg:px-4 lg:py-1.5 lg:text-sm"
-
-  const activeClass = active
-    ? "border-[var(--ink-fg)] bg-[var(--ink-fg)] text-[var(--ink-bg)]"
-    : compact
-      ? "border-[#ddd8ce] text-[var(--ink-fg)]"
-      : "border-[#ddd8ce] text-[var(--ink-fg)] hover:bg-[var(--ink-fg)] hover:text-[var(--ink-bg)]"
-
-  return (
-    <button type="button" onClick={onClick} className={`${base} ${activeClass}`}>
-      {label}
-    </button>
   )
 }

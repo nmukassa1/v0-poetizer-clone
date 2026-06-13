@@ -23,12 +23,12 @@ export function PromptRail({
             {prompt.count} submissions · {prompt.days} days left
           </div>
         </div>
-        <button
-          type="button"
-          className="w-fit shrink-0 cursor-pointer rounded-lg border-0 bg-[var(--ink-prompt-btn)] px-3.5 py-2 text-[11px] font-semibold text-white"
+        <Link
+          href="/write"
+          className="w-fit shrink-0 rounded-lg border-0 bg-[var(--ink-prompt-btn)] px-3.5 py-2 text-[11px] font-semibold text-white"
         >
           Write now
-        </button>
+        </Link>
       </div>
       <div className="ink-scrollbar-hide flex gap-2.5 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] lg:grid lg:grid-cols-2 lg:overflow-visible lg:pb-0 xl:grid-cols-4">
         {prompt.submissions.map((s, i) => (

@@ -1,4 +1,4 @@
-import type { FeedItem, Featured, WeeklyPrompt } from "./types"
+import type { FeedItem, Featured, PastPrompt, WeeklyPrompt } from "./types"
 
 export const featured: Featured = {
   type: "poem",
@@ -11,16 +11,137 @@ export const featured: Featured = {
 }
 
 export const weeklyPrompt: WeeklyPrompt = {
+  id: "prompt-2026-w24",
   title: "Things left unsaid",
+  description:
+    "Write about what was never spoken — the letter you never sent, the apology that stayed in your throat, the truth you chose to bury. Poems, stories, and essays welcome.",
   count: 48,
   days: 3,
+  startsAt: "Jun 7",
+  endsAt: "Jun 14",
   submissions: [
-    { title: "Fragments", author: "Sofia Chen", type: "poem", likes: 89, comments: 23 },
-    { title: "After the Call", author: "Mara Osei", type: "poem", likes: 37, comments: 9 },
-    { title: "Undelivered", author: "Jin Park", type: "story", likes: 54, comments: 17 },
-    { title: "Draft No. 7", author: "Lena Müller", type: "essay", likes: 29, comments: 6 },
+    {
+      id: "mock-fragments",
+      title: "Fragments",
+      author: "Sofia Chen",
+      authorHandle: "sofiac",
+      type: "poem",
+      date: "Jun 9",
+      excerpt:
+        "In the space between heartbeats,\nwhere silence learns to speak,\nI find the words I never said —\nturning over like stones in a river.",
+      likes: 89,
+      comments: 23,
+    },
+    {
+      id: "mock-after-the-call",
+      title: "After the Call",
+      author: "Mara Osei",
+      authorHandle: "maraosei",
+      type: "poem",
+      date: "Jun 8",
+      excerpt:
+        "The phone went cold in my hand\nbefore I could say\nwhat I'd rehearsed for weeks.",
+      likes: 37,
+      comments: 9,
+    },
+    {
+      id: "mock-undelivered",
+      title: "Undelivered",
+      author: "Jin Park",
+      authorHandle: "jinpark",
+      type: "story",
+      date: "Jun 8",
+      excerpt:
+        "The envelope sat in her desk drawer for eleven years, its flap still unsealed. She had written it the night he left, every sentence a small demolition.",
+      likes: 54,
+      comments: 17,
+    },
+    {
+      id: "mock-draft-no-7",
+      title: "Draft No. 7",
+      author: "Lena Müller",
+      authorHandle: "lenaschreibt",
+      type: "essay",
+      date: "Jun 7",
+      excerpt:
+        "There is a particular grief in reaching for a word and finding only its outline — the shape of the feeling, not the feeling itself.",
+      likes: 29,
+      comments: 6,
+    },
+    {
+      id: "mock-unspoken",
+      title: "What I Meant to Tell You",
+      author: "Kwame Asante",
+      authorHandle: "kwamea",
+      type: "poem",
+      date: "Jun 9",
+      excerpt:
+        "I kept your name in my mouth\nlike a prayer I was afraid to finish —\nuntil the silence finished it for me.",
+      likes: 61,
+      comments: 14,
+    },
+    {
+      id: "mock-voicemail",
+      title: "Voicemail, Unsent",
+      author: "Theodore Blake",
+      authorHandle: "tblake",
+      type: "story",
+      date: "Jun 10",
+      excerpt:
+        "He recorded it three times. Deleted the first two. On the third, his voice cracked on the word 'sorry' and he hung up before the beep.",
+      likes: 43,
+      comments: 11,
+    },
   ],
 }
+
+export const pastPrompts: PastPrompt[] = [
+  {
+    id: "prompt-2026-w23",
+    title: "First light",
+    dateLabel: "May 31",
+    status: "closed",
+    submissionCount: 62,
+    topSubmission: { title: "Dawn Chorus", author: "Eleanor Vance", likes: 124 },
+    runnerUp: { title: "Before Anyone Wakes", author: "James Whitmore", likes: 98 },
+  },
+  {
+    id: "prompt-2026-w22",
+    title: "A door left open",
+    dateLabel: "May 24",
+    status: "closed",
+    submissionCount: 55,
+    topSubmission: { title: "Threshold", author: "Kwame Asante", likes: 167 },
+    runnerUp: { title: "The Hinge", author: "Sofia Chen", likes: 112 },
+  },
+  {
+    id: "prompt-2026-w21",
+    title: "Salt and memory",
+    dateLabel: "May 17",
+    status: "closed",
+    submissionCount: 71,
+    topSubmission: { title: "Saltwater Memory", author: "Jin Park", likes: 94 },
+    runnerUp: { title: "Tide Lines", author: "Mara Osei", likes: 76 },
+  },
+  {
+    id: "prompt-2026-w20",
+    title: "The last train home",
+    dateLabel: "May 10",
+    status: "closed",
+    submissionCount: 58,
+    topSubmission: { title: "Platform 4", author: "Theodore Blake", likes: 88 },
+    runnerUp: { title: "Midnight Departure", author: "Lena Müller", likes: 71 },
+  },
+  {
+    id: "prompt-2026-w19",
+    title: "Letters never sent",
+    dateLabel: "May 3",
+    status: "closed",
+    submissionCount: 64,
+    topSubmission: { title: "Return to Sender", author: "Eleanor Vance", likes: 103 },
+    runnerUp: { title: "Postmarked", author: "James Whitmore", likes: 89 },
+  },
+]
 
 export const feedItems: FeedItem[] = [
   {

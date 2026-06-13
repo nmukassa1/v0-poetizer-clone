@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useAuth } from "@/components/inkwell/auth-provider";
 import type { Featured, PiecePost, WriterSpotlightData } from "@/lib/feed";
 import { DesktopSidebar } from "@/components/inkwell/feed/desktop-sidebar";
-import { useFeedFilter } from "@/components/inkwell/feed/feed-filter-context";
 import { FeedFeaturedSection } from "@/components/inkwell/feed/feed-featured-section";
 import { FeedMobileStreakSection } from "@/components/inkwell/feed/feed-mobile-streak-section";
 import { FeedPromptSection } from "@/components/inkwell/feed/feed-prompt-section";
@@ -23,13 +22,12 @@ export function InkwellFeed({
   spotlight?: WriterSpotlightData | null;
 }) {
   const { isLoggedIn } = useAuth();
-  const feedFilter = useFeedFilter();
-  const filter = feedFilter?.filter ?? "all";
+  const filter = "all";
   const visibleItems = useMemo(
     () => filterFeedPieces(pieces, filter),
     [pieces, filter],
   );
-  const showFirstSlot = filter === "all";
+  const showFirstSlot = true;
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[760px] pb-20 lg:max-w-6xl lg:pb-24 xl:max-w-7xl">
