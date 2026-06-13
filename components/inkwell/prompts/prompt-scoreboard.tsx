@@ -1,4 +1,6 @@
+import Link from "next/link"
 import type { PastPrompt, PromptStatus, WeeklyPrompt } from "@/lib/feed"
+import { getPromptHref } from "@/lib/prompts/registry"
 
 function statusLabel(status: PromptStatus) {
   switch (status) {
@@ -12,6 +14,7 @@ function statusLabel(status: PromptStatus) {
 }
 
 function ScoreboardCard({
+  slug,
   dateLabel,
   status,
   title,
@@ -21,6 +24,7 @@ function ScoreboardCard({
   active = false,
   sidebar = false,
 }: {
+  slug: string
   dateLabel: string
   status: PromptStatus
   title: string
@@ -55,13 +59,15 @@ function ScoreboardCard({
   }>
 
   return (
-    <article
+    <Link
+      href={getPromptHref(slug)}
+      aria-current={active ? "page" : undefined}
       className={`flex flex-col rounded-[10px] border p-2.5 transition-colors min-[480px]:p-3 ${
         sidebar ? "w-full" : "w-[132px] shrink-0 min-[480px]:w-[148px]"
       } ${
         active
           ? "border-[var(--ink-prompt-btn)] bg-[var(--ink-prompt-bg)] ring-1 ring-[var(--ink-prompt-btn)]"
-          : "border-[var(--ink-prompt-border)] bg-white"
+          : "border-[var(--ink-prompt-border)] bg-white hover:border-[var(--ink-prompt-btn)]/40"
       }`}
     >
       <div className="mb-2 flex items-center justify-between gap-1 text-[10px] font-medium">
@@ -124,17 +130,19 @@ function ScoreboardCard({
           </span>
         </div>
       )}
-    </article>
+    </Link>
   )
 }
 
 export function PromptScoreboard({
   pastPrompts,
   currentPrompt,
+  activeSlug,
   variant = "rail",
 }: {
   pastPrompts: PastPrompt[]
   currentPrompt: WeeklyPrompt
+  activeSlug: string
   variant?: "rail" | "sidebar"
 }) {
   const sidebar = variant === "sidebar"
@@ -142,6 +150,7 @@ export function PromptScoreboard({
     ...pastPrompts.map((prompt) => (
       <ScoreboardCard
         key={prompt.id}
+        slug={prompt.slug}
         sidebar={sidebar}
         dateLabel={prompt.dateLabel}
         status={prompt.status}
@@ -149,16 +158,18 @@ export function PromptScoreboard({
         submissionCount={prompt.submissionCount}
         topSubmission={prompt.topSubmission}
         runnerUp={prompt.runnerUp}
+        active={prompt.slug === activeSlug}
       />
     )),
     <ScoreboardCard
       key={currentPrompt.id}
+      slug={currentPrompt.slug}
       sidebar={sidebar}
       dateLabel={currentPrompt.startsAt}
       status="active"
       title={currentPrompt.title}
       submissionCount={currentPrompt.count}
-      active
+      active={currentPrompt.slug === activeSlug}
     />,
   ]
 

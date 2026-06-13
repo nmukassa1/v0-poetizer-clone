@@ -25,8 +25,14 @@ export interface PromptSubmission {
   comments: number
 }
 
+export interface PiecePrompt {
+  slug: string
+  title: string
+}
+
 export interface WeeklyPrompt {
   id: string
+  slug: string
   title: string
   description: string
   count: number
@@ -38,7 +44,9 @@ export interface WeeklyPrompt {
 
 export interface PastPrompt {
   id: string
+  slug: string
   title: string
+  description?: string
   dateLabel: string
   status: PromptStatus
   submissionCount: number
@@ -78,6 +86,7 @@ export interface PiecePost {
   comments: number
   shares: number
   likedByMe?: boolean
+  prompt?: PiecePrompt
 }
 
 export type FeedItem = SocialPost | PiecePost

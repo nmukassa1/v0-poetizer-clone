@@ -1,8 +1,7 @@
 import { PromptsPage } from "@/components/inkwell/prompts/prompts-page"
-import { pastPrompts, weeklyPrompt } from "@/lib/feed"
-import { promptSubmissionToPiecePost } from "@/lib/prompts/map"
-import { getCurrentUser } from "@/lib/auth/server"
-import { attachLikedToFeedPosts } from "@/lib/social"
+import { getCurrentPromptSlug } from "@/lib/prompts/registry"
+import { loadPromptPageData } from "@/lib/prompts/load-prompt-page-data"
+import { redirect } from "next/navigation"
 
 export const metadata = {
   title: "Prompts | inkwell",
@@ -11,18 +10,11 @@ export const metadata = {
 }
 
 export default async function PromptsRoutePage() {
-  const user = await getCurrentUser()
+  const data = await loadPromptPageData(getCurrentPromptSlug())
 
-  const submissions = await attachLikedToFeedPosts(
-    weeklyPrompt.submissions.map(promptSubmissionToPiecePost),
-    user?.id,
-  )
+  if (!data) {
+    redirect("/")
+  }
 
-  return (
-    <PromptsPage
-      currentPrompt={weeklyPrompt}
-      pastPrompts={pastPrompts}
-      submissions={submissions}
-    />
-  )
+  return <PromptsPage {...data} />
 }

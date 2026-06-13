@@ -12,6 +12,7 @@ export const featured: Featured = {
 
 export const weeklyPrompt: WeeklyPrompt = {
   id: "prompt-2026-w24",
+  slug: "things-left-unsaid",
   title: "Things left unsaid",
   description:
     "Write about what was never spoken — the letter you never sent, the apology that stayed in your throat, the truth you chose to bury. Poems, stories, and essays welcome.",
@@ -98,7 +99,10 @@ export const weeklyPrompt: WeeklyPrompt = {
 export const pastPrompts: PastPrompt[] = [
   {
     id: "prompt-2026-w23",
+    slug: "first-light",
     title: "First light",
+    description:
+      "Write about the first moments of day — dawn breaking, a room filling with light, the hour before anyone else wakes.",
     dateLabel: "May 31",
     status: "closed",
     submissionCount: 62,
@@ -107,7 +111,10 @@ export const pastPrompts: PastPrompt[] = [
   },
   {
     id: "prompt-2026-w22",
+    slug: "a-door-left-open",
     title: "A door left open",
+    description:
+      "Write about thresholds — what you walked toward, what you left behind, or the choice not to close the door.",
     dateLabel: "May 24",
     status: "closed",
     submissionCount: 55,
@@ -116,7 +123,10 @@ export const pastPrompts: PastPrompt[] = [
   },
   {
     id: "prompt-2026-w21",
+    slug: "salt-and-memory",
     title: "Salt and memory",
+    description:
+      "Write about taste, the sea, preservation, or the way memory stings and heals in equal measure.",
     dateLabel: "May 17",
     status: "closed",
     submissionCount: 71,
@@ -125,7 +135,10 @@ export const pastPrompts: PastPrompt[] = [
   },
   {
     id: "prompt-2026-w20",
+    slug: "the-last-train-home",
     title: "The last train home",
+    description:
+      "Write about late-night departures, empty platforms, and the journey back to somewhere — or someone.",
     dateLabel: "May 10",
     status: "closed",
     submissionCount: 58,
@@ -134,7 +147,10 @@ export const pastPrompts: PastPrompt[] = [
   },
   {
     id: "prompt-2026-w19",
+    slug: "letters-never-sent",
     title: "Letters never sent",
+    description:
+      "Write about correspondence that never reached its reader — drafts, unsent messages, words held back.",
     dateLabel: "May 3",
     status: "closed",
     submissionCount: 64,

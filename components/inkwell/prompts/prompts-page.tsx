@@ -1,15 +1,20 @@
 import type { PastPrompt, PiecePost, WeeklyPrompt } from "@/lib/feed";
+import type { PromptDetail } from "@/lib/prompts/types";
 import { PromptHero } from "./prompt-hero";
 import { PromptScoreboard } from "./prompt-scoreboard";
 import { PromptSubmissionsList } from "./prompt-submissions-list";
 
 export function PromptsPage({
-  currentPrompt,
+  prompt,
   pastPrompts,
+  currentPrompt,
+  activeSlug,
   submissions,
 }: {
-  currentPrompt: WeeklyPrompt;
+  prompt: PromptDetail;
   pastPrompts: PastPrompt[];
+  currentPrompt: WeeklyPrompt;
+  activeSlug: string;
   submissions: PiecePost[];
 }) {
   return (
@@ -20,14 +25,15 @@ export function PromptsPage({
             <PromptScoreboard
               pastPrompts={pastPrompts}
               currentPrompt={currentPrompt}
+              activeSlug={activeSlug}
               variant="rail"
             />
           </div>
 
-          <PromptHero prompt={currentPrompt} />
+          <PromptHero prompt={prompt} />
           <PromptSubmissionsList
             submissions={submissions}
-            count={currentPrompt.count}
+            count={prompt.count}
           />
         </main>
 
@@ -36,6 +42,7 @@ export function PromptsPage({
             <PromptScoreboard
               pastPrompts={pastPrompts}
               currentPrompt={currentPrompt}
+              activeSlug={activeSlug}
               variant="sidebar"
             />
           </div>

@@ -5,6 +5,7 @@ export type {
   FeedItem,
   PastPrompt,
   PiecePost,
+  PiecePrompt,
   PromptStatus,
   PromptSubmission,
   SocialPost,

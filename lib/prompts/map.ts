@@ -1,7 +1,8 @@
-import type { PiecePost, PromptSubmission } from "@/lib/feed"
+import type { PiecePost, PiecePrompt, PromptSubmission } from "@/lib/feed"
 
 export function promptSubmissionToPiecePost(
   submission: PromptSubmission,
+  prompt?: PiecePrompt,
 ): PiecePost {
   return {
     kind: "piece",
@@ -15,5 +16,6 @@ export function promptSubmissionToPiecePost(
     likes: submission.likes,
     comments: submission.comments,
     shares: 0,
+    prompt,
   }
 }
