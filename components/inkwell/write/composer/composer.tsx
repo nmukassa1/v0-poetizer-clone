@@ -112,6 +112,7 @@ export function Composer({
         onPreview={c.startPreview}
         onBackToEdit={c.backToEdit}
         onPublish={c.confirmPublish}
+        onOpenSettings={() => c.setSettingsOpen(true)}
       />
 
       {c.phase === "edit" && <ComposerWordCount wordCount={c.wordCount} />}
@@ -127,7 +128,7 @@ export function Composer({
       )}
 
       <ComposerSettingsSheet
-        open={c.settingsOpen && c.phase === "edit"}
+        open={c.settingsOpen}
         onClose={() => c.setSettingsOpen(false)}
         {...c.settingsProps}
       />

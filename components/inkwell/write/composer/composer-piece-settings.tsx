@@ -61,9 +61,7 @@ export function ComposerPieceSettings({
       <ComposerSection
         label="Excerpt"
         hint={
-          excerptOverridden
-            ? "Custom"
-            : "Auto-generated from your first lines"
+          excerptOverridden ? "Custom" : "Auto-generated from your first lines"
         }
       >
         <textarea
@@ -84,7 +82,7 @@ export function ComposerPieceSettings({
         )}
       </ComposerSection>
 
-      <ComposerSection label="Tags" hint={`${tags.length} of 5`}>
+      {/* <ComposerSection label="Tags" hint={`${tags.length} of 5`}>
         <TagInput
           tags={tags}
           tagDraft={tagDraft}
@@ -92,7 +90,7 @@ export function ComposerPieceSettings({
           onCommitTag={onCommitTag}
           onRemoveTag={onRemoveTag}
         />
-      </ComposerSection>
+      </ComposerSection> */}
 
       <ComposerSection label="Visibility">
         <VisibilityOptions
