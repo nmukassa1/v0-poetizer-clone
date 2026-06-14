@@ -3,6 +3,7 @@ import { contentTagToPieceType } from "@/lib/piece/types"
 import { SEED_PROFILES, SEED_USER_ID_PREFIX } from "./profiles"
 import { SEED_PIECES } from "./pieces"
 import { seedPrompts } from "./prompts"
+import { seedQuotes } from "./quotes"
 
 function publishedAt(daysAgo: number): Date {
   const date = new Date()
@@ -32,10 +33,18 @@ export async function clearSeedData() {
   const deletedProfiles = await prisma.profile.deleteMany({
     where: { id: { startsWith: SEED_USER_ID_PREFIX } },
   })
+  const deletedQuotes = await prisma.quote.deleteMany({
+    where: {
+      text: {
+        in: ["The first draft is just you telling yourself the story."],
+      },
+    },
+  })
   return {
     deletedPieces: deletedPieces.count,
     deletedPrompts: deletedPrompts.count,
     deletedProfiles: deletedProfiles.count,
+    deletedQuotes: deletedQuotes.count,
   }
 }
 
@@ -43,11 +52,14 @@ export async function seedDatabase(options?: { clear?: boolean }) {
   if (options?.clear) {
     const cleared = await clearSeedData()
     console.log(
-      `Cleared ${cleared.deletedPieces} pieces, ${cleared.deletedPrompts} prompts, and ${cleared.deletedProfiles} seed profiles.`,
+      `Cleared ${cleared.deletedPieces} pieces, ${cleared.deletedPrompts} prompts, ${cleared.deletedQuotes} quotes, and ${cleared.deletedProfiles} seed profiles.`,
     )
   }
 
-  const promptCount = await seedPrompts(prisma)
+  const [promptCount, quoteCount] = await Promise.all([
+    seedPrompts(prisma),
+    seedQuotes(prisma),
+  ])
 
   for (const profile of SEED_PROFILES) {
     await prisma.profile.upsert({
@@ -120,6 +132,7 @@ export async function seedDatabase(options?: { clear?: boolean }) {
     profiles: SEED_PROFILES.length,
     pieces: SEED_PIECES.length,
     prompts: promptCount,
+    quotes: quoteCount,
   }
 }
 
@@ -129,7 +142,7 @@ async function main() {
   console.log("Seeding inkwell database…")
   const result = await seedDatabase({ clear })
   console.log(
-    `Done. Upserted ${result.profiles} profiles, ${result.pieces} published pieces, and ${result.prompts} prompts.`,
+    `Done. Upserted ${result.profiles} profiles, ${result.pieces} published pieces, ${result.prompts} prompts, and ${result.quotes} quotes.`,
   )
 }
 

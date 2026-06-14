@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import { AdminPageHeader } from "@/components/inkwell/admin/admin-page-header"
 import { slugifyPromptTitle } from "@/lib/prompts/slug"
 import type { PromptStatus as UiPromptStatus } from "@/lib/feed"
 
@@ -343,32 +344,24 @@ export function AdminPromptsPage({ prompts }: { prompts: AdminPrompt[] }) {
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-5xl px-4 py-10 min-[480px]:px-6 lg:px-8">
-      <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ink-subtle)]">
-            Admin
-          </p>
-          <h1 className="mt-2 font-serif text-3xl font-semibold text-[var(--ink-fg)]">
-            Manage prompts
-          </h1>
-          <p className="mt-2 max-w-2xl font-sans text-sm text-[var(--ink-muted)]">
-            Create weekly prompts, set one live at a time, and review submission
-            counts.
-          </p>
-        </div>
-        {!showCreate ? (
-          <button
-            type="button"
-            onClick={() => {
-              setEditingId(null)
-              setShowCreate(true)
-            }}
-            className="rounded-lg bg-[var(--ink-prompt-btn)] px-4 py-2 font-sans text-sm font-semibold text-white"
-          >
-            New prompt
-          </button>
-        ) : null}
-      </div>
+      <AdminPageHeader
+        title="Manage prompts"
+        description="Create weekly prompts, set one live at a time, and review submission counts."
+        action={
+          !showCreate ? (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingId(null)
+                setShowCreate(true)
+              }}
+              className="rounded-lg bg-[var(--ink-prompt-btn)] px-4 py-2 font-sans text-sm font-semibold text-white"
+            >
+              New prompt
+            </button>
+          ) : undefined
+        }
+      />
 
       {showCreate ? (
         <div className="mb-8">

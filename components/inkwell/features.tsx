@@ -1,5 +1,7 @@
 import type { ContentTag } from "@/lib/feed"
-import { lovedPieces, quoteOfDay, trendingWriters } from "@/lib/feed"
+import { lovedPieces, trendingWriters } from "@/lib/feed"
+import { getQuoteOfDay } from "@/lib/quotes/queries"
+import { QuoteCalloutCard } from "@/components/inkwell/feed/quote-callout-card"
 import { Avatar, HeartIcon, Tag } from "@/components/inkwell/primitives"
 
 const lovedAccents: Record<
@@ -135,15 +137,8 @@ export function ReadersLovingGrid({ variant = "feed" }: { variant?: "feed" | "si
   )
 }
 
-export function QuoteCallout() {
-  return (
-    <blockquote className="my-1 border-l-[3px] border-[var(--ink-fg)] py-0 pl-[18px]">
-      <p className="mb-2.5 font-serif text-[15px] font-semibold italic leading-snug text-[var(--ink-fg)] min-[480px]:text-[17px] min-[480px]:leading-[1.55]">
-        &ldquo;{quoteOfDay.text}&rdquo;
-      </p>
-      <cite className="text-[11px] not-italic tracking-wide text-[#a09c94]">
-        — {quoteOfDay.author}
-      </cite>
-    </blockquote>
-  )
+export async function QuoteCallout() {
+  const quote = await getQuoteOfDay()
+
+  return <QuoteCalloutCard text={quote.text} author={quote.author} />
 }
