@@ -1,16 +1,19 @@
 import Link from "next/link"
-import type { Visibility } from "./types"
+import type { ComposerLinkedPrompt, Visibility } from "./types"
+import { getPromptHref } from "@/lib/prompts/registry"
 
 export function ComposerPublished({
   title,
   visibility,
   publishedPieceId,
   editingPieceId,
+  linkedPrompt = null,
 }: {
   title: string
   visibility: Visibility
   publishedPieceId: string | null
   editingPieceId?: string | null
+  linkedPrompt?: ComposerLinkedPrompt | null
 }) {
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-20">
@@ -25,7 +28,9 @@ export function ComposerPublished({
           &ldquo;{title || "Untitled"}&rdquo;{" "}
           {visibility === "draft"
             ? "is saved as a draft on your profile."
-            : "is now in the world. May it find the readers it\u2019s meant for."}
+            : linkedPrompt
+              ? `is now part of the “${linkedPrompt.title}” prompt.`
+              : "is now in the world. May it find the readers it\u2019s meant for."}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
@@ -47,6 +52,14 @@ export function ComposerPublished({
               className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
             >
               Continue editing
+            </Link>
+          ) : null}
+          {linkedPrompt && visibility !== "draft" ? (
+            <Link
+              href={getPromptHref(linkedPrompt.slug)}
+              className="rounded-full border border-[var(--ink-border)] px-5 py-2.5 text-xs font-semibold tracking-wide text-[var(--ink-fg)] transition-colors hover:border-[var(--ink-fg)]"
+            >
+              View prompt page
             </Link>
           ) : null}
           <Link

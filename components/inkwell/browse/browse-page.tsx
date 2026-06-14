@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import type { Featured, PiecePost } from "@/lib/feed/types"
 import { BrowseFeaturedSection } from "./browse-featured-section"
 import { BrowseFilterBar } from "./browse-filter-bar"
@@ -15,13 +15,13 @@ export function BrowsePage({
   pieces,
   featured,
   featuredReadHref,
+  filter,
 }: {
   pieces: PiecePost[]
   featured: Featured
   featuredReadHref?: string
+  filter: BrowseFilter
 }) {
-  const [filter, setFilter] = useState<BrowseFilter>("all")
-
   const showFeatured = useMemo(
     () => shouldShowFeatured(filter, featured.type),
     [filter, featured.type],
@@ -35,7 +35,7 @@ export function BrowsePage({
   return (
     <div className="mx-auto w-full max-w-7xl px-4 pb-20 min-[480px]:px-6 lg:px-8 lg:pb-24 xl:px-10">
       <BrowseHeader />
-      <BrowseFilterBar filter={filter} onFilterChange={setFilter} />
+      <BrowseFilterBar filter={filter} />
       {showFeatured && (
         <BrowseFeaturedSection featured={featured} readHref={featuredReadHref} />
       )}

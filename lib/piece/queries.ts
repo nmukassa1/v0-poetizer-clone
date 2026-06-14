@@ -10,6 +10,11 @@ const authorSelect = {
   location: true,
 } as const
 
+const promptSelect = {
+  slug: true,
+  title: true,
+} as const
+
 const publishedPublicWhere = {
   status: "PUBLISHED" as const,
   visibility: "PUBLIC" as const,
@@ -30,7 +35,10 @@ export async function listPublishedPieces(options?: {
     },
     orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
     take: limit,
-    include: { author: { select: authorSelect } },
+    include: {
+      author: { select: authorSelect },
+      prompt: { select: promptSelect },
+    },
   })
 }
 

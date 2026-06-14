@@ -38,6 +38,7 @@ model Piece {
   status      PieceStatus     @default(DRAFT)
   visibility  PieceVisibility @default(PUBLIC)
   tags        String[]        @default([])
+  promptSlug  String?         @map("prompt_slug")
   likeCount    Int            @default(0) @map("like_count")
   commentCount Int            @default(0) @map("comment_count")
   shareCount   Int            @default(0) @map("share_count")
@@ -46,12 +47,14 @@ model Piece {
   updatedAt   DateTime        @updatedAt @map("updated_at")
   authorId    String          @map("author_id")
   author      Profile         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  prompt      Prompt?         @relation(fields: [promptSlug], references: [slug], onDelete: SetNull)
   likes       PieceLike[]
   comments    PieceComment[]
 
   @@index([authorId])
   @@index([status, publishedAt(sort: Desc)])
   @@index([type])
+  @@index([promptSlug, status, publishedAt(sort: Desc)])
   @@map("pieces")
 }
 
@@ -97,6 +100,31 @@ model ProfileFollow {
   @@id([followerId, followingId])
   @@index([followingId])
   @@map("profile_follows")
+}
+
+/// Weekly writing prompt.
+model Prompt {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  description String       @db.Text
+  status      PromptStatus @default(CLOSED)
+  startsAt    DateTime     @map("starts_at")
+  endsAt      DateTime     @map("ends_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  pieces      Piece[]
+
+  @@index([status, startsAt(sort: Desc)])
+  @@map("prompts")
+}
+
+enum PromptStatus {
+  ACTIVE
+  VOTING
+  CLOSED
+
+  @@map("prompt_status")
 }
 
 enum PieceType {

@@ -1,9 +1,19 @@
-import { PrismaClient } from "@/lib/generated/prisma/client"
+import { Prisma, PrismaClient } from "@/lib/generated/prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: TaggedPrismaClient | undefined
 }
+
+/** Busts the dev HMR singleton when generated models or fields change. */
+const PRISMA_CLIENT_SCHEMA_KEY = [
+  ...Object.keys(Prisma.PieceScalarFieldEnum),
+  ...Object.keys(Prisma.PromptScalarFieldEnum),
+]
+  .sort()
+  .join(",")
+
+type TaggedPrismaClient = PrismaClient & { __schemaKey?: string }
 
 /**
  * pg v8 treats require/prefer/verify-ca like verify-full; v9 will not.
@@ -23,7 +33,7 @@ function normalizeConnectionString(connectionString: string): string {
   return connectionString
 }
 
-function createPrismaClient() {
+function createPrismaClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL
   if (!connectionString) {
     throw new Error("DATABASE_URL is not configured")
@@ -32,23 +42,28 @@ function createPrismaClient() {
   const adapter = new PrismaPg({
     connectionString: normalizeConnectionString(connectionString),
   })
-  return new PrismaClient({
+  const client = new PrismaClient({
     adapter,
     log:
       process.env.NODE_ENV === "development"
         ? ["error", "warn"]
         : ["error"],
-  })
+  }) as TaggedPrismaClient
+
+  client.__schemaKey = PRISMA_CLIENT_SCHEMA_KEY
+  return client
 }
 
-/** Dev HMR can keep an old PrismaClient missing new models — recreate when stale. */
+/** Dev HMR can keep an old PrismaClient missing new fields — recreate when stale. */
 function isPrismaClientReady(
-  client: PrismaClient | undefined,
+  client: TaggedPrismaClient | undefined,
 ): client is PrismaClient {
   return Boolean(
     client &&
+      client.__schemaKey === PRISMA_CLIENT_SCHEMA_KEY &&
       typeof client.profile?.findFirst === "function" &&
       typeof client.piece?.findFirst === "function" &&
+      typeof client.prompt?.findUnique === "function" &&
       typeof client.pieceLike?.findMany === "function" &&
       typeof client.pieceComment?.findMany === "function" &&
       typeof client.profileFollow?.findMany === "function",

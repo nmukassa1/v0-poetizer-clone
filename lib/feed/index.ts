@@ -3,7 +3,10 @@ export type {
   Featured,
   FeedFilter,
   FeedItem,
+  PastPrompt,
   PiecePost,
+  PiecePrompt,
+  PromptStatus,
   PromptSubmission,
   SocialPost,
   WeeklyPrompt,
@@ -13,11 +16,9 @@ export { filterFeed } from "./filter"
 
 export {
   featured,
-  feedItems,
   lovedPieces,
   quoteOfDay,
   trendingWriters,
-  weeklyPrompt,
 } from "./mock-data"
 
 export {

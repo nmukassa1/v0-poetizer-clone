@@ -4,7 +4,13 @@ import { useEffect, useRef, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import type { ContentTag } from "@/lib/feed"
 import type { PublishPieceResult } from "@/lib/piece/publish"
-import type { ComposerAuthor, ComposerInitialDraft, Phase, Visibility } from "./types"
+import type {
+  ComposerAuthor,
+  ComposerInitialDraft,
+  ComposerLinkedPrompt,
+  Phase,
+  Visibility,
+} from "./types"
 
 function wordCountFromHtml(html: string): number {
   const text = html.replace(/<[^>]+>/g, " ")
@@ -14,6 +20,7 @@ function wordCountFromHtml(html: string): number {
 export function useComposer(
   author: ComposerAuthor,
   initialDraft?: ComposerInitialDraft | null,
+  linkedPrompt: ComposerLinkedPrompt | null = null,
 ) {
   const router = useRouter()
   const authorName = author?.name ?? "You"
@@ -189,6 +196,7 @@ export function useComposer(
       excerpt: excerpt.trim() || undefined,
       visibility,
       tags,
+      promptSlug: linkedPrompt?.slug ?? initialDraft?.promptSlug ?? undefined,
     }
 
     startPublishTransition(async () => {
@@ -275,6 +283,7 @@ export function useComposer(
     bodyRef,
     titleRef,
     today,
+    linkedPrompt,
     settingsProps,
     recalcFromEditor,
     applyFormat,

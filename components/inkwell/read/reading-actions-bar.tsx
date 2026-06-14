@@ -1,12 +1,7 @@
-"use client"
+"use client";
 
-import {
-  Bookmark,
-  Heart,
-  MessageCircle,
-  Share2,
-} from "lucide-react"
-import { usePieceLike } from "@/components/inkwell/social/piece-like-button"
+import { Bookmark, Heart, MessageCircle, Share2 } from "lucide-react";
+import { usePieceLike } from "@/components/inkwell/social/piece-like-button";
 
 export function ReadingActionsBar({
   pieceId,
@@ -19,22 +14,22 @@ export function ReadingActionsBar({
   onSaveToggle,
   onCommentClick,
 }: {
-  pieceId: string
-  likes: number
-  comments: number
-  initialLiked?: boolean
-  isLoggedIn: boolean
-  saved: boolean
-  highlightCount: number
-  onSaveToggle: () => void
-  onCommentClick?: () => void
+  pieceId: string;
+  likes: number;
+  comments: number;
+  initialLiked?: boolean;
+  isLoggedIn: boolean;
+  saved: boolean;
+  highlightCount: number;
+  onSaveToggle: () => void;
+  onCommentClick?: () => void;
 }) {
   const { liked, count, pending, toggle } = usePieceLike({
     pieceId,
     initialCount: likes,
     initialLiked,
     isLoggedIn,
-  })
+  });
 
   return (
     <div className="pointer-events-none fixed bottom-4 left-0 right-0 z-30 flex justify-center px-4 min-[480px]:bottom-6">
@@ -71,7 +66,7 @@ export function ReadingActionsBar({
 
         <span className="mx-1 h-5 w-px bg-[var(--ink-border)]" aria-hidden />
 
-        <button
+        {/* <button
           type="button"
           onClick={onSaveToggle}
           className={`flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors ${
@@ -87,15 +82,15 @@ export function ReadingActionsBar({
             strokeWidth={1.5}
             fill={saved ? "currentColor" : "none"}
           />
-        </button>
+        </button> */}
 
-        <button
+        {/* <button
           type="button"
           className="flex cursor-pointer items-center justify-center rounded-full p-2 text-[var(--ink-muted)] transition-colors hover:text-[var(--ink-fg)]"
           aria-label="Share"
         >
           <Share2 className="h-4 w-4" strokeWidth={1.5} />
-        </button>
+        </button> */}
 
         {highlightCount > 0 && (
           <>
@@ -111,5 +106,5 @@ export function ReadingActionsBar({
         )}
       </div>
     </div>
-  )
+  );
 }

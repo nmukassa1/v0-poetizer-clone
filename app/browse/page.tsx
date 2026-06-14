@@ -1,12 +1,5 @@
 import { BrowsePage } from "@/components/inkwell/browse/browse-page"
-import { featured as mockFeatured } from "@/lib/feed"
-import {
-  getFeaturedPiece,
-  listPublishedPieces,
-} from "@/lib/piece/queries"
-import { pieceToFeatured, pieceToFeedPost } from "@/lib/piece/map"
-import { getCurrentUser } from "@/lib/auth/server"
-import { attachLikedToFeedPosts } from "@/lib/social"
+import { loadBrowsePageData } from "@/lib/browse/load-browse-page-data"
 
 export const metadata = {
   title: "Browse pieces | inkwell",
@@ -15,27 +8,7 @@ export const metadata = {
 }
 
 export default async function BrowseRoutePage() {
-  const user = await getCurrentUser()
+  const data = await loadBrowsePageData()
 
-  const [featuredRow, pieces] = await Promise.all([
-    getFeaturedPiece(),
-    listPublishedPieces({ limit: 48 }),
-  ])
-
-  const featured = featuredRow
-    ? pieceToFeatured(featuredRow)
-    : mockFeatured
-
-  const browsePieces = await attachLikedToFeedPosts(
-    pieces.map(pieceToFeedPost),
-    user?.id,
-  )
-
-  return (
-    <BrowsePage
-      pieces={browsePieces}
-      featured={featured}
-      featuredReadHref={featuredRow ? `/read/${featuredRow.id}` : undefined}
-    />
-  )
+  return <BrowsePage filter="all" {...data} />
 }

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { Composer } from "@/components/inkwell/write/composer"
+import type { ComposerLinkedPrompt } from "@/components/inkwell/write/composer/types"
 import { getCurrentUser } from "@/lib/auth/server"
 import { pieceToComposerInitial } from "@/lib/piece/composer"
 import {
@@ -7,15 +8,37 @@ import {
   getPieceByIdForAuthor,
   getProfileByUserId,
 } from "@/lib/piece/queries"
+import { getLinkedPromptForComposer } from "@/lib/prompts/resolve-prompt-slug"
 
 export const dynamic = "force-dynamic"
+
+async function resolveLinkedPrompt(options: {
+  promptParam?: string
+  piecePromptSlug?: string | null
+}): Promise<ComposerLinkedPrompt | null> {
+  const slug = options.piecePromptSlug ?? options.promptParam
+  if (!slug) return null
+
+  const prompt = await getLinkedPromptForComposer(slug)
+  if (!prompt) return null
+
+  if (!options.piecePromptSlug && prompt.status !== "ACTIVE") {
+    return null
+  }
+
+  return {
+    slug: prompt.slug,
+    title: prompt.title,
+    description: prompt.description,
+  }
+}
 
 export default async function WritePage({
   searchParams,
 }: {
-  searchParams: Promise<{ pieceId?: string; new?: string }>
+  searchParams: Promise<{ pieceId?: string; new?: string; prompt?: string }>
 }) {
-  const { pieceId, new: newPiece } = await searchParams
+  const { pieceId, new: newPiece, prompt: promptParam } = await searchParams
   const user = await getCurrentUser()
   const profile = user ? await getProfileByUserId(user.id) : null
 
@@ -29,6 +52,7 @@ export default async function WritePage({
   let initialDraft = null
   let draftError: string | null = null
   let publishedPieceId: string | null = null
+  let piecePromptSlug: string | null = null
 
   if (pieceId && profile) {
     const piece = await getPieceByIdForAuthor(pieceId, profile.id)
@@ -40,8 +64,14 @@ export default async function WritePage({
       publishedPieceId = piece.id
     } else {
       initialDraft = pieceToComposerInitial(piece)
+      piecePromptSlug = piece.promptSlug
     }
   }
+
+  const linkedPrompt = await resolveLinkedPrompt({
+    promptParam,
+    piecePromptSlug: piecePromptSlug ?? initialDraft?.promptSlug,
+  })
 
   return (
     <Composer
@@ -51,6 +81,7 @@ export default async function WritePage({
           : null
       }
       initialDraft={initialDraft}
+      linkedPrompt={linkedPrompt}
       draftError={draftError}
       publishedPieceId={publishedPieceId}
     />

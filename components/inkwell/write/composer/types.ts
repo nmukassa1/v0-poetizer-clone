@@ -6,6 +6,12 @@ export type Phase = "edit" | "preview" | "published"
 
 export type ComposerAuthor = { name: string; handle: string } | null
 
+export type ComposerLinkedPrompt = {
+  slug: string
+  title: string
+  description: string
+}
+
 export type { ComposerInitialDraft }
 
 export type ComposerState = {

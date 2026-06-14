@@ -14,6 +14,7 @@ export type ComposerInitialDraft = {
   excerptOverridden: boolean
   tags: string[]
   visibility: ComposerVisibility
+  promptSlug?: string | null
   updatedAt: Date
 }
 
@@ -32,6 +33,7 @@ export function pieceToComposerInitial(
     excerpt: piece.excerpt,
     excerptOverridden,
     tags: piece.tags,
+    promptSlug: piece.promptSlug,
     visibility: visibilityToComposerInput(piece.status, piece.visibility),
     updatedAt: piece.updatedAt,
   }

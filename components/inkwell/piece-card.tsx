@@ -28,14 +28,24 @@ export function PieceCard({
   return (
     <article className="border-b border-[var(--ink-border-soft)] py-10 first:pt-6 min-[480px]:py-12 lg:py-14 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[#534AB7] focus-visible:ring-offset-2">
       <div className="transition-transform duration-200 ease-out hover:scale-[1.025]">
-        <Link href={readHref}>
-          <div className="mx-auto max-w-2xl lg:max-w-none">
-            <div className="mb-6 flex items-center gap-3 min-[480px]:mb-8">
-              <span className="h-px flex-1 bg-[var(--ink-border)]" />
+        <div className="mx-auto max-w-2xl lg:max-w-none">
+          <div className="mb-6 flex items-center gap-3 min-[480px]:mb-8">
+            <span className="h-px flex-1 bg-[var(--ink-border)]" />
+            <div className="flex flex-wrap items-center justify-center gap-2">
               <Tag label={post.type} />
-              <span className="h-px flex-1 bg-[var(--ink-border)]" />
+              {post.prompt ? (
+                <Link
+                  href={`/prompt/${post.prompt.slug}`}
+                  className="inline-flex items-center rounded-full border border-[var(--ink-prompt-border)] bg-[var(--ink-prompt-bg)] px-2.5 py-0.5 font-sans text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--ink-prompt-meta)] transition-colors hover:border-[var(--ink-prompt-btn)] hover:text-[var(--ink-prompt-title)]"
+                >
+                  Prompt · {post.prompt.title}
+                </Link>
+              ) : null}
             </div>
+            <span className="h-px flex-1 bg-[var(--ink-border)]" />
+          </div>
 
+          <Link href={readHref}>
             <h2 className="mb-6 font-serif text-2xl font-medium leading-tight tracking-tight text-[var(--ink-fg)] min-[480px]:mb-8 min-[480px]:text-3xl lg:text-4xl">
               {post.title}
             </h2>
@@ -52,8 +62,8 @@ export function PieceCard({
                 <span aria-hidden>&#8594;</span>
               </span>
             </div>
-          </div>
-        </Link>
+          </Link>
+        </div>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--ink-border)] pt-5 min-[480px]:pt-6">
         <div className="flex items-center gap-3 min-[480px]:gap-4">
