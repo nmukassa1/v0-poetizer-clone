@@ -5,7 +5,6 @@ import type { PiecePost } from "@/lib/feed"
 import type { PublicProfile } from "@/lib/profile"
 import { getPublicProfileByHandle } from "@/lib/profile"
 import { Divider } from "@/components/inkwell/primitives"
-import { StreakWidget } from "@/components/inkwell/streak-widget"
 import { DEFAULT_ME_PROFILE } from "./constants"
 import { ProfileHeader } from "./profile-header"
 import { ProfileSidebar } from "./profile-sidebar"
@@ -81,13 +80,6 @@ export function ProfilePage({
             canFollow={canFollow}
             initialFollowing={initialFollowing}
           />
-
-          {mode === "me" && (
-            <section>
-              <Divider label="Your streaks" />
-              <StreakWidget />
-            </section>
-          )}
 
           <section>
             <Divider label="Library" />

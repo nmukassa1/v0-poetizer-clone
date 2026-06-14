@@ -1,6 +1,5 @@
 import { InkwellFeed } from "@/components/inkwell/feed/inkwell-feed"
 import { featured as mockFeatured } from "@/lib/feed"
-import { getWriterSpotlight } from "@/lib/feed/spotlight"
 import { loadLivePromptForFeed } from "@/lib/prompts/load-prompt-page-data"
 import {
   getFeaturedPiece,
@@ -13,10 +12,9 @@ import { attachLikedToFeedPosts } from "@/lib/social"
 export default async function HomePage() {
   const user = await getCurrentUser()
 
-  const [featuredRow, pieces, spotlight, livePrompt] = await Promise.all([
+  const [featuredRow, pieces, livePrompt] = await Promise.all([
     getFeaturedPiece(),
     listPublishedPieces({ limit: 20 }),
-    getWriterSpotlight(user?.id),
     loadLivePromptForFeed(),
   ])
 
@@ -34,7 +32,6 @@ export default async function HomePage() {
       pieces={feedPieces}
       featured={featured}
       featuredReadHref={featuredRow ? `/read/${featuredRow.id}` : undefined}
-      spotlight={spotlight}
       livePrompt={livePrompt}
     />
   )
