@@ -6,7 +6,7 @@ import { useAuth } from "@/components/inkwell/auth-provider"
 type FooterLink = {
   href: string
   label: string
-  auth?: "in" | "out"
+  auth?: "in" | "out" | "admin"
 }
 
 const productLinks: FooterLink[] = [
@@ -23,20 +23,24 @@ const accountLinks: FooterLink[] = [
   { href: "/sign-up", label: "Sign up", auth: "out" },
   { href: "/profile", label: "My profile", auth: "in" },
   { href: "/profile/settings", label: "Settings", auth: "in" },
+  { href: "/admin", label: "Admin", auth: "admin" },
 ]
 
 function FooterLinkList({
   title,
   links,
   isLoggedIn,
+  isAdmin,
 }: {
   title: string
   links: FooterLink[]
   isLoggedIn: boolean
+  isAdmin: boolean
 }) {
   const visible = links.filter((link) => {
     if (link.auth === "in") return isLoggedIn
     if (link.auth === "out") return !isLoggedIn
+    if (link.auth === "admin") return isLoggedIn && isAdmin
     return true
   })
 
@@ -64,7 +68,7 @@ function FooterLinkList({
 }
 
 export function SiteFooter() {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, isAdmin } = useAuth()
   const year = new Date().getFullYear()
 
   return (
@@ -88,11 +92,13 @@ export function SiteFooter() {
             title="Explore"
             links={productLinks}
             isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
           />
           <FooterLinkList
             title="Account"
             links={accountLinks}
             isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
           />
         </div>
 

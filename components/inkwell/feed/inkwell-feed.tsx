@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import { useAuth } from "@/components/inkwell/auth-provider";
 import type { Featured, PiecePost } from "@/lib/feed";
+import type { QuoteSnippet } from "@/lib/quotes/queries";
+import { intersperseFeedQuotes } from "@/lib/feed/intersperse-quotes";
 import type { LivePromptView } from "@/lib/prompts/types";
 import { DesktopSidebar } from "@/components/inkwell/feed/desktop-sidebar";
 import { FeedFeaturedSection } from "@/components/inkwell/feed/feed-featured-section";
@@ -16,17 +18,23 @@ export function InkwellFeed({
   featured,
   featuredReadHref,
   livePrompt = null,
+  quotes = [],
 }: {
   pieces: PiecePost[];
   featured: Featured;
   featuredReadHref?: string;
   livePrompt?: LivePromptView | null;
+  quotes?: QuoteSnippet[];
 }) {
   const { isLoggedIn } = useAuth();
   const filter = "all";
   const visibleItems = useMemo(
     () => filterFeedPieces(pieces, filter),
     [pieces, filter],
+  );
+  const feedItems = useMemo(
+    () => intersperseFeedQuotes(visibleItems, quotes),
+    [visibleItems, quotes],
   );
   const showWelcome = !isLoggedIn;
 
@@ -51,7 +59,7 @@ export function InkwellFeed({
 
           <FeedPromptSection livePrompt={livePrompt} />
 
-          <FeedRecentSection items={visibleItems} />
+          <FeedRecentSection items={feedItems} />
         </main>
 
         {showWelcome && <DesktopSidebar />}

@@ -9,6 +9,7 @@ const globalForPrisma = globalThis as unknown as {
 const PRISMA_CLIENT_SCHEMA_KEY = [
   ...Object.keys(Prisma.PieceScalarFieldEnum),
   ...Object.keys(Prisma.PromptScalarFieldEnum),
+  ...Object.keys(Prisma.QuoteScalarFieldEnum),
 ]
   .sort()
   .join(",")
@@ -64,6 +65,7 @@ function isPrismaClientReady(
       typeof client.profile?.findFirst === "function" &&
       typeof client.piece?.findFirst === "function" &&
       typeof client.prompt?.findUnique === "function" &&
+      typeof client.quote?.findMany === "function" &&
       typeof client.pieceLike?.findMany === "function" &&
       typeof client.pieceComment?.findMany === "function" &&
       typeof client.profileFollow?.findMany === "function",

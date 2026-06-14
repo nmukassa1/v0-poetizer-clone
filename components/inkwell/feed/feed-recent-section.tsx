@@ -1,8 +1,8 @@
-import type { PiecePost } from "@/lib/feed"
+import type { RecentFeedEntry } from "@/lib/feed/intersperse-quotes"
 import { Divider } from "@/components/inkwell/primitives"
 import { RecentFeed } from "@/components/inkwell/feed/recent-feed"
 
-export function FeedRecentSection({ items }: { items: PiecePost[] }) {
+export function FeedRecentSection({ items }: { items: RecentFeedEntry[] }) {
   return (
     <section>
       <Divider label="Recent" />

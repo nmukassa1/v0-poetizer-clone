@@ -119,6 +119,17 @@ model Prompt {
   @@map("prompts")
 }
 
+/// Inspirational quote shown in the app (rotates daily).
+model Quote {
+  id        String   @id @default(cuid())
+  text      String   @db.Text
+  author    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("quotes")
+}
+
 enum PromptStatus {
   ACTIVE
   VOTING
