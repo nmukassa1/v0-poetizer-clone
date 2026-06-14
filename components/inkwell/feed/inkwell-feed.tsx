@@ -40,13 +40,7 @@ export function InkwellFeed({
 
   return (
     <div className="mx-auto min-h-screen w-full max-w-[760px] pb-20 lg:max-w-6xl lg:pb-24 xl:max-w-7xl">
-      <div
-        className={`px-4 min-[480px]:px-6 lg:px-8 xl:px-10 ${
-          showWelcome
-            ? "lg:grid lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10 xl:gap-12"
-            : ""
-        }`}
-      >
+      <div className={`px-4 min-[480px]:px-6 lg:px-8 xl:px-10 `}>
         <main className="min-w-0">
           {showWelcome && <FeedMobileStreakSection />}
 
@@ -62,7 +56,7 @@ export function InkwellFeed({
           <FeedRecentSection items={feedItems} />
         </main>
 
-        {showWelcome && <DesktopSidebar />}
+        {/* {showWelcome && <DesktopSidebar />} */}
       </div>
     </div>
   );
