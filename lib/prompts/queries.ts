@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db"
 import type { PieceWithAuthor } from "@/lib/piece/map"
+import { syncExpiredActivePrompts } from "@/lib/prompts/sync-status"
 
 const authorSelect = {
   name: true,
@@ -24,6 +25,8 @@ const publishedPublicWhere = {
 }
 
 export async function getActivePromptRecord() {
+  await syncExpiredActivePrompts()
+
   return prisma.prompt.findFirst({
     where: { status: "ACTIVE" },
     orderBy: { startsAt: "desc" },
@@ -114,4 +117,20 @@ export async function getTopPiecesForPromptSlugs(
   )
 
   return new Map(results.map(({ slug, pieces }) => [slug, pieces]))
+}
+
+export async function getPublishedSubmissionForPromptByAuthor(
+  authorId: string,
+  promptSlug: string,
+  excludePieceId?: string,
+) {
+  return prisma.piece.findFirst({
+    where: {
+      authorId,
+      promptSlug,
+      status: "PUBLISHED",
+      ...(excludePieceId ? { id: { not: excludePieceId } } : {}),
+    },
+    select: { id: true },
+  })
 }

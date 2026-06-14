@@ -1,4 +1,8 @@
 import { getPromptRecordBySlug } from "@/lib/prompts/queries"
+import {
+  isPromptAcceptingSubmissions,
+  syncExpiredActivePrompts,
+} from "@/lib/prompts/sync-status"
 
 export async function resolvePromptSlugForSave(
   inputSlug: string | null | undefined,
@@ -15,12 +19,14 @@ export async function resolvePromptSlugForSave(
     return { ok: true, promptSlug: null }
   }
 
+  await syncExpiredActivePrompts()
+
   const prompt = await getPromptRecordBySlug(inputSlug)
   if (!prompt) {
     return { ok: false, error: "Unknown prompt." }
   }
 
-  if (prompt.status !== "ACTIVE") {
+  if (!isPromptAcceptingSubmissions(prompt)) {
     return {
       ok: false,
       error: "This prompt is no longer accepting submissions.",
@@ -33,8 +39,10 @@ export async function resolvePromptSlugForSave(
 export async function getLinkedPromptForComposer(slug: string | null | undefined) {
   if (!slug) return null
 
+  await syncExpiredActivePrompts()
+
   const prompt = await getPromptRecordBySlug(slug)
-  if (!prompt) return null
+  if (!prompt || !isPromptAcceptingSubmissions(prompt)) return null
 
   return {
     slug: prompt.slug,

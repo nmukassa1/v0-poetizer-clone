@@ -21,7 +21,8 @@ export default async function proxy(request: NextRequest) {
   const isProtected =
     pathname === "/write" ||
     pathname === "/profile" ||
-    pathname.startsWith("/profile/settings")
+    pathname.startsWith("/profile/settings") ||
+    pathname.startsWith("/admin")
 
   if (isProtected) {
     const protectedMiddleware = auth.middleware({
@@ -45,6 +46,7 @@ export const config = {
     "/write",
     "/profile",
     "/profile/settings",
+    "/admin/:path*",
     "/sign-in",
     "/sign-up",
   ],

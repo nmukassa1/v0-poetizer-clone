@@ -16,12 +16,9 @@ export { filterFeed } from "./filter"
 
 export {
   featured,
-  feedItems,
   lovedPieces,
-  pastPrompts,
   quoteOfDay,
   trendingWriters,
-  weeklyPrompt,
 } from "./mock-data"
 
 export {

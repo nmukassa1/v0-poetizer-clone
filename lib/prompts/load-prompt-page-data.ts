@@ -17,6 +17,7 @@ import {
   listPublishedPiecesByPromptSlug,
 } from "@/lib/prompts/queries"
 import type { LivePromptView } from "@/lib/prompts/types"
+import { syncExpiredActivePrompts } from "@/lib/prompts/sync-status"
 
 async function buildScoreboardData(active: Awaited<
   ReturnType<typeof getActivePromptRecord>
@@ -121,6 +122,8 @@ export async function loadPromptMetadataBySlug(slug: string) {
 }
 
 export async function loadAdminPromptsPageData() {
+  await syncExpiredActivePrompts()
+
   const prompts = await listPromptRecords()
   const slugs = prompts.map((prompt) => prompt.slug)
   const counts = await countSubmissionsForPrompts(slugs)

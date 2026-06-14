@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { authorizeAdminApi } from "@/lib/auth/require-admin"
 import {
   deletePromptRecord,
   updatePromptRecord,
@@ -9,6 +10,11 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const auth = await authorizeAdminApi()
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
+  }
+
   const { id } = await params
 
   let body: unknown
@@ -35,6 +41,11 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const auth = await authorizeAdminApi()
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
+  }
+
   const { id } = await params
   const result = await deletePromptRecord(id)
 

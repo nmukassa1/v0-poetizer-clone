@@ -4,6 +4,7 @@ import { getPieceByIdForAuthor } from "@/lib/piece/queries"
 import type { PublishPieceResult } from "@/lib/piece/publish"
 import { contentTagToPieceType } from "@/lib/piece/types"
 import { visibilityFromInput } from "@/lib/piece/visibility"
+import { getPublishedSubmissionForPromptByAuthor } from "@/lib/prompts/queries"
 import { resolvePromptSlugForSave } from "@/lib/prompts/resolve-prompt-slug"
 import { prisma } from "@/lib/db"
 import { publishPieceSchema } from "@/lib/validations/piece"
@@ -48,6 +49,24 @@ export async function updatePiece(
   )
   if (!resolvedPrompt.ok) {
     return { success: false, error: resolvedPrompt.error }
+  }
+
+  if (
+    status === "PUBLISHED" &&
+    resolvedPrompt.promptSlug
+  ) {
+    const existingSubmission = await getPublishedSubmissionForPromptByAuthor(
+      user.id,
+      resolvedPrompt.promptSlug,
+      pieceId,
+    )
+
+    if (existingSubmission) {
+      return {
+        success: false,
+        error: "You already submitted to this prompt.",
+      }
+    }
   }
 
   try {

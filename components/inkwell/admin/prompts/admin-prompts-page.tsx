@@ -353,8 +353,7 @@ export function AdminPromptsPage({ prompts }: { prompts: AdminPrompt[] }) {
           </h1>
           <p className="mt-2 max-w-2xl font-sans text-sm text-[var(--ink-muted)]">
             Create weekly prompts, set one live at a time, and review submission
-            counts. This page is public for now and will be restricted to admins
-            later.
+            counts.
           </p>
         </div>
         {!showCreate ? (

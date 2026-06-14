@@ -2,6 +2,7 @@ import { getCurrentUser } from "@/lib/auth/server"
 import { excerptFromBody } from "@/lib/piece/excerpt"
 import { visibilityFromInput } from "@/lib/piece/visibility"
 import { contentTagToPieceType } from "@/lib/piece/types"
+import { getPublishedSubmissionForPromptByAuthor } from "@/lib/prompts/queries"
 import { resolvePromptSlugForSave } from "@/lib/prompts/resolve-prompt-slug"
 import { prisma } from "@/lib/db"
 import { publishPieceSchema } from "@/lib/validations/piece"
@@ -46,6 +47,23 @@ export async function publishPiece(
   const resolvedPrompt = await resolvePromptSlugForSave(promptSlug, null)
   if (!resolvedPrompt.ok) {
     return { success: false, error: resolvedPrompt.error }
+  }
+
+  if (
+    status === "PUBLISHED" &&
+    resolvedPrompt.promptSlug
+  ) {
+    const existingSubmission = await getPublishedSubmissionForPromptByAuthor(
+      profile.id,
+      resolvedPrompt.promptSlug,
+    )
+
+    if (existingSubmission) {
+      return {
+        success: false,
+        error: "You already submitted to this prompt.",
+      }
+    }
   }
 
   try {
