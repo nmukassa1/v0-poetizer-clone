@@ -1,8 +1,8 @@
-import { X } from "lucide-react";
-import type { ContentTag } from "@/lib/feed";
-import { CONTENT_TYPES, VISIBILITIES } from "./constants";
-import { ComposerSection } from "./composer-section";
-import type { Visibility } from "./types";
+import { X } from "lucide-react"
+import type { ContentTag } from "@/lib/feed"
+import { CONTENT_TYPES, VISIBILITIES } from "./constants"
+import { ComposerSection } from "./composer-section"
+import type { Visibility } from "./types"
 
 export function ComposerPieceSettings({
   type,
@@ -21,21 +21,21 @@ export function ComposerPieceSettings({
   savedAgoText,
   visibilityRadioName = "visibility",
 }: {
-  type: ContentTag;
-  onTypeChange: (type: ContentTag) => void;
-  excerpt: string;
-  onExcerptChange: (value: string, overridden: boolean) => void;
-  excerptOverridden: boolean;
-  onResetExcerpt: () => void;
-  tags: string[];
-  tagDraft: string;
-  onTagDraftChange: (value: string) => void;
-  onCommitTag: () => void;
-  onRemoveTag: (tag: string) => void;
-  visibility: Visibility;
-  onVisibilityChange: (visibility: Visibility) => void;
-  savedAgoText?: string;
-  visibilityRadioName?: string;
+  type: ContentTag
+  onTypeChange: (type: ContentTag) => void
+  excerpt: string
+  onExcerptChange: (value: string, overridden: boolean) => void
+  excerptOverridden: boolean
+  onResetExcerpt: () => void
+  tags: string[]
+  tagDraft: string
+  onTagDraftChange: (value: string) => void
+  onCommitTag: () => void
+  onRemoveTag: (tag: string) => void
+  visibility: Visibility
+  onVisibilityChange: (visibility: Visibility) => void
+  savedAgoText?: string
+  visibilityRadioName?: string
 }) {
   return (
     <div className="space-y-7">
@@ -106,7 +106,7 @@ export function ComposerPieceSettings({
         </p>
       )}
     </div>
-  );
+  )
 }
 
 function TagInput({
@@ -116,11 +116,11 @@ function TagInput({
   onCommitTag,
   onRemoveTag,
 }: {
-  tags: string[];
-  tagDraft: string;
-  onTagDraftChange: (value: string) => void;
-  onCommitTag: () => void;
-  onRemoveTag: (tag: string) => void;
+  tags: string[]
+  tagDraft: string
+  onTagDraftChange: (value: string) => void
+  onCommitTag: () => void
+  onRemoveTag: (tag: string) => void
 }) {
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -147,11 +147,11 @@ function TagInput({
           onChange={(e) => onTagDraftChange(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === ",") {
-              e.preventDefault();
-              onCommitTag();
+              e.preventDefault()
+              onCommitTag()
             }
             if (e.key === "Backspace" && tagDraft === "" && tags.length > 0) {
-              onRemoveTag(tags[tags.length - 1]);
+              onRemoveTag(tags[tags.length - 1])
             }
           }}
           onBlur={onCommitTag}
@@ -160,7 +160,7 @@ function TagInput({
         />
       )}
     </div>
-  );
+  )
 }
 
 function VisibilityOptions({
@@ -168,9 +168,9 @@ function VisibilityOptions({
   onVisibilityChange,
   radioName,
 }: {
-  visibility: Visibility;
-  onVisibilityChange: (visibility: Visibility) => void;
-  radioName: string;
+  visibility: Visibility
+  onVisibilityChange: (visibility: Visibility) => void
+  radioName: string
 }) {
   return (
     <div className="space-y-2">
@@ -202,5 +202,5 @@ function VisibilityOptions({
         </label>
       ))}
     </div>
-  );
+  )
 }
