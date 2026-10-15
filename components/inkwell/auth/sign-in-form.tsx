@@ -1,6 +1,7 @@
 "use client"
 
 import { useActionState } from "react"
+import Link from "next/link"
 import { signInAction } from "@/app/actions/sign-in"
 import {
   AuthFormFooter,
@@ -12,8 +13,17 @@ import { initialAuthState } from "@/lib/auth/form-state"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-export function SignInForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
-  const [state, formAction] = useActionState(signInAction, initialAuthState)
+export function SignInForm({
+  callbackUrl = "/",
+  notice,
+}: {
+  callbackUrl?: string
+  notice?: string
+}) {
+  const [state, formAction] = useActionState(signInAction, {
+    ...initialAuthState,
+    message: notice ?? null,
+  })
 
   return (
     <AuthFormShell
@@ -59,9 +69,12 @@ export function SignInForm({ callbackUrl = "/" }: { callbackUrl?: string }) {
           >
             Password
           </Label>
-          <span className="font-sans text-[11px] font-medium text-[var(--ink-subtle)]">
-            Forgot password? (soon)
-          </span>
+          <Link
+            href="/forgot-password"
+            className="font-sans text-[11px] font-medium text-[var(--ink-subtle)] underline-offset-2 hover:text-[var(--ink-fg)] hover:underline"
+          >
+            Forgot password?
+          </Link>
         </div>
         <Input
           id="sign-in-password"

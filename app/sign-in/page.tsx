@@ -9,16 +9,23 @@ export const metadata = {
 export default async function SignInPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string }>
+  searchParams: Promise<{ callbackUrl?: string; reset?: string }>
 }) {
-  const { callbackUrl } = await searchParams
+  const { callbackUrl, reset } = await searchParams
 
   return (
     <AuthPageLayout
       imageSrc="/images/auth-reading.png"
       imageAlt="Illustration of a person reading a book in an armchair"
     >
-      <SignInForm callbackUrl={callbackUrl ?? "/"} />
+      <SignInForm
+        callbackUrl={callbackUrl ?? "/"}
+        notice={
+          reset === "success"
+            ? "Password updated. Sign in with your new password."
+            : undefined
+        }
+      />
     </AuthPageLayout>
   )
 }

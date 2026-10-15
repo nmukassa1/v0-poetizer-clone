@@ -22,11 +22,20 @@ export function SignUpForm() {
       action={formAction}
       state={state}
       footer={
-        <AuthFormFooter
-          prompt="Already have an account?"
-          href="/sign-in"
-          linkLabel="Sign in"
-        />
+        <>
+          <AuthFormFooter
+            prompt="Already have an account?"
+            href="/sign-in"
+            linkLabel="Sign in"
+          />
+          <span className="mt-2 block">
+            <AuthFormFooter
+              prompt="Forgot your password?"
+              href="/forgot-password"
+              linkLabel="Reset it"
+            />
+          </span>
+        </>
       }
     >
       <div className="space-y-2">
