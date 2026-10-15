@@ -34,6 +34,7 @@ export function AuthFormShell({
   footer,
   hiddenFields,
   state,
+  submitLabel,
 }: {
   title: string
   description: string
@@ -42,6 +43,7 @@ export function AuthFormShell({
   footer: ReactNode
   hiddenFields?: ReactNode
   state: AuthFormState
+  submitLabel?: string
 }) {
   return (
     <form
@@ -66,12 +68,21 @@ export function AuthFormShell({
         </p>
       )}
 
+      {state.message && !state.error && (
+        <p
+          role="status"
+          className="mt-4 rounded-lg border border-[var(--ink-border)] bg-[color-mix(in_srgb,var(--ink-fg)_4%,var(--ink-bg))] px-3 py-2 font-sans text-[13px] text-[var(--ink-fg)]"
+        >
+          {state.message}
+        </p>
+      )}
+
       <div className="mt-6 space-y-4">
         {hiddenFields}
         {children}
       </div>
 
-      <SubmitButton label={title} />
+      <SubmitButton label={submitLabel ?? title} />
 
       <p className="mt-6 text-center font-sans text-[13px] text-[var(--ink-muted)]">
         {footer}

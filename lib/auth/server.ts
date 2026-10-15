@@ -47,6 +47,12 @@ export const auth = {
   changePassword: (
     ...args: Parameters<ReturnType<typeof createNeonAuth>["changePassword"]>
   ) => getAuth().changePassword(...args),
+  requestPasswordReset: (
+    ...args: Parameters<ReturnType<typeof createNeonAuth>["requestPasswordReset"]>
+  ) => getAuth().requestPasswordReset(...args),
+  resetPassword: (
+    ...args: Parameters<ReturnType<typeof createNeonAuth>["resetPassword"]>
+  ) => getAuth().resetPassword(...args),
   deleteUser: (
     ...args: Parameters<ReturnType<typeof createNeonAuth>["deleteUser"]>
   ) => getAuth().deleteUser(...args),

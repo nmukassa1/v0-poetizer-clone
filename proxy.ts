@@ -31,7 +31,11 @@ export default async function proxy(request: NextRequest) {
     return protectedMiddleware(request)
   }
 
-  if (pathname === "/sign-in" || pathname === "/sign-up") {
+  if (
+    pathname === "/sign-in" ||
+    pathname === "/sign-up" ||
+    pathname === "/forgot-password"
+  ) {
     const { data: session } = await auth.getSession()
     if (session?.user) {
       return NextResponse.redirect(new URL("/", request.url))
@@ -49,5 +53,6 @@ export const config = {
     "/admin/:path*",
     "/sign-in",
     "/sign-up",
+    "/forgot-password",
   ],
 }
